@@ -187,28 +187,30 @@ If the setting is successful, the terminal will output: `https://goproxy.io,dire
 
 After completing the above configuration, Go will automatically use the specified proxy server every time you start the terminal.
 
-## Create your own project
+## Create your own project 🛠️
 
-### 1. API
+### 1. API 📄
 
-Modify [gen/openapi.yaml](gen/openapi.yaml) then run `api:generate` script in [package.json](package.json).
+Modify [gen/openapi.yaml](gen/openapi.yaml) then run `api:generate` script in [package.json](package.json). 🚀
 
-### 2. Server Logics
+### 2. Server Logics 💻
 
-Write your own server logics in [server/routes](server/routes/Framework.Handlers.go) about how the server responses.
+Write your own server logics in [server/routes](server/routes/Framework.Handlers.go) about how the server responses. 📡
 
-### 3. Models
+### 3. Models 📐
 
-1. Define your own models in [server/model](server/model/Framework.Example.Product.go).
-2. Register the models in [Framework.DB.go](server/model/Framework.DB.go).
-   ```go
-   db.AutoMigrate(&Product{}) // and your own models
-   ```
+#### 1. Define your own models in [server/model](server/model/Framework.Example.Product.go). 📝
 
-### 4. Frontend
+#### 2. Register the models in [Framework.DB.go](server/model/Framework.DB.go). 📚
 
-Create your own frontend pages in [vue](vue/pages/index.vue).
+```go
+db.AutoMigrate(&Product{}) // and your own models
+```
 
-### 5. Develop
+### 4. Frontend 🌈
 
-Run `dev` script in [package.json](package.json).
+Create your own frontend pages in [vue](vue/pages/index.vue). 🎨
+
+### 5. Develop 🚧
+
+Run `dev` script in [package.json](package.json). 🏃‍♂️
