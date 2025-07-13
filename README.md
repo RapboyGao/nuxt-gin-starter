@@ -1,5 +1,9 @@
 # [Nuxt 3 Gin Starter 🚀](https://github.com/RapboyGao/nuxt3-gin-starter.git)
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![GitHub stars](https://img.shields.io/github/stars/RapboyGao/nuxt3-gin-starter.svg?style=social)](https://github.com/yourusername/nuxt3-gin-starter/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/RapboyGao/nuxt3-gin-starter.svg?style=social)](https://github.com/yourusername/nuxt3-gin-starter/network)
+
 Explore the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introduction) and [Gin](https://gin-gonic.com) to gain in-depth knowledge.
 
 ## Environment Setup ⚙️
