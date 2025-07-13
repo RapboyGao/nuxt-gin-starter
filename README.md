@@ -1,4 +1,4 @@
-# Nuxt 3 Gin Starter 🚀
+# [Nuxt 3 Gin Starter 🚀](https://github.com/RapboyGao/nuxt3-gin-starter.git)
 
 Explore the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introduction) and [Gin](https://gin-gonic.com) to gain in-depth knowledge.
 
