@@ -1,0 +1,5 @@
+{
+    "baseUrl": "/web",
+    "nuxtPort": 3000,
+    "ginPort": 8099
+}

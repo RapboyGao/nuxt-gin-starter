@@ -1,0 +1,8 @@
+{
+	// https://nuxt.com/docs/guide/concepts/typescript
+	"extends": "./vue/.nuxt/tsconfig.json",
+	"compilerOptions": {
+		"allowJs": true,
+		"checkJs": true
+	}
+}

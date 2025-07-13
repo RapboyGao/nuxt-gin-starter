@@ -1,0 +1,31 @@
+{
+  "private": true,
+  "scripts": {
+    "dev": "node ./tools/develop",
+    "build": "node ./tools/pack",
+    "pm2:start": "pm2 kill && pm2 start && pm2 monit",
+    "pm2:kill": "pm2 kill",
+    "api:generate": "node gen",
+    "go:dev": "air",
+    "nuxt:dev": "nuxt dev",
+    "nuxt:build": "nuxt build",
+    "nuxt:start": "node ./vue/.output/server/index.mjs",
+    "nuxt:generate": "nuxt generate",
+    "nuxt:preview": "nuxt preview",
+    "postinstall": "node ./tools/postinstall"
+  },
+  "devDependencies": {
+    "7zip-min": "^2.1.0",
+    "@openapitools/openapi-generator-cli": "^2.21.0",
+    "@types/fs-extra": "^11.0.4",
+    "@types/node": "^22.15.18",
+    "@vitejs/plugin-legacy": "^6.1.1",
+    "axios": "^1.9.0",
+    "concurrently": "^9.1.2",
+    "fs-extra": "^11.3.0",
+    "nuxt": "^3.17.3",
+    "pm2": "^6.0.6",
+    "prettier": "^3.5.3",
+    "sass": "^1.88.0"
+  }
+}

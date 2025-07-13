@@ -1,0 +1,5 @@
+{
+    "apiPath": "server/api",
+    "packageName": "api",
+    "serverPort": "8099"
+}

@@ -1,0 +1,28 @@
+openapi: 3.0.2
+# 定义前后端统一的API
+info:
+  title: Nuxt Backend
+  version: "1.0"
+servers:
+  - description: Development Server
+    url: http://localhost:8099/api-go
+paths:
+  /test:
+    post:
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TestResponse"
+components:
+  schemas:
+    TestResponse:
+      title: Test of response
+      description: An example of test on server response.
+      type: object
+      properties:
+        time:
+          type: integer
+          format: int64

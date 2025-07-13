@@ -1,0 +1,25 @@
+{
+    "title": "API configuration schema",
+    "description": "API configuration schema. For more info see http://json-schema.org/ and https://frontaid.io/blog/json-schema-vscode/",
+    "type": "object",
+    "properties": {
+        "ginPort": {
+            "title": "The port for Gin / Gin框架端口",
+            "type": "integer"
+        },
+        "nuxtPort": {
+            "title": "The port for Nuxt / Nuxt框架devServer端口",
+            "type": "integer"
+        },
+        "baseUrl": {
+            "title": "The base url for nuxt. / Nuxt的BaseUrl",
+            "type": "string",
+            "pattern": "^\\/\\w.+"
+        }
+    },
+    "required": [
+        "ginPort",
+        "nuxtPort",
+        "baseUrl"
+    ]
+}

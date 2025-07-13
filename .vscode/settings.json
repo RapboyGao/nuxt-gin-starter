@@ -1,0 +1,53 @@
+{
+  "cSpell.words": [
+    "composables",
+    "daterange",
+    "datetime",
+    "esbuild",
+    "excelize",
+    "gonic",
+    "GOPROXY",
+    "gorm",
+    "jsoniter",
+    "mapstructure",
+    "Milli",
+    "nuxt",
+    "openapi",
+    "panigation",
+    "pinia",
+    "primevue",
+    "testdata",
+    "Upsert"
+  ],
+  "[yaml]": {
+    "editor.defaultFormatter": "redhat.vscode-yaml"
+  },
+  "npm.packageManager": "pnpm",
+  "[markdown]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[go]": {
+    "editor.defaultFormatter": "golang.go"
+  },
+  "[go.mod]": {
+    "editor.defaultFormatter": "golang.go"
+  },
+  "[vue]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "files.associations": {
+    "*.openapi-generator-ignore": "ignore",
+    "*.schema": "jsonc",
+    "*.toml": "editorconfig"
+  },
+  "json.schemas": [
+    {
+      "fileMatch": ["/server.config.json"],
+      "url": "/.vscode/api-config.schema"
+    }
+  ],
+  "python.analysis.typeCheckingMode": "basic"
+}
