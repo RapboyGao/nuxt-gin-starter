@@ -4,6 +4,8 @@
 [![GitHub stars](https://img.shields.io/github/stars/RapboyGao/nuxt3-gin-starter.svg?style=social)](https://github.com/yourusername/nuxt3-gin-starter/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/RapboyGao/nuxt3-gin-starter.svg?style=social)](https://github.com/yourusername/nuxt3-gin-starter/network)
 
+[🇨🇳简体中文](./README.zh-CN.md)
+
 Explore the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introduction) and [Gin](https://gin-gonic.com) to gain in-depth knowledge.
 
 ## Environment Setup ⚙️
