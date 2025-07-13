@@ -41,7 +41,8 @@
   "files.associations": {
     "*.openapi-generator-ignore": "ignore",
     "*.schema": "jsonc",
-    "*.toml": "editorconfig"
+    "*.toml": "toml", // 修改这里，将所有.toml文件关联到toml语言模式
+    ".air.toml": "toml" // 新增这一行，将.air.toml文件关联到toml语言模式
   },
   "json.schemas": [
     {
