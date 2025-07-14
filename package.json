@@ -3,8 +3,6 @@
   "scripts": {
     "dev": "node ./tools/develop",
     "build": "node ./tools/pack",
-    "pm2:start": "pm2 kill && pm2 start && pm2 monit",
-    "pm2:kill": "pm2 kill",
     "api:generate": "node gen",
     "go:dev": "air",
     "nuxt:dev": "nuxt dev",
@@ -24,7 +22,6 @@
     "concurrently": "^9.2.0",
     "fs-extra": "^11.3.0",
     "nuxt": "^3.17.6",
-    "pm2": "^6.0.8",
     "prettier": "^3.6.2",
     "sass": "^1.89.2"
   }
