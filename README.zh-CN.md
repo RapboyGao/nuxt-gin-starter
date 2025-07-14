@@ -201,7 +201,7 @@ go env GOPROXY
 
 ### 3. 模型 📐
 
-#### 1. 在 [server/model](server/model/Framework.Example.Product.go) 中定义自己的模型。📝
+#### 1. 在 [server/model](server/model/Example.Product.go) 中定义自己的模型。📝
 
 #### 2. 在 [Framework.DB.go](server/model/Framework.DB.go) 中注册模型。📚
 

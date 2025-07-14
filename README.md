@@ -205,7 +205,7 @@ Write your own server logics in [server/routes](server/routes/Framework.Handlers
 
 ### 3. Models 📐
 
-#### 1. Define your own models in [server/model](server/model/Framework.Example.Product.go). 📝
+#### 1. Define your own models in [server/model](server/model/Example.Product.go). 📝
 
 #### 2. Register the models in [Framework.DB.go](server/model/Framework.DB.go). 📚
 
