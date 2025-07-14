@@ -190,7 +190,10 @@ go env GOPROXY
 
 ### 1. API 📄
 
-修改 [gen/openapi.yaml](gen/openapi.yaml)，然后运行 [package.json](package.json) 中的 `api:generate` 脚本。🚀
+- 修改 [gen/openapi.yaml](gen/openapi.yaml)，然后运行 [package.json](package.json) 中的 `api:generate` 脚本。🚀
+- API生成器的内容在
+  - [server/api](server/api/api_default.go)
+  - [vue/composables/api](vue/composables/api/index.ts)
 
 ### 2. 服务器逻辑 💻
 

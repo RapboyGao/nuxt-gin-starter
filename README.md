@@ -195,6 +195,10 @@ After completing the above configuration, Go will automatically use the specifie
 
 Modify [gen/openapi.yaml](gen/openapi.yaml) then run `api:generate` script in [package.json](package.json). 🚀
 
+- API generated contents are located at
+  - [server/api](server/api/api_default.go)
+  - [vue/composables/api](vue/composables/api/index.ts)
+
 ### 2. Server Logics 💻
 
 Write your own server logics in [server/routes](server/routes/Framework.Handlers.go) about how the server responses. 📡
