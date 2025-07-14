@@ -18,7 +18,7 @@ const FILE_LIST = [
   "tmp/production.exe",
   "start.bat",
   "start.ps1",
-  "start-pm2.ps1",
+  "start.sh",
   "ecosystem.config.js",
   "server.config.json",
 ];
