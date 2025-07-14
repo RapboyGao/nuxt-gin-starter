@@ -13,15 +13,7 @@ function p(...names) {
 const DIST_PACKAGE = "dist/package";
 
 /** 需要打包的文件相对位置列表 */
-const FILE_LIST = [
-  "vue/.output",
-  "tmp/production.exe",
-  "start.bat",
-  "start.ps1",
-  "start.sh",
-  "ecosystem.config.js",
-  "server.config.json",
-];
+const FILE_LIST = ["vue/.output", "tmp/production.exe", "start.bat", "start.ps1", "start.sh", "ecosystem.config.js", "server.config.json"];
 
 /** package.json 文件夹相对于Workspace位置 */
 const PACKAGE_JSON = DIST_PACKAGE + "/package.json";
@@ -32,12 +24,7 @@ const _7Z_PATH = DIST_PACKAGE + "/../package.7z";
 const PACKAGE_JSON_CONTENT = {
   private: true,
   scripts: {
-    "start": "./tmp/production.exe",
-    "pm2:start": "pm2 kill && pm2 start && pm2 monit",
-    "pm2:kill": "pm2 kill",
-  },
-  devDependencies: {
-    pm2: "latest",
+    start: "./tmp/production.exe",
   },
 };
 
