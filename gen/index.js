@@ -8,6 +8,8 @@ const concurrently = require("concurrently"); // 用于并发执行命令的工�
 const Path = require("path"); // 处理和转换文件路径的工具
 const Fs = require("fs-extra"); // 文件系统操作工具，提供更便捷的API
 
+const cwd = process.cwd(); // 获取当前工作目录
+
 /**
  * 要执行的命令列表
  * 包含OpenAPI代码生成命令：
@@ -22,7 +24,7 @@ let commands = [
 /**
  * 执行完成后需要删除的路径列表
  */
-const pathsToDelete = ["../api"];
+const pathsToDelete = ["api"];
 
 /**
  * 设置Vue API客户端的基础URL
@@ -32,7 +34,7 @@ const pathsToDelete = ["../api"];
 async function setVueBaseUrl() {
   try {
     // 构建Vue API运行时配置文件的完整路径
-    const VUE_API_RUNTIME_PATH = Path.join(__dirname, "../vue/composables/api/base.ts");
+    const VUE_API_RUNTIME_PATH = Path.join(cwd, "vue/composables/api/base.ts");
 
     // 读取原始文件内容
     const originalContent = await Fs.readFile(VUE_API_RUNTIME_PATH, "utf-8");
@@ -61,7 +63,7 @@ async function removePaths() {
     // 遍历要删除的路径列表
     for (const path of pathsToDelete) {
       // 构建完整路径
-      const fullPath = Path.join(__dirname, path);
+      const fullPath = Path.join(cwd, path);
 
       // 删除路径（文件或目录）
       await Fs.remove(fullPath);

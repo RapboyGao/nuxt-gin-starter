@@ -1,12 +1,15 @@
 const Fs = require("fs-extra");
 const Zip = require("7zip-min");
+const path = require("path");
+
+const cwd = process.cwd();
 
 /**
  * @param  {...string} names 路径名称
  * @returns 相对于Workspace位置的路径名称
  */
 function p(...names) {
-  return require("path").join(__dirname, "../", ...names);
+  return path.join(cwd, ...names);
 }
 
 /** 打包文件夹相对于Workspace位置 */
