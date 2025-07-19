@@ -14,7 +14,7 @@
     "@vitejs/plugin-legacy": "^7.0.1",
     "axios": "^1.10.0",
     "nuxt": "^4.0.0",
-    "nuxt-gin-tools": "0.0.10",
+    "nuxt-gin-tools": "0.0.11",
     "prettier": "^3.6.2",
     "sass": "^1.89.2"
   }
