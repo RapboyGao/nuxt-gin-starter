@@ -15,6 +15,19 @@ export default {
   // 禁用服务器端渲染（SSR），即页面将在客户端进行渲染
   ssr: false,
   /**
+   * 配置实验性功能
+   * 禁用 payloadExtraction 功能，该功能可能用于提取页面的有效负载数据
+   * 这里禁用它可能是为了避免某些兼容性问题或特定的项目需求
+   */
+  experimental: {
+    payloadExtraction: false,
+  },
+  devtools: {
+    timeline: {
+      enabled: true,
+    },
+  },
+  /**
    * 配置应用的基础 URL
    * 从 server.config.json 文件中获取 baseUrl 作为应用的基础 URL
    * 这个基础 URL 将用于构建应用的路由和请求地址
@@ -34,13 +47,5 @@ export default {
       allowHeaders: ["X-Requested-With", "Content-Type"],
       allowMethods: ["PUT", "POST", "GET", "DELETE", "OPTIONS"],
     },
-  },
-  /**
-   * 配置实验性功能
-   * 禁用 payloadExtraction 功能，该功能可能用于提取页面的有效负载数据
-   * 这里禁用它可能是为了避免某些兼容性问题或特定的项目需求
-   */
-  experimental: {
-    payloadExtraction: false,
   },
 } as NuxtConfig;
