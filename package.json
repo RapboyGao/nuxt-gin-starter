@@ -4,12 +4,6 @@
     "dev": "nuxt-gin dev",
     "build": "nuxt-gin build",
     "api:generate": "nuxt-gin gen",
-    "go:dev": "air",
-    "nuxt:dev": "nuxt dev",
-    "nuxt:build": "nuxt build",
-    "nuxt:start": "node ./vue/.output/server/index.mjs",
-    "nuxt:generate": "nuxt generate",
-    "nuxt:preview": "nuxt preview",
     "postinstall": "nuxt-gin install"
   },
   "devDependencies": {
@@ -18,7 +12,7 @@
     "@vitejs/plugin-legacy": "^7.0.0",
     "axios": "^1.10.0",
     "nuxt": "^3.17.6",
-    "nuxt-gin-tools": "0.0.5",
+    "nuxt-gin-tools": "0.0.6",
     "prettier": "^3.6.2",
     "sass": "^1.89.2"
   }
