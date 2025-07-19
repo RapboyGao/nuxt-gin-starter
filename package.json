@@ -6,7 +6,7 @@
     "api:generate": "nuxt-gin gen",
     "cleanup": "nuxt-gin cleanup",
     "postinstall": "nuxt-gin install",
-    "update:dep": "pnpm update --latest"
+    "update:dep": "nuxt-gin update"
   },
   "devDependencies": {
     "@openapitools/openapi-generator-cli": "^2.21.2",
@@ -14,7 +14,7 @@
     "@vitejs/plugin-legacy": "^7.0.1",
     "axios": "^1.10.0",
     "nuxt": "^4.0.0",
-    "nuxt-gin-tools": "0.0.11",
+    "nuxt-gin-tools": "0.0.12",
     "prettier": "^3.6.2",
     "sass": "^1.89.2"
   }
