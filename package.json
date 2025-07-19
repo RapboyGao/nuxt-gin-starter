@@ -18,8 +18,8 @@
     "@vitejs/plugin-legacy": "^7.0.0",
     "axios": "^1.10.0",
     "nuxt": "^3.17.6",
+    "nuxt-gin-tools": "0.0.5",
     "prettier": "^3.6.2",
-    "sass": "^1.89.2",
-    "nuxt-gin-tools": "0.0.1"
+    "sass": "^1.89.2"
   }
 }
