@@ -1,12 +1,19 @@
-# [Nuxt 3 Gin Starter 🚀](https://github.com/RapboyGao/nuxt3-gin-starter.git)
+# [Nuxt Gin Starter 🚀](https://github.com/RapboyGao/nuxt-gin-starter.git)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![GitHub stars](https://img.shields.io/github/stars/RapboyGao/nuxt3-gin-starter.svg?style=social)](https://github.com/yourusername/nuxt3-gin-starter/stargazers)
-[![GitHub forks](https://img.shields.io/github/forks/RapboyGao/nuxt3-gin-starter.svg?style=social)](https://github.com/yourusername/nuxt3-gin-starter/network)
+[![GitHub stars](https://img.shields.io/github/stars/RapboyGao/nuxt-gin-starter.svg?style=social)](https://github.com/yourusername/nuxt-gin-starter/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/RapboyGao/nuxt-gin-starter.svg?style=social)](https://github.com/yourusername/nuxt-gin-starter/network)
 
 [🇨🇳简体中文](./README.zh-CN.md)
 
-Explore the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introduction) and [Gin](https://gin-gonic.com) to gain in-depth knowledge.
+Explore the following to gain in-depth knowledge:
+
+- [Nuxt 4 documentation](https://nuxt.com/docs/getting-started/introduction)
+- [Gin](https://gin-gonic.com)
+- [GORM](https://gorm.io)
+- [Vue](https://vuejs.org)
+- [OpenAPI](https://www.openapis.org)
+- [OpenAPI Generator](https://openapi-generator.tech)
 
 ## Environment Setup ⚙️
 
@@ -193,7 +200,7 @@ After completing the above configuration, Go will automatically use the specifie
 
 ### 1. API 📄
 
-Modify [gen/openapi.yaml](gen/openapi.yaml) then run `api:generate` script in [package.json](package.json). 🚀
+Modify [openapi.yaml](openapi.yaml) then run `api:generate` script in [package.json](package.json). 🚀
 
 - API generated contents are located at
   - [server/api](server/api/api_default.go)

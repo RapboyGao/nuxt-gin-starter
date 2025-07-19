@@ -1,10 +1,17 @@
-# [Nuxt 3 Gin starter 🚀](https://github.com/RapboyGao/nuxt3-gin-starter.git)
+# [Nuxt Gin starter 🚀](https://github.com/RapboyGao/nuxt-gin-starter.git)
 
 [![许可证：MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![GitHub 星标](https://img.shields.io/github/stars/RapboyGao/nuxt3-gin-starter.svg?style=social)](https://github.com/RapboyGao/nuxt3-gin-starter/stargazers)
-[![GitHub 分叉](https://img.shields.io/github/forks/RapboyGao/nuxt3-gin-starter.svg?style=social)](https://github.com/RapboyGao/nuxt3-gin-starter/network)
+[![GitHub 星标](https://img.shields.io/github/stars/RapboyGao/nuxt-gin-starter.svg?style=social)](https://github.com/RapboyGao/nuxt-gin-starter/stargazers)
+[![GitHub 分叉](https://img.shields.io/github/forks/RapboyGao/nuxt-gin-starter.svg?style=social)](https://github.com/RapboyGao/nuxt-gin-starter/network)
 
-想要深入了解相关知识，可以查阅 [Nuxt 3 文档](https://nuxt.com/docs/getting-started/introduction) 和 [Gin 框架文档](https://gin-gonic.com)。
+想要深入了解相关知识，可以查阅
+
+- [Nuxt 4 documentation](https://nuxt.com/docs/getting-started/introduction)
+- [Gin](https://gin-gonic.com)
+- [GORM](https://gorm.io)
+- [Vue](https://vuejs.org)
+- [OpenAPI](https://www.openapis.org)
+- [OpenAPI Generator](https://openapi-generator.tech)
 
 ## 环境配置 ⚙️
 
@@ -190,7 +197,7 @@ go env GOPROXY
 
 ### 1. API 📄
 
-- 修改 [gen/openapi.yaml](gen/openapi.yaml)，然后运行 [package.json](package.json) 中的 `api:generate` 脚本。🚀
+- 修改 [openapi.yaml](openapi.yaml)，然后运行 [package.json](package.json) 中的 `api:generate` 脚本。🚀
 - API生成器的内容在
   - [server/api](server/api/api_default.go)
   - [vue/composables/api](vue/composables/api/index.ts)
