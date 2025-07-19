@@ -3,18 +3,18 @@
 import type { NuxtConfig } from "nuxt/config";
 // 导入服务器配置文件，该文件包含了服务器的一些基础配置信息，如端口号、基础 URL 等
 import serverConfig from "../server.config.json";
-
 /**
  * 导出默认的 Nuxt 配置对象
  * 该配置对象包含了一些 Nuxt 项目的基本配置信息
  */
 export default {
-  // 设置项目的根目录为 "vue"，表示 Nuxt 项目的主要代码将存放在该目录下
-  rootDir: "vue",
+  buildDir: "vue/.nuxt", // 设置构建目录为 "vue/.nuxt"，表示 Nuxt 项目的构建输出将存放在该目录下
+  srcDir: "vue", // 设置源代码目录为 "vue"，表示 Nuxt 项目的源代码将存放在该目录下
   // 设置服务器端代码的目录为 "vue/server"，表示服务器端的代码将存放在该目录下
   // serverDir: "vue/server",
   // 禁用服务器端渲染（SSR），即页面将在客户端进行渲染
   ssr: false,
+
   /**
    * 配置应用的基础 URL
    * 从 server.config.json 文件中获取 baseUrl 作为应用的基础 URL

@@ -1,8 +1,17 @@
 {
-	// https://nuxt.com/docs/guide/concepts/typescript
-	"extends": "./vue/.nuxt/tsconfig.json",
-	"compilerOptions": {
-		"allowJs": true,
-		"checkJs": true
-	}
+  "files": [],
+  "references": [
+    {
+      "path": "./vue/.nuxt/tsconfig.app.json"
+    },
+    {
+      "path": "./vue/.nuxt/tsconfig.server.json"
+    },
+    {
+      "path": "./vue/.nuxt/tsconfig.shared.json"
+    },
+    {
+      "path": "./vue/.nuxt/tsconfig.node.json"
+    }
+  ]
 }
