@@ -15,6 +15,8 @@ Explore the following to gain in-depth knowledge:
 - [OpenAPI](https://www.openapis.org)
 - [OpenAPI Generator](https://openapi-generator.tech)
 
+## Recommended IDE - [VS Code](https://code.visualstudio.com)
+
 ## Environment Setup ⚙️
 
 ### 1. Powershell (Win10+) 💻

@@ -13,6 +13,8 @@
 - [OpenAPI](https://www.openapis.org)
 - [OpenAPI Generator](https://openapi-generator.tech)
 
+## 推荐的IDE - [VS Code](https://code.visualstudio.com)
+
 ## 环境配置 ⚙️
 
 ### 1. PowerShell（Win10+）💻

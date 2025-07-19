@@ -13,6 +13,7 @@
     "Milli",
     "nuxt",
     "openapi",
+    "openapitools",
     "panigation",
     "pinia",
     "primevue",
@@ -42,13 +43,21 @@
     "*.openapi-generator-ignore": "ignore",
     "*.schema": "jsonc",
     "*.toml": "toml", // 修改这里，将所有.toml文件关联到toml语言模式
-    ".air.toml": "toml" // 新增这一行，将.air.toml文件关联到toml语言模式
+    ".air.toml": "toml", // 新增这一行，将.air.toml文件关联到toml语言模式
+    ".openapi-generator-ignore": ".gitignore" //
   },
   "json.schemas": [
     {
       "fileMatch": ["/server.config.json"],
       "url": "/.vscode/api-config.schema"
+    },
+    {
+      "fileMatch": ["/openapitools.json"],
+      "url": "/node_modules/@openapitools/openapi-generator-cli/config.schema.json"
     }
   ],
-  "python.analysis.typeCheckingMode": "basic"
+  "python.analysis.typeCheckingMode": "basic",
+  "material-icon-theme.folders.associations": {
+    "composables": "cobol"
+  }
 }
