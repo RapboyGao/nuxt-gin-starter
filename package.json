@@ -1,28 +1,25 @@
 {
   "private": true,
   "scripts": {
-    "dev": "node ./tools/develop",
-    "build": "node ./tools/pack",
-    "api:generate": "node gen",
+    "dev": "nuxt-gin dev",
+    "build": "nuxt-gin build",
+    "api:generate": "nuxt-gin gen",
     "go:dev": "air",
     "nuxt:dev": "nuxt dev",
     "nuxt:build": "nuxt build",
     "nuxt:start": "node ./vue/.output/server/index.mjs",
     "nuxt:generate": "nuxt generate",
     "nuxt:preview": "nuxt preview",
-    "postinstall": "node ./tools/postinstall"
+    "postinstall": "nuxt-gin install"
   },
   "devDependencies": {
-    "7zip-min": "^2.1.0",
     "@openapitools/openapi-generator-cli": "^2.21.0",
-    "@types/fs-extra": "^11.0.4",
     "@types/node": "^24.0.13",
     "@vitejs/plugin-legacy": "^7.0.0",
     "axios": "^1.10.0",
-    "concurrently": "^9.2.0",
-    "fs-extra": "^11.3.0",
     "nuxt": "^3.17.6",
     "prettier": "^3.6.2",
-    "sass": "^1.89.2"
+    "sass": "^1.89.2",
+    "nuxt-gin-tools": "0.0.1"
   }
 }
