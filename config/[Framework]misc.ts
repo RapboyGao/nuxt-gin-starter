@@ -11,6 +11,8 @@ import serverConfig from "../server.config.json";
 export default {
   // 设置项目的根目录为 "vue"，表示 Nuxt 项目的主要代码将存放在该目录下
   rootDir: "vue",
+  // 设置服务器端代码的目录为 "vue/server"，表示服务器端的代码将存放在该目录下
+  // serverDir: "vue/server",
   // 禁用服务器端渲染（SSR），即页面将在客户端进行渲染
   ssr: false,
   /**
@@ -24,7 +26,16 @@ export default {
    * 从 server.config.json 文件中获取 nuxtPort 作为开发服务器的端口号
    * 启动开发服务器时，将使用该端口号进行监听
    */
-  devServer: { port: serverConfig.nuxtPort },
+  devServer: {
+    port: serverConfig.nuxtPort,
+    cors: {
+      allowCredentials: true,
+      maxAge: "1728000",
+      origin: "*", // 允许所有源进行跨域请求
+      allowHeaders: ["X-Requested-With", "Content-Type"],
+      allowMethods: ["PUT", "POST", "GET", "DELETE", "OPTIONS"],
+    },
+  },
   /**
    * 配置实验性功能
    * 禁用 payloadExtraction 功能，该功能可能用于提取页面的有效负载数据
