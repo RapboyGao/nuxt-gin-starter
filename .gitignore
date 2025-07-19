@@ -14,3 +14,5 @@ dist
 /vendor
 /logs
 /.build
+**/DS_Store
+DS_Store
