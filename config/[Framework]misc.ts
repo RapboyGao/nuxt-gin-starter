@@ -14,7 +14,6 @@ export default {
   // serverDir: "vue/server",
   // 禁用服务器端渲染（SSR），即页面将在客户端进行渲染
   ssr: false,
-
   /**
    * 配置应用的基础 URL
    * 从 server.config.json 文件中获取 baseUrl 作为应用的基础 URL

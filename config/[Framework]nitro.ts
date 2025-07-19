@@ -30,6 +30,10 @@ const target = `http://localhost:${serverConfig.ginPort}${thisBasePath}`;
  * 该配置对象包含了开发环境下的代理配置，用于将特定路径的请求代理到目标服务器
  */
 export default {
+  output: {
+    // 设置输出目录为 "vue/.nuxt", 表示 Nitro 的构建输出
+    dir: "vue/.output",
+  },
   devProxy: {
     // 定义代理规则，将匹配 thisBasePath 的请求代理到目标服务器
     [thisBasePath]: {
