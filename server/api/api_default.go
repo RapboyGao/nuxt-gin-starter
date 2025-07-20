@@ -15,6 +15,6 @@ import (
 
 type DefaultAPI struct {
 	// Post /api-go/test
-	//
+	// 
 	TestPost gin.HandlerFunc
 }
