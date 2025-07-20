@@ -1,22 +1,22 @@
 // [框架] Nuxt Config，不要删除或修改
 // 导入 Nuxt 配置类型，用于类型检查，确保配置对象符合 Nuxt 的配置规范
-import type { NuxtConfig } from "nuxt/config";
+import type { NuxtConfig } from 'nuxt/config';
 // 导入服务器配置文件，该文件包含了服务器的一些基础配置信息，如端口号、基础 URL 等
-import serverConfig from "../server.config.json";
+import serverConfig from '../server.config.json';
 // 导入 API 的基础路径，该路径用于构建 API 请求的 URL
-import { BASE_PATH } from "../vue/composables/api/base";
+import { BASE_PATH } from '../vue/composables/api/base';
 
 /**
  * 导出 Nitro 配置类型，它是 Nuxt 配置中 nitro 部分的类型
  * 这样可以方便在其他地方使用和检查 Nitro 配置的类型
  */
-export type NitroConfig = NuxtConfig["nitro"];
+export type NitroConfig = NuxtConfig['nitro'];
 
 /**
  * 处理基础路径，去除协议和域名部分，只保留路径部分
  * 例如，将 "https://example.com/api-go" 转换为 "/api-go"
  */
-const thisBasePath = BASE_PATH.replace(/^https?:[/]{2}[^/]+/, "");
+const thisBasePath = BASE_PATH.replace(/^https?:[/]{2}[^/]+/, '');
 
 /**
  * 定义代理目标 URL
@@ -32,7 +32,7 @@ const target = `http://localhost:${serverConfig.ginPort}${thisBasePath}`;
 export default {
   output: {
     // 设置输出目录为 "vue/.nuxt", 表示 Nitro 的构建输出
-    dir: "vue/.output",
+    dir: 'vue/.output',
   },
   devProxy: {
     // 定义代理规则，将匹配 thisBasePath 的请求代理到目标服务器

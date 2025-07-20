@@ -1,12 +1,15 @@
 <template>
   <div>
-    <div v-if="date" class="bg-black">If you're seeing this, you've successfully received data from Gin server: {{ date }}</div>
+    <div v-if="date" class="bg-black">
+      If you're seeing this, you've successfully received data from Gin server:
+      {{ date }}
+    </div>
     <NuxtWelcome />
   </div>
 </template>
 
 <script setup lang="ts">
-import type { TestResponse } from "@/composables/api";
+import type { TestResponse } from '@/composables/api';
 const response = ref<TestResponse | undefined>();
 
 const date = computed(() => {
@@ -19,8 +22,8 @@ const date = computed(() => {
 });
 
 useSeoMeta({
-  title: "Hello World",
-  applicationName: "Hello World",
+  title: 'Hello World',
+  applicationName: 'Hello World',
 });
 
 onMounted(async () => {

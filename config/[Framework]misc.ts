@@ -1,15 +1,15 @@
 // [框架] Nuxt Config，不要删除或修改
 // 导入 Nuxt 配置类型，用于类型检查，确保配置对象符合 Nuxt 的配置规范
-import type { NuxtConfig } from "nuxt/config";
+import type { NuxtConfig } from 'nuxt/config';
 // 导入服务器配置文件，该文件包含了服务器的一些基础配置信息，如端口号、基础 URL 等
-import serverConfig from "../server.config.json";
+import serverConfig from '../server.config.json';
 /**
  * 导出默认的 Nuxt 配置对象
  * 该配置对象包含了一些 Nuxt 项目的基本配置信息
  */
 export default {
-  buildDir: "vue/.nuxt", // 设置构建目录为 "vue/.nuxt"，表示 Nuxt 项目的构建输出将存放在该目录下
-  srcDir: "vue", // 设置源代码目录为 "vue"，表示 Nuxt 项目的源代码将存放在该目录下
+  buildDir: 'vue/.nuxt', // 设置构建目录为 "vue/.nuxt"，表示 Nuxt 项目的构建输出将存放在该目录下
+  srcDir: 'vue', // 设置源代码目录为 "vue"，表示 Nuxt 项目的源代码将存放在该目录下
   // 设置服务器端代码的目录为 "vue/server"，表示服务器端的代码将存放在该目录下
   // serverDir: "vue/server",
   // 禁用服务器端渲染（SSR），即页面将在客户端进行渲染
@@ -42,10 +42,10 @@ export default {
     port: serverConfig.nuxtPort,
     cors: {
       allowCredentials: true,
-      maxAge: "1728000",
-      origin: "*", // 允许所有源进行跨域请求
-      allowHeaders: ["X-Requested-With", "Content-Type"],
-      allowMethods: ["PUT", "POST", "GET", "DELETE", "OPTIONS"],
+      maxAge: '1728000',
+      origin: '*', // 允许所有源进行跨域请求
+      allowHeaders: ['X-Requested-With', 'Content-Type'],
+      allowMethods: ['PUT', 'POST', 'GET', 'DELETE', 'OPTIONS'],
     },
   },
 } as NuxtConfig;
