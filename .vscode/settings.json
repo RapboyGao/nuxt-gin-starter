@@ -61,5 +61,6 @@
     "vue/composables": "shared",
     ".openapi-generator": "temp",
     ".server": "temp"
-  }
+  },
+  "workbench.iconTheme": "material-icon-theme"
 }
