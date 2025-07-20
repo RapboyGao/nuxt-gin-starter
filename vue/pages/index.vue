@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="date" class="bg-black">If you're seeing this you've successfully got data from Gin server: {{ date }}</div>
+    <div v-if="date" class="bg-black">If you're seeing this, you've successfully received data from Gin server: {{ date }}</div>
     <NuxtWelcome />
   </div>
 </template>
