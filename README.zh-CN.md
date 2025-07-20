@@ -13,6 +13,11 @@
 - [OpenAPI](https://www.openapis.org)
 - [OpenAPI Generator](https://openapi-generator.tech)
 
+编程语言:
+
+- [Typescript](https://www.typescriptlang.org)
+- [Go](https://go.dev)
+
 ## 推荐的IDE - [VS Code](https://code.visualstudio.com)
 
 ## 环境配置 ⚙️

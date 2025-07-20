@@ -15,6 +15,11 @@ Explore the following to gain in-depth knowledge:
 - [OpenAPI](https://www.openapis.org)
 - [OpenAPI Generator](https://openapi-generator.tech)
 
+Programming Languages:
+
+- [Typescript](https://www.typescriptlang.org)
+- [Go](https://go.dev)
+
 ## Recommended IDE - [VS Code](https://code.visualstudio.com)
 
 ## Environment Setup ⚙️
