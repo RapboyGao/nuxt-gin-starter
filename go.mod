@@ -7,6 +7,7 @@ toolchain go1.24.3
 require (
 	github.com/arduino/go-paths-helper v1.13.1 // direct
 	github.com/dlclark/regexp2 v1.11.5 // direct
+	github.com/fatih/color v1.18.0 // direct
 	github.com/gin-contrib/cors v1.7.6 // direct
 	github.com/gin-gonic/gin v1.10.1 // direct
 	github.com/golang-module/carbon v1.7.3 // direct
@@ -16,7 +17,6 @@ require (
 	github.com/xuri/excelize/v2 v2.9.1 // direct
 	gorm.io/driver/sqlite v1.5.7 // direct
 	gorm.io/gorm v1.26.1 // direct
-	github.com/fatih/color v1.18.0 // direct
 )
 
 require (

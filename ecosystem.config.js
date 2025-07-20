@@ -8,7 +8,7 @@ module.exports = {
       error_file: 'logs/error.log',
       out_file: 'logs/logs.log',
       combine_logs: true,
-      script: './tmp/production.exe',
+      script: './.server/production.exe',
       env: {
         NODE_ENV: 'production',
         GIN_MODE: 'release',

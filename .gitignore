@@ -10,7 +10,7 @@ dist
 /.temp
 **/.openapi-generator
 /go.sum
-/tmp
+/.server
 /vendor
 /logs
 /.build
