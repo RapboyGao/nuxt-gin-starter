@@ -200,6 +200,55 @@ go env GOPROXY
 
 完成上述配置后，每次启动终端时，Go 都会自动使用指定的代理服务器。
 
+## 文件结构
+
+```plaintext
+nuxt-gin-starter/
+├── .air.toml                     # Air工具配置（Go热重载）
+├── .gitignore                    # Git版本控制忽略规则
+├── .npmrc                        # npm/pnpm配置
+├── .openapi-generator-ignore     # OpenAPI生成器忽略规则
+├── Dockerfile                    # 容器化部署配置
+├── LICENSE                       # 开源许可证（MIT）
+├── README.md                     # 英文项目说明
+├── README.zh-CN.md               # 中文项目说明
+├── ecosystem.config.js           # PM2进程管理配置
+├── go.mod                        # Go模块依赖管理
+├── main.go                       # Go服务器入口
+├── nuxt.config.ts                # Nuxt.js核心配置 (和/config一致)
+├── openapi.yaml                  # OpenAPI规范文档 (可编辑)
+├── openapitools.json             # OpenAPI生成器配置
+├── package.json                  # Node.js项目配置
+├── server.config.json            # 服务器配置（端口等）
+├── tsconfig.json                 # TypeScript编译配置
+│
+├── vue/                          # Nuxt.js前端代码 (可编辑)
+│   ├── composables/              # Vue全局复用代码
+│   │   ├── api/                  # OpenAPI生成器生成的内容
+│   └── pages/                    # 页面组件
+│
+├── server/                       # Gin后端代码
+│   ├── frontend/                 # 前端服务相关
+│   │   └── Framework.GetConfig.go # 配置文件加载
+│   ├── model/                    # 数据库模型      (可编辑)
+│   │   ├── Example.Product.go    # 示例产品模型
+│   │   └── Framework.DB.go       # 数据库初始化
+│   ├── routes/                   # API路由定义     (可编辑)
+│   └── utils/                    # 工具函数
+│       ├── Framework.Directory.go # 目录操作工具
+│       ├── Framework.Excelize.go  # Excel处理工具
+│       ├── Framework.MapStructure.go # 数据结构转换
+│       └── Framework.Percentage.go # 百分比计算工具
+│
+├── config/                       # Nuxt项目配置
+│   ├── [Framework]misc.ts        # Nuxt杂项配置
+│   ├── [Framework]nitro.ts       # Nitro引擎配置
+│   ├── [Framework]vite.ts        # Vite构建配置
+│   └── index.ts                  # 配置入口
+│
+└── .vscode/                      # VSCode开发配置
+```
+
 ## 创建你自己的项目 🛠️
 
 ### 1. API 📄
