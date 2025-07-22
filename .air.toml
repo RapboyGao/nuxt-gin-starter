@@ -1,20 +1,20 @@
 root = "."
 testdata_dir = "testdata"
-.server_dir = ".server"
+.build/.server_dir = ".build/.server"
 
 [build]
   args_bin = []
-  bin = "./.server/development.exe"
-  cmd = "go build -o ./.server/development.exe ."
+  bin = "./.build/.server/development.exe"
+  cmd = "go build -o ./.build/.server/development.exe ."
   delay = 0
-  exclude_dir = ["assets", ".server", "vendor", "testdata", "node_modules", "vue", "api", ".vscode", ".git"]
+  exclude_dir = ["assets", ".build/.server", "vendor", "testdata", "node_modules", "vue", "api", ".vscode", ".git"]
   exclude_file = []
   exclude_regex = ["_test.go"]
   exclude_unchanged = false
   follow_symlink = false
   full_bin = ""
   include_dir = []
-  include_ext = ["go", "tpl", ".serverl", "html"]
+  include_ext = ["go", "tpl", ".build/.server", "html"]
   include_file = []
   kill_delay = "0s"
   log = "build-errors.log"

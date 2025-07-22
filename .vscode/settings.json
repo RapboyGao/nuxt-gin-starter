@@ -60,7 +60,8 @@
   "material-icon-theme.folders.associations": {
     "vue/composables": "shared",
     ".openapi-generator": "temp",
-    ".server": "temp"
+    ".build/.server": "temp",
+    ".build/production": "dist"
   },
   "workbench.iconTheme": "material-icon-theme"
 }
