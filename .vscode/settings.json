@@ -49,7 +49,7 @@
   "json.schemas": [
     {
       "fileMatch": ["/server.config.json"],
-      "url": "/.vscode/api-config.schema"
+      "url": "/node_modules/nuxt-gin-tools/src/server-config.json"
     },
     {
       "fileMatch": ["/openapitools.json"],
