@@ -1,7 +1,7 @@
 <template>
   <div>
     <div v-if="date" class="bg-black">
-      If you're seeing this, you've successfully received data from Gin server:
+      If you're seeing this, you are receiving data from Gin server:
       {{ date }}
     </div>
     <NuxtWelcome />
@@ -26,10 +26,9 @@ useSeoMeta({
   applicationName: 'Hello World',
 });
 
-onMounted(async () => {
+setInterval(async () => {
   response.value = (await myApi.testPost()).data;
-});
-// const response = 1;
+}, 1000);
 </script>
 
 <style lang="scss">
