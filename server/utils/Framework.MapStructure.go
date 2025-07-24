@@ -48,7 +48,7 @@ func Decode(input interface{}, result interface{}) error {
 	if err != nil {
 		return err
 	}
-	if err := decoder.Decode(input); err != nil {
+	if decodeErr := decoder.Decode(input); decodeErr != nil {
 		return err
 	}
 	return err

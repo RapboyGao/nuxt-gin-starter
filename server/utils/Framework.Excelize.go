@@ -44,7 +44,7 @@ func ReadFirstSheetRaw(path string) ([][]string, error) {
 		return make([][]string, 0), err
 	}
 	defer func() {
-		if err := f.Close(); err != nil {
+		if closeErr := f.Close(); closeErr != nil {
 			fmt.Println(err)
 		}
 	}()
@@ -65,7 +65,7 @@ func ReadFirstSheet(path string, headerIndex int, dataIndex int) ([](StringDict)
 		return fakeResult, err
 	}
 	defer func() {
-		if err := f.Close(); err != nil {
+		if closeErr := f.Close(); closeErr != nil {
 			fmt.Println(err)
 		}
 	}()

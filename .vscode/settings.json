@@ -5,20 +5,24 @@
     "datetime",
     "esbuild",
     "excelize",
+    "fatih",
     "gonic",
     "GOPROXY",
     "gorm",
     "jsoniter",
     "mapstructure",
     "Milli",
+    "mitchellh",
     "nuxt",
     "openapi",
     "openapitools",
     "panigation",
     "pinia",
     "primevue",
+    "samber",
     "testdata",
-    "Upsert"
+    "Upsert",
+    "xuri"
   ],
   "[yaml]": {
     "editor.defaultFormatter": "redhat.vscode-yaml"
@@ -61,7 +65,7 @@
     "vue/composables": "shared",
     ".openapi-generator": "temp",
     ".build/.server": "temp",
-    ".build/production": "next",
+    ".build/production": "next"
   },
-  "workbench.iconTheme": "material-icon-theme",
+  "workbench.iconTheme": "material-icon-theme"
 }
