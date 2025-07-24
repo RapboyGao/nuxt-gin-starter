@@ -3,6 +3,7 @@
     "composables",
     "daterange",
     "datetime",
+    "domexception",
     "esbuild",
     "excelize",
     "fatih",
