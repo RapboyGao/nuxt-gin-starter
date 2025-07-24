@@ -10,7 +10,6 @@
   },
   "devDependencies": {
     "@openapitools/openapi-generator-cli": "^2.21.3",
-    "@types/node": "^24.0.15",
     "axios": "^1.10.0",
     "nuxt": "^4.0.1",
     "nuxt-gin-tools": "0.1.7",
