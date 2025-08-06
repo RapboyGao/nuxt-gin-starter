@@ -9,11 +9,11 @@
     "update:dep": "nuxt-gin update"
   },
   "devDependencies": {
-    "@openapitools/openapi-generator-cli": "^2.21.3",
-    "axios": "^1.10.0",
-    "nuxt": "^4.0.1",
+    "@openapitools/openapi-generator-cli": "^2.21.4",
+    "axios": "^1.11.0",
+    "nuxt": "^4.0.3",
     "nuxt-gin-tools": "0.1.7",
     "prettier": "^3.6.2",
-    "sass": "^1.89.2"
+    "sass": "^1.90.0"
   }
 }
