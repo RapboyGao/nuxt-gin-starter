@@ -6,9 +6,9 @@ package routes
 
 import (
 	"GinServer/server/api"
-	"GinServer/server/frontend"
 	"net/http"
 
+	"github.com/RapboyGao/nuxtGin"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
@@ -33,7 +33,7 @@ func CreateServerRouters() *gin.Engine {
 	engine.Use(cors.Default())
 
 	// 配置Vue前端服务（开发环境代理/生产环境静态文件）
-	frontend.ServeVue(engine)
+	nuxtGin.ServeVue(engine)
 
 	// 注册API路由
 	for _, route := range api.GetRoutes(handlers) {

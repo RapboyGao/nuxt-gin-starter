@@ -1,28 +1,27 @@
 module GinServer
 
-go 1.23.0
-
-toolchain go1.24.3
+go 1.24.3
 
 require (
-	github.com/arduino/go-paths-helper v1.13.1 // direct
-	github.com/dlclark/regexp2 v1.11.5 // direct
-	github.com/fatih/color v1.18.0 // direct
+	github.com/RapboyGao/nuxtGin v0.0.1
+	github.com/arduino/go-paths-helper v1.14.0 // indirect; direct
+	github.com/dlclark/regexp2 v1.11.5 // indirect; direct
+	github.com/fatih/color v1.18.0 // indirect; direct
 	github.com/gin-contrib/cors v1.7.6 // direct
 	github.com/gin-gonic/gin v1.10.1 // direct
 	github.com/golang-module/carbon v1.7.3 // direct
-	github.com/json-iterator/go v1.1.12 // direct
-	github.com/mitchellh/mapstructure v1.5.0 // direct
-	github.com/samber/lo v1.51.0 // direct
-	github.com/xuri/excelize/v2 v2.9.1 // direct
+	github.com/json-iterator/go v1.1.12 // indirect; direct
+	github.com/mitchellh/mapstructure v1.5.0 // indirect; direct
+	github.com/samber/lo v1.51.0 // indirect; direct
+	github.com/xuri/excelize/v2 v2.9.1 // indirect; direct
 	gorm.io/driver/sqlite v1.5.7 // direct
 	gorm.io/gorm v1.26.1 // direct
 )
 
 require (
-	github.com/bytedance/sonic v1.13.3 // indirect
+	github.com/bytedance/sonic v1.14.0 // indirect
 	github.com/bytedance/sonic/loader v0.3.0 // indirect
-	github.com/cloudwego/base64x v0.1.5 // indirect
+	github.com/cloudwego/base64x v0.1.6 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.9 // indirect
 	github.com/gin-contrib/sse v1.1.0 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect

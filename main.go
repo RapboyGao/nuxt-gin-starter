@@ -2,25 +2,26 @@ package main
 
 import (
 	// 引入前端配置相关的包，用于配置Gin模式和获取配置信息
-	"GinServer/server/frontend"
+
 	// 引入路由相关的包，用于创建服务器路由
 	"GinServer/server/routes"
-	// 引入工具包，用于记录服务器日志等操作
-	"GinServer/server/utils"
 	// 引入格式化输出包，用于格式化字符串
 	"fmt"
 	// 引入日志包，用于记录程序运行中的日志信息
 	"log"
+
+	"github.com/RapboyGao/nuxtGin"
+	"github.com/RapboyGao/nuxtGin/utils"
 )
 
 // main 函数是Go程序的入口点，程序从这里开始执行
 func main() {
 	// 调用frontend包中的ConfigureGinMode函数，根据项目目录下是否存在node_modules目录来配置Gin框架的运行模式
 	// 如果存在node_modules目录，使用调试模式，输出详细日志；如果不存在，使用生产模式，禁用详细日志以提高性能
-	frontend.ConfigureGinMode()
+	nuxtGin.ConfigureGinMode()
 
 	// 调用frontend包中的GetConfig函数，获取前端配置信息，该配置信息包含Gin服务器端口、Nuxt应用端口和应用基础URL等
-	var sharedConfig = frontend.GetConfig
+	var sharedConfig = nuxtGin.GetConfig
 
 	// 将Gin服务器端口转换为字符串，并添加冒号前缀，用于后续启动服务器时指定端口
 	port := ":" + fmt.Sprint(sharedConfig.GinPort)
