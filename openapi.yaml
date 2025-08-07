@@ -1,7 +1,8 @@
 openapi: 3.0.2
 # 定义前后端统一的API
 info:
-  title: Nuxt Backend
+  title: GinServer API
+  description: API for GinServer.
   version: "1.0"
 servers:
   - description: Development Server
