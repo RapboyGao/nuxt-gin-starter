@@ -208,6 +208,7 @@ nuxt-gin-starter/
 ├── .gitignore                    # Git版本控制忽略规则
 ├── .npmrc                        # npm/pnpm配置
 ├── .openapi-generator-ignore     # OpenAPI生成器忽略规则
+├── .prettierrc                   # Prettier格式化配置
 ├── Dockerfile                    # 容器化部署配置
 ├── LICENSE                       # 开源许可证（MIT）
 ├── README.md                     # 英文项目说明
@@ -224,21 +225,23 @@ nuxt-gin-starter/
 │
 ├── vue/                          # Nuxt.js前端代码 (可编辑)
 │   ├── composables/              # Vue全局复用代码
-│   │   ├── api/                  # OpenAPI生成器生成的内容
+│   │   ├── [Framework]my-api.ts  # 框架API组合函数
+│   │   └── api/                  # OpenAPI生成器生成的内容
 │   └── pages/                    # 页面组件
 │
 ├── server/                       # Gin后端代码
-│   ├── frontend/                 # 前端服务相关
-│   │   └── Framework.GetConfig.go # 配置文件加载
+│   ├── api/                      # OpenAPI生成的API定义
+│   │   ├── Framework.export.go   # 框架导出
+│   │   ├── README.md             # API文档
+│   │   ├── api_default.go        # 默认API实现
+│   │   ├── model_test_response.go # 测试响应模型
+│   │   └── routers.go            # API路由
 │   ├── model/                    # 数据库模型      (可编辑)
-│   │   ├── Example.Product.go    # 示例产品模型
-│   │   └── Framework.DB.go       # 数据库初始化
-│   ├── routes/                   # API路由定义     (可编辑)
-│   └── utils/                    # 工具函数
-│       ├── Framework.Directory.go # 目录操作工具
-│       ├── Framework.Excelize.go  # Excel处理工具
-│       ├── Framework.MapStructure.go # 数据结构转换
-│       └── Framework.Percentage.go # 百分比计算工具
+│   │   ├── DB.go                 # 数据库初始化
+│   │   └── Example.Product.go    # 示例产品模型
+│   └── routes/                   # API路由定义     (可编辑)
+│       ├── Framework.CreateRouters.go # 路由创建
+│       └── Framework.Handlers.go # 路由处理函数
 │
 ├── config/                       # Nuxt项目配置
 │   ├── [Framework]misc.ts        # Nuxt杂项配置
