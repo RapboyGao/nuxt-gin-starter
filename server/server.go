@@ -2,10 +2,11 @@
 // 不要修改或删除本文件
 // 本文件用于导出创建适合本程序的gin.Engine
 
-package routes
+package server
 
 import (
 	"GinServer/server/api"
+	"GinServer/server/routes"
 	"net/http"
 
 	"github.com/RapboyGao/nuxtGin"
@@ -15,7 +16,7 @@ import (
 
 // 默认的API处理函数集合
 // 将默认API处理函数映射到ApiHandleFunctions结构体
-var handlers = api.ApiHandleFunctions{DefaultAPI: defaultApis}
+var handlers = api.ApiHandleFunctions{DefaultAPI: routes.MyApi}
 
 /**
  * 创建适合本程序的Gin引擎实例
@@ -25,7 +26,7 @@ var handlers = api.ApiHandleFunctions{DefaultAPI: defaultApis}
  * - Vue前端服务
  * - API路由注册
  */
-func CreateServerRouters() *gin.Engine {
+func CreateServer() *gin.Engine {
 	// 创建默认Gin引擎，包含日志和恢复中间件
 	engine := gin.Default()
 

@@ -11,7 +11,7 @@ import (
  * 默认API处理函数集合
  * 定义了系统内置的基础API接口实现
  */
-var defaultApis = api.DefaultAPI{
+var MyApi = api.DefaultAPI{
 	// 测试POST接口
 	// 返回当前时间戳（毫秒级），用于验证服务可用性
 	TestPost: func(c *gin.Context) {

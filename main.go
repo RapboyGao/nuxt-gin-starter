@@ -1,10 +1,8 @@
 package main
 
 import (
-	// 引入前端配置相关的包，用于配置Gin模式和获取配置信息
-
-	// 引入路由相关的包，用于创建服务器路由
-	"GinServer/server/routes"
+	// 引入服务器相关的包，用于创建服务器路由
+	"GinServer/server"
 	// 引入格式化输出包，用于格式化字符串
 	"fmt"
 	// 引入日志包，用于记录程序运行中的日志信息
@@ -32,7 +30,7 @@ func main() {
 
 	// 调用routes包中的CreateServerRouters函数，创建适合本程序的Gin引擎实例
 	// 该函数会配置默认中间件（日志、恢复）、CORS跨域支持、Vue前端服务，并注册API路由
-	router := routes.CreateServerRouters()
+	router := server.CreateServer()
 
 	// 调用router.Run方法启动Gin服务器，监听指定端口
 	// 如果启动过程中出现错误，使用log.Fatal函数记录错误信息并终止程序
