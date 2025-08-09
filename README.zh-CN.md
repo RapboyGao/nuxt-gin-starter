@@ -216,7 +216,7 @@ nuxt-gin-starter/
 ├── ecosystem.config.js           # PM2进程管理配置
 ├── go.mod                        # Go模块依赖管理
 ├── main.go                       # Go服务器入口
-├── nuxt.config.ts                # Nuxt.js核心配置 (和/config一致)
+├── nuxt.config.ts                # Nuxt.js核心配置
 ├── openapi.yaml                  # OpenAPI规范文档 (可编辑)
 ├── openapitools.json             # OpenAPI生成器配置
 ├── package.json                  # Node.js项目配置
@@ -242,12 +242,6 @@ nuxt-gin-starter/
 │   └── routes/                   # API路由定义     (可编辑)
 │       ├── Framework.CreateRouters.go # 路由创建
 │       └── Framework.Handlers.go # 路由处理函数
-│
-├── config/                       # Nuxt项目配置
-│   ├── [Framework]misc.ts        # Nuxt杂项配置
-│   ├── [Framework]nitro.ts       # Nitro引擎配置
-│   ├── [Framework]vite.ts        # Vite构建配置
-│   └── index.ts                  # 配置入口
 │
 └── .vscode/                      # VSCode开发配置
 ```

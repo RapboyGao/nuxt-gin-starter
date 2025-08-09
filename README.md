@@ -219,7 +219,7 @@ nuxt-gin-starter/
 ├── ecosystem.config.js           # PM2 process management configuration
 ├── go.mod                        # Go module dependency management
 ├── main.go                       # Go server entry point
-├── nuxt.config.ts                # Nuxt.js core configuration (consistent with /config)
+├── nuxt.config.ts                # Nuxt.js core configuration
 ├── openapi.yaml                  # OpenAPI specification document (editable)
 ├── openapitools.json             # OpenAPI generator configuration
 ├── package.json                  # Node.js project configuration
@@ -245,12 +245,6 @@ nuxt-gin-starter/
 │   └── routes/                   # API route definitions (editable)
 │       ├── Framework.CreateRouters.go # Router creation
 │       └── Framework.Handlers.go # Route handlers
-│
-├── config/                       # Nuxt project configuration
-│   ├── [Framework]misc.ts        # Nuxt miscellaneous configuration
-│   ├── [Framework]nitro.ts       # Nitro engine configuration
-│   ├── [Framework]vite.ts        # Vite build configuration
-│   └── index.ts                  # Configuration entry
 │
 └── .vscode/                      # VSCode development configuration
 ```
