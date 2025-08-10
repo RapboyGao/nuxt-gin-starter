@@ -204,12 +204,10 @@ go env GOPROXY
 
 ```plaintext
 nuxt-gin-starter/
-├── .air.toml                     # Air工具配置（Go热重载）
 ├── .gitignore                    # Git版本控制忽略规则
 ├── .npmrc                        # npm/pnpm配置
 ├── .openapi-generator-ignore     # OpenAPI生成器忽略规则
 ├── .prettierrc                   # Prettier格式化配置
-├── Dockerfile                    # 容器化部署配置
 ├── LICENSE                       # 开源许可证（MIT）
 ├── README.md                     # 英文项目说明
 ├── README.zh-CN.md               # 中文项目说明
@@ -228,10 +226,11 @@ nuxt-gin-starter/
 │   │   ├── [Framework]my-api.ts  # 框架API组合函数
 │   │   └── api/                  # OpenAPI生成器生成的内容
 │   └── pages/                    # 页面组件
+│       └── index.vue             # 首页组件
 │
 ├── server/                       # Gin后端代码
+│   ├── Framework.server.go       # 框架服务器配置
 │   ├── api/                      # OpenAPI生成的API定义
-│   │   ├── Framework.export.go   # 框架导出
 │   │   ├── README.md             # API文档
 │   │   ├── api_default.go        # 默认API实现
 │   │   ├── model_test_response.go # 测试响应模型
@@ -240,10 +239,12 @@ nuxt-gin-starter/
 │   │   ├── DB.go                 # 数据库初始化
 │   │   └── Example.Product.go    # 示例产品模型
 │   └── routes/                   # API路由定义     (可编辑)
-│       ├── Framework.CreateRouters.go # 路由创建
 │       └── Framework.Handlers.go # 路由处理函数
 │
 └── .vscode/                      # VSCode开发配置
+    ├── extensions.json           # 推荐扩展
+    ├── launch.json               # 调试配置
+    └── settings.json             # VSCode设置
 ```
 
 ## 创建你自己的项目 🛠️
