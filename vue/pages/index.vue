@@ -28,6 +28,7 @@ useSeoMeta({
 
 setInterval(async () => {
   response.value = (await myApi.testPost()).data;
+  console.log(response.value);
 }, 1000);
 </script>
 

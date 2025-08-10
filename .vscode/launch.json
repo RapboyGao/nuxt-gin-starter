@@ -19,7 +19,7 @@
       "webRoot": "${workspaceFolder}",
       "sourceMaps": true,
       "pathMapping": {
-        "/_nuxt": "${workspaceFolder}/.nuxt"
+        "/_nuxt": "${workspaceFolder}/vue/.nuxt"
       }
     },
     // 服务端调试（Node.js 环境）
