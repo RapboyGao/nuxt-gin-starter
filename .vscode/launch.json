@@ -43,7 +43,7 @@
   "compounds": [
     {
       "name": "Nuxt + Go",
-      "configurations": ["Go", "Nuxt 4 Client", "Nuxt 4 Server"]
+      "configurations": ["Go", "Nuxt Client", "Nuxt Server"]
     }
   ]
 }
