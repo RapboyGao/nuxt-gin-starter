@@ -1,0 +1,31 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      // 运行 go run main.go 这个command
+      "name": "Go",
+      "type": "go",
+      "request": "launch",
+      "mode": "auto",
+      "program": "${workspaceFolder}/main.go",
+      // debug文件放到.build/.server目录下
+      "args": ["-debug", "-debug-path", "${workspaceFolder}/.build/.server"],
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      // 运行 nuxt-gin dev 这个command
+      "name": "Nuxt",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/node_modules/.bin/nuxt",
+      "args": ["dev"],
+      "cwd": "${workspaceFolder}"
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Nuxt + Go",
+      "configurations": ["Nuxt", "Go"]
+    }
+  ]
+}
