@@ -12,9 +12,9 @@
     },
     // 客户端调试（浏览器环境）
     {
+      "name": "Nuxt Client",
       "type": "chrome",
       "request": "launch",
-      "name": "Nuxt 4 Client",
       "url": "http://localhost:3000", // Nuxt 默认开发端口
       "webRoot": "${workspaceFolder}",
       "sourceMaps": true,
@@ -24,7 +24,7 @@
     },
     // 服务端调试（Node.js 环境）
     {
-      "name": "Nuxt 4 Server",
+      "name": "Nuxt Server",
       "type": "node",
       "request": "launch",
       "runtimeExecutable": "pnpm",
