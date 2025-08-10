@@ -6,7 +6,8 @@
     "api:generate": "nuxt-gin gen",
     "cleanup": "nuxt-gin cleanup",
     "postinstall": "nuxt-gin install",
-    "update:dep": "nuxt-gin update"
+    "update:dep": "nuxt-gin update",
+    "nuxt:dev": "nuxt dev"
   },
   "devDependencies": {
     "@openapitools/openapi-generator-cli": "^2.21.4",

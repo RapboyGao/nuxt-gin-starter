@@ -1,31 +1,49 @@
 {
   "version": "0.2.0",
   "configurations": [
+    // Gin 后端调试环境
     {
-      // 运行 go run main.go 这个command
       "name": "Go",
       "type": "go",
       "request": "launch",
       "mode": "auto",
       "program": "${workspaceFolder}/main.go",
-      // debug文件放到.build/.server目录下
-      "args": ["-debug", "-debug-path", "${workspaceFolder}/.build/.server"],
       "cwd": "${workspaceFolder}"
     },
+    // 客户端调试（浏览器环境）
     {
-      // 运行 nuxt-gin dev 这个command
-      "name": "Nuxt",
+      "type": "chrome",
+      "request": "launch",
+      "name": "Nuxt 4 Client",
+      "url": "http://localhost:3000", // Nuxt 默认开发端口
+      "webRoot": "${workspaceFolder}",
+      "sourceMaps": true,
+      "pathMapping": {
+        "/_nuxt": "${workspaceFolder}/.nuxt"
+      }
+    },
+    // 服务端调试（Node.js 环境）
+    {
+      "name": "Nuxt 4 Server",
       "type": "node",
       "request": "launch",
-      "program": "${workspaceFolder}/node_modules/.bin/nuxt",
-      "args": ["dev"],
-      "cwd": "${workspaceFolder}"
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["run", "nuxt:dev"], // 对应 package.json 中的 "dev" 脚本
+      "serverReadyAction": {
+        "pattern": "Local: (.*)",
+        "uriFormat": "%s",
+        "action": "debugWithChrome"
+      },
+      "sourceMaps": true,
+      "env": {
+        "NODE_OPTIONS": "--inspect" // 启用 Node 调试模式
+      }
     }
   ],
   "compounds": [
     {
       "name": "Nuxt + Go",
-      "configurations": ["Nuxt", "Go"]
+      "configurations": ["Go", "Nuxt 4 Client", "Nuxt 4 Server"]
     }
   ]
 }
