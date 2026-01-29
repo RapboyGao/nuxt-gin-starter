@@ -52,10 +52,25 @@
     ".air.toml": "toml", // 新增这一行，将.air.toml文件关联到toml语言模式
     ".openapi-generator-ignore": ".gitignore" //
   },
+  "material-icon-theme.folders.associations": {
+    "vue/composables": "shared",
+    ".openapi-generator": "temp",
+    ".build/.server": "temp",
+    ".build/production": "next"
+  },
+  "material-icon-theme.files.associations": {
+    "pack.config.json": "zip",
+    "server.config.json": "settings",
+    "openapitools.json": "openapi"
+  },
   "json.schemas": [
     {
       "fileMatch": ["/server.config.json"],
       "url": "/node_modules/nuxt-gin-tools/src/server-config.json"
+    },
+    {
+      "fileMatch": ["/pack.config.json"],
+      "url": "/node_modules/nuxt-gin-tools/src/pack-config.schema.json"
     },
     {
       "fileMatch": ["/openapitools.json"],
@@ -63,11 +78,5 @@
     }
   ],
   "python.analysis.typeCheckingMode": "basic",
-  "material-icon-theme.folders.associations": {
-    "vue/composables": "shared",
-    ".openapi-generator": "temp",
-    ".build/.server": "temp",
-    ".build/production": "next"
-  },
   "workbench.iconTheme": "material-icon-theme"
 }
