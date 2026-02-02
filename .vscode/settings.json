@@ -56,7 +56,8 @@
     "vue/composables": "shared",
     ".openapi-generator": "temp",
     ".build/.server": "temp",
-    ".build/production": "next"
+    ".build/production": "next",
+    "server/v2": "server"
   },
   "material-icon-theme.files.associations": {
     "pack.config.json": "zip",

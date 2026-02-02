@@ -7,9 +7,12 @@ package server
 import (
 	"GinServer/server/api"
 	"GinServer/server/routes"
+	v2 "GinServer/server/v2"
 	"fmt"
 	"log"
 	"net/http"
+
+	"github.com/RapboyGao/nuxtGin/schema"
 
 	"github.com/RapboyGao/nuxtGin"
 	"github.com/RapboyGao/nuxtGin/utils"
@@ -55,6 +58,8 @@ func CreateServer() *gin.Engine {
 			engine.DELETE(route.Pattern, route.HandlerFunc)
 		}
 	}
+
+	schema.RegisterSchemasAndExportTSInDevMode(engine, v2.AllSchemas, "/api-v2")
 
 	return engine
 }
