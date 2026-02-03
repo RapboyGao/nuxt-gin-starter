@@ -4,13 +4,24 @@
       If you're seeing this, you are receiving data from Gin server:
       {{ date }}
     </div>
+    <div v-if="product" class="bg-black">
+      Product from getProductAPI: {{ product.name }} - ${{ product.price }}
+    </div>
+    <div v-if="productError" class="bg-black">
+      {{ productError }}
+    </div>
     <NuxtWelcome />
   </div>
 </template>
 
 <script setup lang="ts">
 import type { TestResponse } from '@/composables/api';
+import { getProduct } from '@/composables/auto-generated-api';
+import type { ProductResponseBody } from '@/composables/auto-generated-api';
+
 const response = ref<TestResponse | undefined>();
+const product = ref<ProductResponseBody | undefined>();
+const productError = ref('');
 
 const date = computed(() => {
   const time = response.value?.time;
@@ -24,6 +35,23 @@ const date = computed(() => {
 useSeoMeta({
   title: 'Hello World',
   applicationName: 'Hello World',
+});
+
+const loadProduct = async () => {
+  try {
+    productError.value = '';
+    product.value = await getProduct({
+      path: { ID: 'p_1001' },
+      query: { WithStock: true },
+    });
+  } catch (error) {
+    console.error(error);
+    productError.value = 'load product failed';
+  }
+};
+
+onMounted(() => {
+  loadProduct();
 });
 
 setInterval(async () => {

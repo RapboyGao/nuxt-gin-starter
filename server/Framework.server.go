@@ -12,9 +12,8 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/RapboyGao/nuxtGin/schema"
-
 	"github.com/RapboyGao/nuxtGin"
+	"github.com/RapboyGao/nuxtGin/endpoint"
 	"github.com/RapboyGao/nuxtGin/utils"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -59,7 +58,9 @@ func CreateServer() *gin.Engine {
 		}
 	}
 
-	schema.RegisterSchemasAndExportTSInDevMode(engine, v2.AllSchemas, "/api-v2")
+	if _, err := endpoint.ApplyEndpoints(engine, v2.AllEndpoints); err != nil {
+		panic(err)
+	}
 
 	return engine
 }

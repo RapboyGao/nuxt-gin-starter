@@ -1,9 +1,9 @@
 package v2
 
 import (
-	"github.com/RapboyGao/nuxtGin/schema"
+	"github.com/RapboyGao/nuxtGin/endpoint"
 )
 
-var AllSchemas = []schema.Schema{
-	ProductSchema,
+var AllEndpoints = []endpoint.EndpointLike{
+	ProductEndpoint,
 }
