@@ -8,7 +8,6 @@ node_modules
 dist
 /pnpm-lock.yaml
 /.temp
-**/.openapi-generator
 /go.sum
 /vendor
 /logs

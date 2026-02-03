@@ -15,8 +15,6 @@
     "Milli",
     "mitchellh",
     "nuxt",
-    "openapi",
-    "openapitools",
     "panigation",
     "pinia",
     "primevue",
@@ -46,23 +44,19 @@
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "files.associations": {
-    "*.openapi-generator-ignore": "ignore",
     "*.schema": "jsonc",
     "*.toml": "toml", // 修改这里，将所有.toml文件关联到toml语言模式
-    ".air.toml": "toml", // 新增这一行，将.air.toml文件关联到toml语言模式
-    ".openapi-generator-ignore": ".gitignore" //
+    ".air.toml": "toml" // 新增这一行，将.air.toml文件关联到toml语言模式
   },
   "material-icon-theme.folders.associations": {
     "vue/composables": "shared",
-    ".openapi-generator": "temp",
     ".build/.server": "temp",
     ".build/production": "next",
     "server/v2": "server"
   },
   "material-icon-theme.files.associations": {
     "pack.config.json": "zip",
-    "server.config.json": "settings",
-    "openapitools.json": "openapi"
+    "server.config.json": "settings"
   },
   "json.schemas": [
     {
@@ -72,10 +66,6 @@
     {
       "fileMatch": ["/pack.config.json"],
       "url": "/node_modules/nuxt-gin-tools/src/pack-config.schema.json"
-    },
-    {
-      "fileMatch": ["/openapitools.json"],
-      "url": "/node_modules/@openapitools/openapi-generator-cli/config.schema.json"
     }
   ],
   "python.analysis.typeCheckingMode": "basic",

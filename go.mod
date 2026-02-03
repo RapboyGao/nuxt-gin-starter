@@ -9,7 +9,7 @@ require (
 	github.com/fatih/color v1.18.0 // indirect; direct
 	github.com/gin-contrib/cors v1.7.6 // direct
 	github.com/gin-gonic/gin v1.11.0 // direct
-	github.com/golang-module/carbon v1.7.3 // direct
+	github.com/golang-module/carbon v1.7.3 // indirect; direct
 	github.com/json-iterator/go v1.1.12 // indirect; direct
 	github.com/mitchellh/mapstructure v1.5.0 // indirect; direct
 	github.com/samber/lo v1.52.0 // indirect; direct

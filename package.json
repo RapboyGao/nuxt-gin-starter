@@ -3,14 +3,11 @@
   "scripts": {
     "dev": "nuxt-gin dev",
     "build": "nuxt-gin build",
-    "api:generate": "nuxt-gin gen",
-    "cleanup": "nuxt-gin cleanup",
     "postinstall": "nuxt-gin install",
     "update:dep": "nuxt-gin update",
     "nuxt:dev": "nuxt dev"
   },
   "devDependencies": {
-    "@openapitools/openapi-generator-cli": "^2.28.0",
     "axios": "^1.13.4",
     "nuxt": "^4.3.0",
     "nuxt-gin-tools": "0.1.21",

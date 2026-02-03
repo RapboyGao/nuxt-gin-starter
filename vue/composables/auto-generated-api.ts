@@ -80,6 +80,10 @@ export interface ProductResponseBody {
   price: number;
 }
 
+export interface TestResponseBody {
+  time: string;
+}
+
 export async function getProduct(params: {
   path: ProductPathParams;
   query: ProductQueryParams;
@@ -98,4 +102,17 @@ export async function getProduct(params: {
     return options.deserializeResponse(responseData);
   }
   return responseData as ProductResponseBody;
+}
+
+export async function testPost(options?: AxiosConvertOptions<never, TestResponseBody>): Promise<TestResponseBody> {
+  const url = `/api-go/v1/test`;
+  const response = await axiosClient.request<TestResponseBody>({
+    method: 'POST',
+    url,
+  });
+  const responseData = response.data as unknown;
+  if (options?.deserializeResponse) {
+    return options.deserializeResponse(responseData);
+  }
+  return responseData as TestResponseBody;
 }

@@ -1,4 +1,4 @@
-package v2
+package api
 
 import (
 	"github.com/RapboyGao/nuxtGin/endpoint"
@@ -6,4 +6,5 @@ import (
 
 var AllEndpoints = []endpoint.EndpointLike{
 	ProductEndpoint,
+	TestEndpoint,
 }

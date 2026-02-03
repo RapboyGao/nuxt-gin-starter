@@ -15,11 +15,10 @@
 </template>
 
 <script setup lang="ts">
-import type { TestResponse } from '@/composables/api';
-import { getProduct } from '@/composables/auto-generated-api';
-import type { ProductResponseBody } from '@/composables/auto-generated-api';
+import { getProduct, testPost } from '@/composables/auto-generated-api';
+import type { ProductResponseBody, TestResponseBody } from '@/composables/auto-generated-api';
 
-const response = ref<TestResponse | undefined>();
+const response = ref<TestResponseBody | undefined>();
 const product = ref<ProductResponseBody | undefined>();
 const productError = ref('');
 
@@ -55,7 +54,7 @@ onMounted(() => {
 });
 
 setInterval(async () => {
-  response.value = (await myApi.testPost()).data;
+  response.value = await testPost();
   console.log(response.value);
 }, 1000);
 </script>

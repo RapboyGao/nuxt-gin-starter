@@ -10,8 +10,6 @@
 - [Gin](https://gin-gonic.com)
 - [GORM](https://gorm.io)
 - [Vue](https://vuejs.org)
-- [OpenAPI](https://www.openapis.org)
-- [OpenAPI Generator](https://openapi-generator.tech)
 
 编程语言:
 
@@ -53,46 +51,7 @@ HomeBrew 是 macOS 系统上流行的包管理器。使用以下命令安装：
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ```
 
-### 4. Open Api Generator 🔄
-
-#### Windows 系统 🖥️
-
-通过 Scoop 在 Windows 上安装 Open Api Generator：
-
-```powershell
-scoop bucket add java
-scoop install openjdk
-scoop install openapi-generator-cli@7.1.0 # 若不通过 npm 安装
-scoop install mingw
-```
-
-#### macOS 系统 🍎
-
-##### Java 运行环境
-
-```sh
-#!/bin/bash
-
-# 检查是否安装 HomeBrew
-if ! command -v brew &> /dev/null; then
-    echo "未找到 HomeBrew，正在安装..."
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-fi
-
-# 更新 HomeBrew
-brew update
-
-# 安装 OpenJDK
-brew install openjdk
-
-# 链接 Java（可能需要管理员权限）
-sudo ln -sfn /opt/homebrew/opt/openjdk/libexec/openjdk.jdk /Library/Java/JavaVirtualMachines/openjdk.jdk
-
-# 验证安装
-java -version
-```
-
-### 5. Go 语言 🐹
+### 4. Go 语言 🐹
 
 Go 是本项目使用的编程语言。
 
@@ -115,20 +74,20 @@ go get gorm.io/driver/sqlite
 go get gorm.io/gorm
 ```
 
-### 6. pnpm（需先安装 Scoop）📦
+### 5. pnpm（需先安装 Scoop）📦
 
 pnpm 是一款快速、节省磁盘空间的包管理器。
 
 - **官方网站**：[pnpm 安装指南](https://www.pnpm.cn/installation)
 
-### 7. Node.js 🌐
+### 6. Node.js 🌐
 
 Node.js 是基于 Chrome V8 引擎的 JavaScript 运行时环境。
 
 - **官方网站**：[下载 Node.js](https://nodejs.org)
 - **镜像地址**：[从镜像下载](https://registry.npmmirror.com/binary.html?path=node/v18.13.0/)
 
-### 8. Air ♻️
+### 7. Air ♻️
 
 Air 是 Go 应用的热重载工具。使用以下命令安装：
 
@@ -206,7 +165,6 @@ go env GOPROXY
 nuxt-gin-starter/
 ├── .gitignore                    # Git版本控制忽略规则
 ├── .npmrc                        # npm/pnpm配置
-├── .openapi-generator-ignore     # OpenAPI生成器忽略规则
 ├── .prettierrc                   # Prettier格式化配置
 ├── LICENSE                       # 开源许可证（MIT）
 ├── README.md                     # 英文项目说明
@@ -215,31 +173,26 @@ nuxt-gin-starter/
 ├── go.mod                        # Go模块依赖管理
 ├── main.go                       # Go服务器入口
 ├── nuxt.config.ts                # Nuxt.js核心配置
-├── openapi.yaml                  # OpenAPI规范文档 (可编辑)
-├── openapitools.json             # OpenAPI生成器配置
 ├── package.json                  # Node.js项目配置
 ├── server.config.json            # 服务器配置（端口等）
 ├── tsconfig.json                 # TypeScript编译配置
 │
 ├── vue/                          # Nuxt.js前端代码 (可编辑)
 │   ├── composables/              # Vue全局复用代码
-│   │   ├── [Framework]my-api.ts  # 框架API组合函数
-│   │   └── api/                  # OpenAPI生成器生成的内容
+│   │   ├── api-base.ts           # API基础路径配置
+│   │   └── auto-generated-api.ts # endpoint API客户端
 │   └── pages/                    # 页面组件
 │       └── index.vue             # 首页组件
 │
 ├── server/                       # Gin后端代码
 │   ├── Framework.server.go       # 框架服务器配置
-│   ├── api/                      # OpenAPI生成的API定义
-│   │   ├── README.md             # API文档
-│   │   ├── api_default.go        # 默认API实现
-│   │   ├── model_test_response.go # 测试响应模型
-│   │   └── routers.go            # API路由
 │   ├── model/                    # 数据库模型      (可编辑)
 │   │   ├── DB.go                 # 数据库初始化
 │   │   └── Example.Product.go    # 示例产品模型
-│   └── routes/                   # API路由定义     (可编辑)
-│       └── Framework.Handlers.go # 路由处理函数
+│   └── v2/                        # endpoint 定义    (可编辑)
+│       ├── index.go              # endpoint 注册
+│       ├── Product.go            # 示例 endpoint
+│       └── Test.go               # 测试 endpoint
 │
 └── .vscode/                      # VSCode开发配置
     ├── extensions.json           # 推荐扩展
@@ -251,14 +204,11 @@ nuxt-gin-starter/
 
 ### 1. API 📄
 
-- 修改 [openapi.yaml](openapi.yaml)，然后运行 [package.json](package.json) 中的 `api:generate` 脚本。🚀
-- API生成器的内容在
-  - [server/api](server/api/api_default.go)
-  - [vue/composables/api](vue/composables/api/index.ts)
+在 [server/v2](server/v2/index.go) 中通过 nuxtGin endpoint 定义 API，然后在 [vue/composables/auto-generated-api.ts](vue/composables/auto-generated-api.ts) 中同步前端客户端。🚀
 
 ### 2. 服务器逻辑 💻
 
-在 [server/routes](server/routes/Framework.Handlers.go) 中编写你自己的服务器逻辑，定义服务器如何响应请求。📡
+在 [server/v2](server/v2/Product.go) 的 endpoint 处理函数中编写你的服务器逻辑，定义服务器如何响应请求。📡
 
 ### 3. 模型 📐
 
