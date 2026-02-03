@@ -3,11 +3,11 @@ module GinServer
 go 1.24.3
 
 require (
-	github.com/RapboyGao/nuxtGin v0.0.9
+	github.com/RapboyGao/nuxtGin v0.1.0
 	github.com/arduino/go-paths-helper v1.14.0 // indirect; direct
 	github.com/dlclark/regexp2 v1.11.5 // indirect; direct
 	github.com/fatih/color v1.18.0 // indirect; direct
-	github.com/gin-contrib/cors v1.7.6 // direct
+	github.com/gin-contrib/cors v1.7.6 // indirect; direct
 	github.com/gin-gonic/gin v1.11.0 // direct
 	github.com/golang-module/carbon v1.7.3 // indirect; direct
 	github.com/json-iterator/go v1.1.12 // indirect; direct
@@ -24,7 +24,7 @@ require (
 	github.com/bytedance/sonic v1.15.0 // indirect
 	github.com/bytedance/sonic/loader v0.5.0 // indirect
 	github.com/cloudwego/base64x v0.1.6 // indirect
-	github.com/gabriel-vasile/mimetype v1.4.12 // indirect
+	github.com/gabriel-vasile/mimetype v1.4.13 // indirect
 	github.com/gin-contrib/sse v1.1.0 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
@@ -59,7 +59,6 @@ require (
 	github.com/ugorji/go/codec v1.3.1 // indirect
 	github.com/xuri/efp v0.0.1 // indirect
 	github.com/xuri/nfp v0.0.2-0.20250530014748-2ddeb826f9a9 // indirect
-	go.uber.org/mock v0.6.0 // indirect
 	golang.org/x/arch v0.23.0 // indirect
 	golang.org/x/crypto v0.47.0 // indirect
 	golang.org/x/mod v0.32.0 // indirect
@@ -69,5 +68,4 @@ require (
 	golang.org/x/text v0.33.0 // indirect
 	google.golang.org/protobuf v1.36.11 // indirect
 	rsc.io/qr v0.2.0 // indirect
-
 )
