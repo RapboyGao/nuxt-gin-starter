@@ -8,7 +8,7 @@ import (
 )
 
 type TestResponseBody struct {
-	Time int64 `json:"time"`
+	Time time.Time `json:"time"`
 }
 
 var TestEndpoint = endpoint.NewEndpointNoBody(
@@ -17,7 +17,7 @@ var TestEndpoint = endpoint.NewEndpointNoBody(
 	"/test",
 	func(_ endpoint.NoParams, _ endpoint.NoParams, _ endpoint.NoParams, _ endpoint.NoParams, _ *gin.Context) (TestResponseBody, error) {
 		return TestResponseBody{
-			Time: time.Now().UnixMilli(),
+			Time: time.Now(),
 		}, nil
 	},
 )
