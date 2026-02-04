@@ -6,30 +6,37 @@
       <p class="intro-subtitle">
         A pragmatic starter for building full-stack apps with a Nuxt frontend and a Gin backend.
       </p>
+      <p class="intro-subtitle-cn">
+        一个用于构建 Nuxt 前端 + Gin 后端的实用全栈项目模板。
+      </p>
     </header>
 
     <div class="intro-body">
       <div class="intro-grid">
         <div class="intro-item">
-          <h3>Unified Dev Workflow</h3>
+          <h3>Unified Dev Workflow / 统一开发流程</h3>
           <p>Run frontend and backend together with a single `nuxt-gin` workflow.</p>
+          <p class="intro-cn">前后端通过一条 `nuxt-gin` 流程统一启动与调试。</p>
         </div>
         <div class="intro-item">
-          <h3>Endpoint-First API</h3>
+          <h3>Endpoint-First API / 以 Endpoint 为中心</h3>
           <p>Define typed endpoints in Go and consume them cleanly from the Nuxt app.</p>
+          <p class="intro-cn">在 Go 中定义 Endpoint，可自动生成 TypeScript Axios 等前端客户端，保持类型一致并降低调用成本。</p>
         </div>
         <div class="intro-item">
-          <h3>Production Ready</h3>
+          <h3>Production Ready / 面向生产</h3>
           <p>Built-in CORS, static serving, and a sensible project layout for growth.</p>
+          <p class="intro-cn">内置 CORS 与静态资源服务，结构清晰便于扩展。</p>
         </div>
         <div class="intro-item">
-          <h3>Extensible</h3>
+          <h3>Extensible / 易扩展</h3>
           <p>Drop in models, routes, and UI quickly without fighting the scaffolding.</p>
+          <p class="intro-cn">快速添加模型、路由与界面，不受脚手架束缚。</p>
         </div>
       </div>
 
       <div class="intro-repo">
-        <span>Repository</span>
+        <span>Repository / 仓库地址</span>
         <a class="intro-link" href="https://github.com/RapboyGao/nuxt-gin-starter.git" target="_blank" rel="noreferrer">
           https://github.com/RapboyGao/nuxt-gin-starter.git
         </a>
@@ -71,6 +78,12 @@
   color: #b8c0cc;
 }
 
+.intro-subtitle-cn {
+  margin: 4px 0 0;
+  color: #95a2b3;
+  font-size: 13px;
+}
+
 .intro-body {
   margin-top: 16px;
   display: grid;
@@ -100,6 +113,12 @@
   margin: 0;
   color: #9ea7b3;
   line-height: 1.5;
+}
+
+.intro-item .intro-cn {
+  margin-top: 6px;
+  color: #8a96a5;
+  font-size: 12px;
 }
 
 .intro-repo {
