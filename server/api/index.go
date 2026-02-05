@@ -5,6 +5,10 @@ import (
 )
 
 var AllEndpoints = []endpoint.EndpointLike{
-	ProductEndpoint,
 	TestEndpoint,
+	ProductCreateEndpoint,
+	ProductGetEndpoint,
+	ProductUpdateEndpoint,
+	ProductDeleteEndpoint,
+	ProductListEndpoint,
 }

@@ -5,7 +5,7 @@
       <h3>Product Preview</h3>
     </div>
     <div v-if="product" class="status-body">
-      <p class="status-text">Product from getProductAPI</p>
+      <p class="status-text">Product from GORM API</p>
       <div class="product-row">
         <span class="product-name">{{ product.name }}</span>
         <span class="product-price">${{ product.price }}</span>
@@ -21,18 +21,25 @@
 </template>
 
 <script setup lang="ts">
-import { getProduct } from '@/composables/auto-generated-api';
-import type { ProductResponseBody } from '@/composables/auto-generated-api';
+import { createProduct, listProducts } from '@/composables/auto-generated-api';
+import type { ProductModelResponse } from '@/composables/auto-generated-api';
 
-const product = ref<ProductResponseBody | undefined>();
+const product = ref<ProductModelResponse | undefined>();
 const error = ref('');
 
 const loadProduct = async () => {
   try {
     error.value = '';
-    product.value = await getProduct({
-      path: { ID: 'p_1001' },
-      query: { WithStock: true },
+    const list = await listProducts({ query: { page: 1, pageSize: 1 } });
+    if (list.items.length > 0) {
+      product.value = list.items[0];
+      return;
+    }
+
+    product.value = await createProduct({
+      name: 'Zen Chair',
+      price: 135.82,
+      code: 'ZC-1001',
     });
   } catch (err) {
     console.error(err);

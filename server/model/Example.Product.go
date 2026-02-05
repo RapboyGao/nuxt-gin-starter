@@ -10,6 +10,7 @@ import (
 
 type Product struct {
 	gorm.Model
-	Code  string
-	Price uint
+	Name  string  `gorm:"size:128;not null"`
+	Price float64 `gorm:"not null"`
+	Code  string  `gorm:"size:64"`
 }

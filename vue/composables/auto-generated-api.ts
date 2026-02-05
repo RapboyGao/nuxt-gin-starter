@@ -84,42 +84,45 @@ const normalizeParamKeys = (
   return out;
 };
 
-export interface ProductPathParams {
-  ID: string;
-}
-
-export interface ProductQueryParams {
-  WithStock: boolean;
-}
-
-export interface ProductResponseBody {
-  id: string;
-  name: string;
-  price: number;
-}
-
 export interface TestResponseBody {
   time: string;
 }
 
-export async function getProduct(params: {
-  path: ProductPathParams;
-  query: ProductQueryParams;
-}, options?: AxiosConvertOptions<never, ProductResponseBody>): Promise<ProductResponseBody> {
-  const url = `/api-go/v1/products/${encodeURIComponent(String(params.path?.ID ?? ''))}`;
-  const normalizedParams = normalizeParamKeys(params, {
-    query: {'withstock': 'WithStock'},
-  });
-  const response = await axiosClient.request<ProductResponseBody>({
-    method: 'GET',
-    url,
-    params: normalizedParams.query,
-  });
-  const responseData = response.data as unknown;
-  if (options?.deserializeResponse) {
-    return options.deserializeResponse(responseData);
-  }
-  return responseData as ProductResponseBody;
+export interface ProductCreateRequest {
+  name: string;
+  price: number;
+  code: string;
+}
+
+export interface ProductModelResponse {
+  id: number;
+  name: string;
+  price: number;
+  code: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ProductIDPathParams {
+  ID: string;
+}
+
+export interface ProductUpdateRequest {
+  name: string;
+  price: number;
+  code: string;
+}
+
+export interface ProductListQueryParams {
+  Page: number;
+  PageSize: number;
+}
+
+export interface ProductListResponse {
+  items: ProductModelResponse[];
+  total: number;
+  page: number;
+  size: number;
 }
 
 export async function testPost(options?: AxiosConvertOptions<never, TestResponseBody>): Promise<TestResponseBody> {
@@ -133,4 +136,85 @@ export async function testPost(options?: AxiosConvertOptions<never, TestResponse
     return options.deserializeResponse(responseData);
   }
   return responseData as TestResponseBody;
+}
+
+export async function createProduct(requestBody: ProductCreateRequest, options?: AxiosConvertOptions<ProductCreateRequest, ProductModelResponse>): Promise<ProductModelResponse> {
+  const url = `/api-go/v1/products`;
+  const requestData = options?.serializeRequest ? options.serializeRequest(requestBody) : requestBody;
+  const response = await axiosClient.request<ProductModelResponse>({
+    method: 'POST',
+    url,
+    data: requestData,
+  });
+  const responseData = response.data as unknown;
+  if (options?.deserializeResponse) {
+    return options.deserializeResponse(responseData);
+  }
+  return responseData as ProductModelResponse;
+}
+
+export async function getProductByID(params: {
+  path: ProductIDPathParams;
+}, options?: AxiosConvertOptions<never, ProductModelResponse>): Promise<ProductModelResponse> {
+  const url = `/api-go/v1/products/${encodeURIComponent(String(params.path?.ID ?? ''))}`;
+  const response = await axiosClient.request<ProductModelResponse>({
+    method: 'GET',
+    url,
+  });
+  const responseData = response.data as unknown;
+  if (options?.deserializeResponse) {
+    return options.deserializeResponse(responseData);
+  }
+  return responseData as ProductModelResponse;
+}
+
+export async function updateProduct(params: {
+  path: ProductIDPathParams;
+}, requestBody: ProductUpdateRequest, options?: AxiosConvertOptions<ProductUpdateRequest, ProductModelResponse>): Promise<ProductModelResponse> {
+  const url = `/api-go/v1/products/${encodeURIComponent(String(params.path?.ID ?? ''))}`;
+  const requestData = options?.serializeRequest ? options.serializeRequest(requestBody) : requestBody;
+  const response = await axiosClient.request<ProductModelResponse>({
+    method: 'PUT',
+    url,
+    data: requestData,
+  });
+  const responseData = response.data as unknown;
+  if (options?.deserializeResponse) {
+    return options.deserializeResponse(responseData);
+  }
+  return responseData as ProductModelResponse;
+}
+
+export async function deleteProduct(params: {
+  path: ProductIDPathParams;
+}, options?: AxiosConvertOptions<never, Record<string, unknown>>): Promise<Record<string, unknown>> {
+  const url = `/api-go/v1/products/${encodeURIComponent(String(params.path?.ID ?? ''))}`;
+  const response = await axiosClient.request<Record<string, unknown>>({
+    method: 'DELETE',
+    url,
+  });
+  const responseData = response.data as unknown;
+  if (options?.deserializeResponse) {
+    return options.deserializeResponse(responseData);
+  }
+  return responseData as Record<string, unknown>;
+}
+
+export async function listProducts(params: {
+  query: ProductListQueryParams;
+}, options?: AxiosConvertOptions<never, ProductListResponse>): Promise<ProductListResponse> {
+  const url = `/api-go/v1/products`;
+  const normalizedParams = normalizeParamKeys(params, {
+    query: {'page': 'Page', 'pagesize': 'PageSize'},
+  });
+  const response = await axiosClient.request<ProductListResponse>({
+    method: 'GET',
+    url,
+    params: normalizedParams.query,
+  });
+  const responseData = response.data as unknown;
+  if (options?.deserializeResponse) {
+    return options.deserializeResponse(responseData);
+  }
+  return responseData as ProductListResponse;
 }
