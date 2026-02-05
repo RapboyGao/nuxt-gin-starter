@@ -84,10 +84,6 @@ const normalizeParamKeys = (
   return out;
 };
 
-export interface TestResponseBody {
-  time: string;
-}
-
 export interface ProductCreateRequest {
   name: string;
   price: number;
@@ -120,22 +116,9 @@ export interface ProductListQueryParams {
 
 export interface ProductListResponse {
   items: ProductModelResponse[];
-  total: number;
+  total: string;
   page: number;
   size: number;
-}
-
-export async function testPost(options?: AxiosConvertOptions<never, TestResponseBody>): Promise<TestResponseBody> {
-  const url = `/api-go/v1/test`;
-  const response = await axiosClient.request<TestResponseBody>({
-    method: 'POST',
-    url,
-  });
-  const responseData = response.data as unknown;
-  if (options?.deserializeResponse) {
-    return options.deserializeResponse(responseData);
-  }
-  return responseData as TestResponseBody;
 }
 
 export async function createProduct(requestBody: ProductCreateRequest, options?: AxiosConvertOptions<ProductCreateRequest, ProductModelResponse>): Promise<ProductModelResponse> {

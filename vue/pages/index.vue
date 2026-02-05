@@ -20,10 +20,4 @@ useSeoMeta({
   min-width: 100vw;
 }
 
-.grid {
-  display: grid;
-  gap: 16px;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  padding-top: 24px;
-}
 </style>

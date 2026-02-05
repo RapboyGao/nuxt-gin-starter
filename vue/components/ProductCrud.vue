@@ -3,9 +3,13 @@
     <div class="crud-header">
       <div>
         <h3>Product CRUD</h3>
-        <p class="crud-subtitle">Create, update, list, and delete products using GORM.</p>
+        <p class="crud-subtitle">
+          Create, update, list, and delete products using GORM.
+        </p>
       </div>
-      <button class="btn secondary" type="button" @click="refresh">Refresh</button>
+      <button class="btn secondary" type="button" @click="refresh">
+        Refresh
+      </button>
     </div>
 
     <form class="crud-form" @submit.prevent="create">
@@ -15,13 +19,21 @@
       </div>
       <div class="field">
         <label>Price</label>
-        <input v-model.number="createForm.price" type="number" step="0.01" min="0" />
+        <input
+          v-model.number="createForm.price"
+          type="number"
+          step="0.01"
+          min="0"
+        />
       </div>
       <div class="field">
         <label>Code</label>
         <input v-model.trim="createForm.code" placeholder="e.g. ZC-1001" />
       </div>
-      <button class="btn ghost" type="submit">Create</button>
+      <div class="field">
+        <label></label>
+        <button class="btn ghost" type="submit">Create</button>
+      </div>
     </form>
 
     <div v-if="error" class="error">{{ error }}</div>
@@ -37,17 +49,26 @@
       <div v-for="item in items" :key="item.id" class="row">
         <div>{{ item.id }}</div>
         <div>
-          <input v-model.trim="edits[item.id].name" />
+          <input v-model.trim="getEdit(item.id).name" />
         </div>
         <div>
-          <input v-model.number="edits[item.id].price" type="number" step="0.01" min="0" />
+          <input
+            v-model.number="getEdit(item.id).price"
+            type="number"
+            step="0.01"
+            min="0"
+          />
         </div>
         <div>
-          <input v-model.trim="edits[item.id].code" />
+          <input v-model.trim="getEdit(item.id).code" />
         </div>
         <div class="actions">
-          <button class="btn ghost" type="button" @click="update(item.id)">Update</button>
-          <button class="btn danger" type="button" @click="remove(item.id)">Delete</button>
+          <button class="btn ghost" type="button" @click="update(item.id)">
+            Update
+          </button>
+          <button class="btn danger" type="button" @click="remove(item.id)">
+            Delete
+          </button>
         </div>
       </div>
       <div v-if="items.length === 0" class="row empty">No products yet.</div>
@@ -56,7 +77,12 @@
 </template>
 
 <script setup lang="ts">
-import { createProduct, deleteProduct, listProducts, updateProduct } from '@/composables/auto-generated-api';
+import {
+  createProduct,
+  deleteProduct,
+  listProducts,
+  updateProduct,
+} from '@/composables/auto-generated-api';
 import type { ProductModelResponse } from '@/composables/auto-generated-api';
 
 type EditState = {
@@ -87,7 +113,7 @@ const randomName = () => {
     'Summit Bottle',
     'Glow Candle',
   ];
-  return names[Math.floor(Math.random() * names.length)];
+  return names[Math.floor(Math.random() * names.length)] ?? 'Product';
 };
 
 const randomPrice = () => Number((50 + Math.random() * 250).toFixed(2));
@@ -114,10 +140,21 @@ const syncEdits = (list: ProductModelResponse[]) => {
   }
 };
 
+const getEdit = (id: number) => {
+  if (!edits[id]) {
+    edits[id] = {
+      name: '',
+      price: 0,
+      code: '',
+    };
+  }
+  return edits[id];
+};
+
 const refresh = async () => {
   try {
     error.value = '';
-    const res = await listProducts({ query: { page: 1, pageSize: 50 } });
+    const res = await listProducts({ query: { Page: 1, PageSize: 50 } });
     items.value = res.items;
     syncEdits(res.items);
   } catch (err) {
@@ -149,7 +186,7 @@ const create = async () => {
 const update = async (id: number) => {
   try {
     error.value = '';
-    const next = edits[id];
+    const next = getEdit(id);
     await updateProduct(
       { path: { ID: String(id) } },
       {
@@ -185,6 +222,7 @@ onMounted(() => {
 <style scoped lang="scss">
 .crud-card {
   padding: 16px;
+  margin: 10px 10px 10px 10px;
   border-radius: 14px;
   background: #111214;
   border: 1px solid rgba(255, 255, 255, 0.08);
