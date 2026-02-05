@@ -1,10 +1,7 @@
 <template>
   <div class="page">
     <ProjectIntro />
-    <div class="grid">
-      <ServerTime />
-      <ProductPreview />
-    </div>
+    <ProductCrud />
   </div>
 </template>
 
