@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"GinServer/server/model"
+
 	"github.com/RapboyGao/nuxtGin/endpoint"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -124,7 +125,7 @@ var ProductGetEndpoint = endpoint.NewEndpointNoBody(
 	},
 )
 
-var ProductUpdateEndpoint = endpoint.NewEndpoint[ProductIDPathParams, endpoint.NoParams, endpoint.NoParams, endpoint.NoParams, ProductUpdateRequest, ProductModelResponse](
+var ProductUpdateEndpoint = endpoint.NewEndpoint(
 	"UpdateProduct",
 	endpoint.HTTPMethodPut,
 	"/products/:id",
@@ -171,7 +172,7 @@ var ProductUpdateEndpoint = endpoint.NewEndpoint[ProductIDPathParams, endpoint.N
 	},
 )
 
-var ProductDeleteEndpoint = endpoint.NewEndpointNoBody[ProductIDPathParams, endpoint.NoParams, endpoint.NoParams, endpoint.NoParams, gin.H](
+var ProductDeleteEndpoint = endpoint.NewEndpointNoBody(
 	"DeleteProduct",
 	endpoint.HTTPMethodDelete,
 	"/products/:id",
@@ -194,7 +195,7 @@ var ProductDeleteEndpoint = endpoint.NewEndpointNoBody[ProductIDPathParams, endp
 	},
 )
 
-var ProductListEndpoint = endpoint.NewEndpointNoBody[endpoint.NoParams, ProductListQueryParams, endpoint.NoParams, endpoint.NoParams, ProductListResponse](
+var ProductListEndpoint = endpoint.NewEndpointNoBody(
 	"ListProducts",
 	endpoint.HTTPMethodGet,
 	"/products",
