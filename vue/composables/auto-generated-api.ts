@@ -32,6 +32,21 @@ const normalizeResponseJSON = (value: unknown): unknown => {
   return value;
 };
 
+const toFormUrlEncoded = (value: unknown): URLSearchParams => {
+  if (value instanceof URLSearchParams) return value;
+  const params = new URLSearchParams();
+  if (!isPlainObject(value)) return params;
+  for (const [k, v] of Object.entries(value)) {
+    if (v === undefined || v === null) continue;
+    if (Array.isArray(v)) {
+      for (const item of v) params.append(k, String(item));
+      continue;
+    }
+    params.append(k, String(v));
+  }
+  return params;
+};
+
 axiosClient.interceptors.request.use((config) => {
   if (config.data !== undefined) config.data = normalizeRequestJSON(config.data);
   if (config.params !== undefined) config.params = normalizeRequestJSON(config.params);
@@ -39,7 +54,10 @@ axiosClient.interceptors.request.use((config) => {
 });
 
 axiosClient.interceptors.response.use((response) => {
-  response.data = normalizeResponseJSON(response.data);
+  const rt = response.config?.responseType;
+  if (rt !== 'arraybuffer' && rt !== 'blob' && rt !== 'text') {
+    response.data = normalizeResponseJSON(response.data);
+  }
   return response;
 });
 

@@ -12,6 +12,18 @@
     </header>
 
     <div class="intro-body">
+      <div class="intro-overview">
+        <p>
+          This template focuses on a clean, predictable workflow: the Gin server handles APIs and static
+          delivery, while Nuxt provides the UI and SSR. The structure is intentionally minimal so you can
+          scale it without fighting conventions.
+        </p>
+        <p class="intro-cn">
+          本模板强调清晰、可预测的开发体验：Gin 负责 API 与静态资源服务，Nuxt 负责 UI 与 SSR。
+          结构保持精简，便于你在业务增长时稳定扩展。
+        </p>
+      </div>
+
       <div class="intro-grid">
         <div class="intro-item">
           <h3>Unified Dev Workflow / 统一开发流程</h3>
@@ -32,6 +44,16 @@
           <h3>Extensible / 易扩展</h3>
           <p>Drop in models, routes, and UI quickly without fighting the scaffolding.</p>
           <p class="intro-cn">快速添加模型、路由与界面，不受脚手架束缚。</p>
+        </div>
+        <div class="intro-item">
+          <h3>Clear Separation / 清晰分层</h3>
+          <p>Backend logic stays in Go, frontend logic stays in Vue, and they meet at typed APIs.</p>
+          <p class="intro-cn">后端逻辑在 Go，前端逻辑在 Vue，通过类型化 API 连接。</p>
+        </div>
+        <div class="intro-item">
+          <h3>Fast Iteration / 快速迭代</h3>
+          <p>Update endpoints and UI in minutes, with minimal boilerplate and a stable base path.</p>
+          <p class="intro-cn">最少样板代码，稳定的 API 基础路径，改动更快落地。</p>
         </div>
       </div>
 
@@ -88,6 +110,25 @@
   margin-top: 16px;
   display: grid;
   gap: 16px;
+}
+
+.intro-overview {
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.intro-overview p {
+  margin: 0;
+  color: #aab4c2;
+  line-height: 1.6;
+}
+
+.intro-overview .intro-cn {
+  margin-top: 8px;
+  color: #8f9bad;
+  font-size: 12px;
 }
 
 .intro-grid {

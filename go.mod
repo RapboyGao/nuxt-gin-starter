@@ -3,7 +3,7 @@ module GinServer
 go 1.24.3
 
 require (
-	github.com/RapboyGao/nuxtGin v0.1.0
+	github.com/RapboyGao/nuxtGin v0.1.2
 	github.com/arduino/go-paths-helper v1.14.0 // indirect; direct
 	github.com/dlclark/regexp2 v1.11.5 // indirect; direct
 	github.com/fatih/color v1.18.0 // indirect; direct
@@ -35,6 +35,7 @@ require (
 	github.com/goccy/go-json v0.10.5 // indirect
 	github.com/goccy/go-yaml v1.19.2 // indirect
 	github.com/google/uuid v1.6.0 // indirect
+	github.com/gorilla/websocket v1.5.3 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/joho/godotenv v1.5.1 // indirect
