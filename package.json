@@ -5,12 +5,13 @@
     "build": "nuxt-gin build",
     "postinstall": "nuxt-gin install",
     "update:dep": "nuxt-gin update",
+    "cleanup": "nuxt-gin cleanup",
     "nuxt:dev": "nuxt dev"
   },
   "devDependencies": {
     "axios": "^1.13.4",
     "nuxt": "^4.3.0",
-    "nuxt-gin-tools": "0.1.21",
+    "nuxt-gin-tools": "0.1.22",
     "prettier": "^3.8.1",
     "sass": "^1.97.3"
   }
