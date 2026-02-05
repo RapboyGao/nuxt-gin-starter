@@ -1,3 +1,17 @@
+/**
+ * =====================================================
+ * Nuxt Gin HTTP API Client (Axios)
+ * -----------------------------------------------------
+ * [EN] This file is auto-generated. Do not edit by hand.
+ * [EN] Regenerate by running the Go server endpoint export.
+ * [EN] Edits will be overwritten on the next generation.
+ * -----------------------------------------------------
+ * [中文] 本文件由工具自动生成，请勿手动修改。
+ * [中文] 如需更新，请通过 Go 服务端重新生成。
+ * [中文] 手动修改将在下次生成时被覆盖。
+ * =====================================================
+ */
+
 import axios from 'axios';
 
 const axiosClient = axios.create();

@@ -3,7 +3,7 @@ module GinServer
 go 1.24.3
 
 require (
-	github.com/RapboyGao/nuxtGin v0.1.2
+	github.com/RapboyGao/nuxtGin v0.1.3
 	github.com/arduino/go-paths-helper v1.14.0 // indirect; direct
 	github.com/dlclark/regexp2 v1.11.5 // indirect; direct
 	github.com/fatih/color v1.18.0 // indirect; direct
@@ -14,8 +14,8 @@ require (
 	github.com/mitchellh/mapstructure v1.5.0 // indirect; direct
 	github.com/samber/lo v1.52.0 // indirect; direct
 	github.com/xuri/excelize/v2 v2.10.0 // indirect; direct
-	gorm.io/driver/sqlite v1.5.7 // direct
-	gorm.io/gorm v1.26.1 // direct
+	gorm.io/driver/sqlite v1.6.0 // direct
+	gorm.io/gorm v1.31.1 // direct
 )
 
 require (
@@ -43,7 +43,7 @@ require (
 	github.com/leodido/go-urn v1.4.0 // indirect
 	github.com/mattn/go-colorable v0.1.14 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
-	github.com/mattn/go-sqlite3 v1.14.28 // indirect
+	github.com/mattn/go-sqlite3 v1.14.33 // indirect
 	github.com/mdp/qrterminal/v3 v3.2.1 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
