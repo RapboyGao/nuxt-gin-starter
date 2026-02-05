@@ -1,5 +1,6 @@
 {
-    "baseUrl": "/web",
-    "nuxtPort": 3000,
-    "ginPort": 8099
+  "baseUrl": "/web",
+  "nuxtPort": 3000,
+  "ginPort": 8099,
+  "killPortBeforeDevelop": true
 }
