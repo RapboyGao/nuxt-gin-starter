@@ -1,0 +1,227 @@
+<template>
+  <section class="ws-card">
+    <div class="ws-header">
+      <div>
+        <h3>WebSocket Demo</h3>
+        <p class="ws-subtitle">Endpoint: <code>/ws-go/v1/chat-demo</code></p>
+      </div>
+      <div class="ws-status" :class="{ online: isOpen }">{{ isOpen ? 'Connected' : 'Disconnected' }}</div>
+    </div>
+
+    <div class="ws-actions">
+      <button class="btn" type="button" @click="connect" :disabled="isOpen">Connect</button>
+      <button class="btn" type="button" @click="disconnect" :disabled="!isOpen">Disconnect</button>
+      <button class="btn" type="button" @click="sendWhoAmI" :disabled="!isOpen">WhoAmI</button>
+      <button class="btn" type="button" @click="sendPing" :disabled="!isOpen">Ping</button>
+    </div>
+
+    <form class="chat-form" @submit.prevent="sendChat">
+      <input v-model.trim="user" placeholder="user" />
+      <input v-model.trim="chatText" placeholder="message" />
+      <button class="btn primary" type="submit" :disabled="!isOpen">Send Chat</button>
+    </form>
+
+    <p v-if="error" class="error">{{ error }}</p>
+
+    <div class="log">
+      <div v-for="(item, i) in logs" :key="i" class="log-row">{{ item }}</div>
+    </div>
+  </section>
+</template>
+
+<script setup lang="ts">
+type WsEnvelope = {
+  type: string;
+  client?: string;
+  message?: string;
+  at?: number;
+};
+
+const ws = ref<WebSocket | null>(null);
+const isOpen = ref(false);
+const error = ref('');
+const user = ref('demo-user');
+const chatText = ref('');
+const logs = ref<string[]>([]);
+
+const wsURL = () => {
+  const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+  return `${protocol}//${window.location.host}/ws-go/v1/chat-demo`;
+};
+
+const appendLog = (line: string) => {
+  logs.value.unshift(line);
+  if (logs.value.length > 30) {
+    logs.value = logs.value.slice(0, 30);
+  }
+};
+
+const connect = () => {
+  if (ws.value) return;
+  error.value = '';
+  const socket = new WebSocket(wsURL());
+
+  socket.onopen = () => {
+    isOpen.value = true;
+    appendLog('connected');
+  };
+
+  socket.onmessage = (event) => {
+    try {
+      const payload = JSON.parse(event.data) as WsEnvelope;
+      appendLog(`[${payload.type}] ${payload.message ?? ''}`);
+    } catch {
+      appendLog(`raw: ${event.data}`);
+    }
+  };
+
+  socket.onerror = () => {
+    error.value = 'websocket error';
+  };
+
+  socket.onclose = () => {
+    isOpen.value = false;
+    ws.value = null;
+    appendLog('disconnected');
+  };
+
+  ws.value = socket;
+};
+
+const disconnect = () => {
+  ws.value?.close();
+};
+
+const send = (type: string, payload: unknown) => {
+  if (!ws.value || !isOpen.value) return;
+  ws.value.send(JSON.stringify({ type, payload }));
+};
+
+const sendWhoAmI = () => {
+  send('whoami', {});
+};
+
+const sendPing = () => {
+  send('ping', { at: Date.now() });
+};
+
+const sendChat = () => {
+  const text = chatText.value.trim();
+  if (!text) return;
+  send('chat', { user: user.value.trim() || 'demo-user', content: text });
+  chatText.value = '';
+};
+
+onMounted(() => {
+  connect();
+});
+
+onBeforeUnmount(() => {
+  disconnect();
+});
+</script>
+
+<style scoped lang="scss">
+.ws-card {
+  margin-top: 18px;
+  padding: 16px;
+  border-radius: 14px;
+  background: #111214;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #e8e8e8;
+}
+
+.ws-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.ws-header h3 {
+  margin: 0;
+}
+
+.ws-subtitle {
+  margin: 4px 0 0;
+  color: #9ca3af;
+  font-size: 12px;
+}
+
+.ws-status {
+  font-size: 12px;
+  color: #ef4444;
+}
+
+.ws-status.online {
+  color: #22c55e;
+}
+
+.ws-actions {
+  margin-top: 12px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.chat-form {
+  margin-top: 12px;
+  display: grid;
+  gap: 8px;
+  grid-template-columns: 140px minmax(140px, 1fr) 110px;
+}
+
+.chat-form input {
+  background: #0b0c0e;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 7px 9px;
+  color: #e8e8e8;
+}
+
+.btn {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: #1f2937;
+  color: #e5e7eb;
+  border-radius: 8px;
+  padding: 6px 10px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.btn.primary {
+  background: #2563eb;
+  border-color: #2563eb;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.error {
+  margin-top: 10px;
+  color: #fca5a5;
+  font-size: 12px;
+}
+
+.log {
+  margin-top: 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.02);
+  max-height: 220px;
+  overflow: auto;
+}
+
+.log-row {
+  padding: 7px 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  font-size: 12px;
+  color: #cbd5e1;
+}
+
+.log-row:last-child {
+  border-bottom: none;
+}
+</style>

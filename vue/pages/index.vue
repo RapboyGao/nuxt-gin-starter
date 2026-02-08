@@ -2,6 +2,7 @@
   <div class="page">
     <ProjectIntro />
     <ProductCrud />
+    <WebSocketDemo />
   </div>
 </template>
 
