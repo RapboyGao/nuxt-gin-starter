@@ -27,6 +27,10 @@ type wsServerEnvelope struct {
 	At      int64  `json:"at"`
 }
 
+// ChatWebSocketEndpoint handles a small event protocol:
+// - ping   -> server replies pong to current client
+// - whoami -> server replies with current client id
+// - chat   -> server broadcasts chat message to all clients
 var ChatWebSocketEndpoint = func() *endpoint.WebSocketEndpoint {
 	ws := endpoint.NewWebSocketEndpoint()
 	ws.Name = "ChatDemo"
@@ -56,6 +60,7 @@ var ChatWebSocketEndpoint = func() *endpoint.WebSocketEndpoint {
 		})
 	}
 
+	// "ping" handler: responds to current client with a pong event.
 	endpoint.RegisterWebSocketTypedHandler(ws, "ping", func(payload wsPingPayload, ctx *endpoint.WebSocketContext) (any, error) {
 		return wsServerEnvelope{
 			Type:    "pong",
@@ -65,6 +70,7 @@ var ChatWebSocketEndpoint = func() *endpoint.WebSocketEndpoint {
 		}, nil
 	})
 
+	// "whoami" handler: returns current websocket client ID to caller.
 	endpoint.RegisterWebSocketTypedHandler(ws, "whoami", func(_ wsWhoAmIPayload, ctx *endpoint.WebSocketContext) (any, error) {
 		return wsServerEnvelope{
 			Type:    "whoami",
@@ -74,6 +80,7 @@ var ChatWebSocketEndpoint = func() *endpoint.WebSocketEndpoint {
 		}, nil
 	})
 
+	// "chat" handler: validates text and broadcasts formatted chat message.
 	endpoint.RegisterWebSocketTypedHandler(ws, "chat", func(payload wsChatPayload, ctx *endpoint.WebSocketContext) (any, error) {
 		user := strings.TrimSpace(payload.User)
 		if user == "" {

@@ -16,18 +16,21 @@ type ProductIDPathParams struct {
 	ID string `uri:"id"`
 }
 
+// ProductCreateRequest is the input model for creating a product.
 type ProductCreateRequest struct {
 	Name  string  `json:"name"`
 	Price float64 `json:"price"`
 	Code  string  `json:"code"`
 }
 
+// ProductUpdateRequest is the partial input model for updating a product.
 type ProductUpdateRequest struct {
 	Name  *string  `json:"name"`
 	Price *float64 `json:"price"`
 	Code  *string  `json:"code"`
 }
 
+// ProductModelResponse is the normalized API response model for product records.
 type ProductModelResponse struct {
 	ID        uint    `json:"id"`
 	Name      string  `json:"name"`
@@ -72,6 +75,7 @@ var ProductCreateEndpoint = endpoint.NewEndpointNoParams(
 	"CreateProduct",
 	endpoint.HTTPMethodPost,
 	"/products",
+	// Create product: validate input, persist with GORM, return the created row.
 	func(req ProductCreateRequest, _ *gin.Context) (ProductModelResponse, error) {
 		if strings.TrimSpace(req.Name) == "" {
 			return ProductModelResponse{}, errors.New("name is required")
@@ -102,6 +106,7 @@ var ProductGetEndpoint = endpoint.NewEndpointNoBody(
 	"GetProductByID",
 	endpoint.HTTPMethodGet,
 	"/products/:id",
+	// Get product by ID: parse path id, load record, map DB model to API response.
 	func(pathParams ProductIDPathParams, _ endpoint.NoParams, _ endpoint.NoParams, _ endpoint.NoParams, _ *gin.Context) (ProductModelResponse, error) {
 		id, err := strconv.ParseUint(strings.TrimSpace(pathParams.ID), 10, 64)
 		if err != nil || id == 0 {
@@ -129,6 +134,7 @@ var ProductUpdateEndpoint = endpoint.NewEndpoint(
 	"UpdateProduct",
 	endpoint.HTTPMethodPut,
 	"/products/:id",
+	// Update product: apply only provided fields, validate business constraints, save.
 	func(pathParams ProductIDPathParams, _ endpoint.NoParams, _ endpoint.NoParams, _ endpoint.NoParams, req ProductUpdateRequest, _ *gin.Context) (ProductModelResponse, error) {
 		id, err := strconv.ParseUint(strings.TrimSpace(pathParams.ID), 10, 64)
 		if err != nil || id == 0 {
@@ -176,6 +182,7 @@ var ProductDeleteEndpoint = endpoint.NewEndpointNoBody(
 	"DeleteProduct",
 	endpoint.HTTPMethodDelete,
 	"/products/:id",
+	// Delete product: perform hard delete by ID and return deleted identifier.
 	func(pathParams ProductIDPathParams, _ endpoint.NoParams, _ endpoint.NoParams, _ endpoint.NoParams, _ *gin.Context) (gin.H, error) {
 		id, err := strconv.ParseUint(strings.TrimSpace(pathParams.ID), 10, 64)
 		if err != nil || id == 0 {
@@ -199,6 +206,7 @@ var ProductListEndpoint = endpoint.NewEndpointNoBody(
 	"ListProducts",
 	endpoint.HTTPMethodGet,
 	"/products",
+	// List products: apply pagination, query ordered rows, return total and page meta.
 	func(_ endpoint.NoParams, queryParams ProductListQueryParams, _ endpoint.NoParams, _ endpoint.NoParams, _ *gin.Context) (ProductListResponse, error) {
 		page := queryParams.Page
 		size := queryParams.PageSize
