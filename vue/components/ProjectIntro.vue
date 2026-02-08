@@ -1,102 +1,94 @@
 <template>
   <section class="intro-card">
     <header class="intro-header">
-      <div class="intro-badge">Nuxt + Gin</div>
-      <h2>Nuxt Gin Starter</h2>
-      <p class="intro-subtitle">
-        A pragmatic starter for building full-stack apps with a Nuxt frontend
-        and a Gin backend.
-      </p>
-      <p class="intro-subtitle-cn">
-        一个用于构建 Nuxt 前端 + Gin 后端的实用全栈项目模板。
-      </p>
+      <div class="intro-badge">{{ badge }}</div>
+      <h2>{{ title }}</h2>
+      <p class="intro-subtitle">{{ subtitleEn }}</p>
+      <p class="intro-subtitle-cn">{{ subtitleZh }}</p>
     </header>
 
     <div class="intro-body">
       <div class="intro-overview">
-        <p>
-          This template focuses on a clean, predictable workflow: the Gin server
-          handles APIs and static delivery, while Nuxt provides the UI and SSR.
-          The structure is intentionally minimal so you can scale it without
-          fighting conventions.
-        </p>
-        <p class="intro-cn">
-          本模板强调清晰、可预测的开发体验：Gin 负责 API 与静态资源服务，Nuxt
-          负责 UI 与 SSR。 结构保持精简，便于你在业务增长时稳定扩展。
-        </p>
+        <p>{{ overviewEn }}</p>
+        <p class="intro-cn">{{ overviewZh }}</p>
       </div>
 
       <div class="intro-grid">
-        <div class="intro-item">
-          <h3>Unified Dev Workflow / 统一开发流程</h3>
-          <p>
-            Run frontend and backend together with a single `nuxt-gin` workflow.
-          </p>
-          <p class="intro-cn">前后端通过一条 `nuxt-gin` 流程统一启动与调试。</p>
-        </div>
-        <div class="intro-item">
-          <h3>Endpoint-First API / 以 Endpoint 为中心</h3>
-          <p>
-            Define typed endpoints in Go and consume them cleanly from the Nuxt
-            app.
-          </p>
-          <p class="intro-cn">
-            在 Go 中定义 Endpoint，可自动生成 TypeScript Axios
-            等前端客户端，保持类型一致并降低调用成本。
-          </p>
-        </div>
-        <div class="intro-item">
-          <h3>Production Ready / 面向生产</h3>
-          <p>
-            Built-in CORS, static serving, and a sensible project layout for
-            growth.
-          </p>
-          <p class="intro-cn">内置 CORS 与静态资源服务，结构清晰便于扩展。</p>
-        </div>
-        <div class="intro-item">
-          <h3>Extensible / 易扩展</h3>
-          <p>
-            Drop in models, routes, and UI quickly without fighting the
-            scaffolding.
-          </p>
-          <p class="intro-cn">快速添加模型、路由与界面，不受脚手架束缚。</p>
-        </div>
-        <div class="intro-item">
-          <h3>Clear Separation / 清晰分层</h3>
-          <p>
-            Backend logic stays in Go, frontend logic stays in Vue, and they
-            meet at typed APIs.
-          </p>
-          <p class="intro-cn">
-            后端逻辑在 Go，前端逻辑在 Vue，通过类型化 API 连接。
-          </p>
-        </div>
-        <div class="intro-item">
-          <h3>Fast Iteration / 快速迭代</h3>
-          <p>
-            Update endpoints and UI in minutes, with minimal boilerplate and a
-            stable base path.
-          </p>
-          <p class="intro-cn">
-            最少样板代码，稳定的 API 基础路径，改动更快落地。
-          </p>
+        <div v-for="feature in features" :key="feature.key" class="intro-item">
+          <h3>{{ feature.title }}</h3>
+          <p>{{ feature.descriptionEn }}</p>
+          <p class="intro-cn">{{ feature.descriptionZh }}</p>
         </div>
       </div>
 
       <div class="intro-repo">
         <span>Repository / 仓库地址</span>
-        <a
-          class="intro-link"
-          href="https://github.com/RapboyGao/nuxt-gin-starter.git"
-          target="_blank"
-          rel="noreferrer"
-        >
-          https://github.com/RapboyGao/nuxt-gin-starter.git
+        <a class="intro-link" :href="repoUrl" target="_blank" rel="noreferrer">
+          {{ repoUrl }}
         </a>
       </div>
     </div>
   </section>
 </template>
+
+<script setup lang="ts">
+type IntroFeature = {
+  key: string;
+  title: string;
+  descriptionEn: string;
+  descriptionZh: string;
+};
+
+const badge = 'Nuxt + Gin';
+const title = 'Nuxt Gin Starter';
+const subtitleEn = 'A pragmatic starter for building full-stack apps with a Nuxt frontend and a Gin backend.';
+const subtitleZh = '一个用于构建 Nuxt 前端 + Gin 后端的实用全栈项目模板。';
+const overviewEn =
+  'This template focuses on a clean, predictable workflow: the Gin server handles APIs and static delivery, while Nuxt provides the UI and SSR. The structure is intentionally minimal so you can scale it without fighting conventions.';
+const overviewZh =
+  '本模板强调清晰、可预测的开发体验：Gin 负责 API 与静态资源服务，Nuxt 负责 UI 与 SSR。结构保持精简，便于你在业务增长时稳定扩展。';
+
+const repoUrl = 'https://github.com/RapboyGao/nuxt-gin-starter.git';
+
+const features: ReadonlyArray<IntroFeature> = [
+  {
+    key: 'workflow',
+    title: 'Unified Dev Workflow / 统一开发流程',
+    descriptionEn: 'Run frontend and backend together with a single `nuxt-gin` workflow.',
+    descriptionZh: '前后端通过一条 `nuxt-gin` 流程统一启动与调试。',
+  },
+  {
+    key: 'endpoint',
+    title: 'Endpoint-First API / 以 Endpoint 为中心',
+    descriptionEn: 'Define typed endpoints in Go and consume them cleanly from the Nuxt app.',
+    descriptionZh: '在 Go 中定义 Endpoint，可自动生成 TypeScript Axios 等前端客户端，保持类型一致并降低调用成本。',
+  },
+  {
+    key: 'production',
+    title: 'Production Ready / 面向生产',
+    descriptionEn: 'Built-in CORS, static serving, and a sensible project layout for growth.',
+    descriptionZh: '内置 CORS 与静态资源服务，结构清晰便于扩展。',
+  },
+  {
+    key: 'extensible',
+    title: 'Extensible / 易扩展',
+    descriptionEn: 'Drop in models, routes, and UI quickly without fighting the scaffolding.',
+    descriptionZh: '快速添加模型、路由与界面，不受脚手架束缚。',
+  },
+  {
+    key: 'separation',
+    title: 'Clear Separation / 清晰分层',
+    descriptionEn: 'Backend logic stays in Go, frontend logic stays in Vue, and they meet at typed APIs.',
+    descriptionZh: '后端逻辑在 Go，前端逻辑在 Vue，通过类型化 API 连接。',
+  },
+  {
+    key: 'iteration',
+    title: 'Fast Iteration / 快速迭代',
+    descriptionEn: 'Update endpoints and UI in minutes, with minimal boilerplate and a stable base path.',
+    descriptionZh: '最少样板代码，稳定的 API 基础路径，改动更快落地。',
+  },
+];
+</script>
 
 <style scoped lang="scss">
 .intro-card {
