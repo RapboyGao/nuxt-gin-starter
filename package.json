@@ -1,5 +1,8 @@
 {
-  "private": true,
+  "name": "nuxt-gin-starter",
+  "version": "1.0.0",
+  "description": "A full-stack starter template using Nuxt and Gin with endpoint-first APIs.",
+  "license": "MIT",
   "scripts": {
     "dev": "nuxt-gin dev",
     "build": "nuxt-gin build",
