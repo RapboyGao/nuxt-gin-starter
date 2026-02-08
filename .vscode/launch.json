@@ -1,49 +1,57 @@
 {
   "version": "0.2.0",
   "configurations": [
-    // Gin 后端调试环境
+    // Go 后端（Delve，可断点）
     {
-      "name": "Go",
+      "name": "Go API (Delve)",
       "type": "go",
       "request": "launch",
-      "mode": "auto",
+      "mode": "debug",
       "program": "${workspaceFolder}/main.go",
-      "cwd": "${workspaceFolder}"
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal"
     },
-    // 客户端调试（浏览器环境）
+
+    // Nuxt 开发服务（仅前端）
+    {
+      "name": "Nuxt Dev Server",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["nuxt:dev"],
+      "console": "integratedTerminal",
+      "skipFiles": ["<node_internals>/**"],
+      "serverReadyAction": {
+        "pattern": "Local: (http://localhost:[0-9]+)",
+        "uriFormat": "%s",
+        "action": "openExternally"
+      }
+    },
+
+    // 浏览器端断点调试（依赖 Nuxt Dev Server）
     {
       "name": "Nuxt Client",
       "type": "chrome",
       "request": "launch",
-      "url": "http://localhost:3000", // Nuxt 默认开发端口
+      "url": "http://localhost:3000",
       "webRoot": "${workspaceFolder}",
       "sourceMaps": true,
       "pathMapping": {
         "/_nuxt": "${workspaceFolder}/vue/.nuxt"
       }
-    },
-    // 服务端调试（Node.js 环境）
-    {
-      "name": "Nuxt Server",
-      "type": "node",
-      "request": "launch",
-      "runtimeExecutable": "pnpm",
-      "runtimeArgs": ["run", "nuxt:dev"], // 对应 package.json 中的 "dev" 脚本
-      "serverReadyAction": {
-        "pattern": "Local: (.*)",
-        "uriFormat": "%s",
-        "action": "debugWithChrome"
-      },
-      "sourceMaps": true,
-      "env": {
-        "NODE_OPTIONS": "--inspect" // 启用 Node 调试模式
-      }
     }
   ],
   "compounds": [
     {
-      "name": "Nuxt + Go",
-      "configurations": ["Go", "Nuxt Client", "Nuxt Server"]
+      "name": "Fullstack Debug (Go + Nuxt + Browser)",
+      "stopAll": true,
+      "configurations": ["Go API (Delve)", "Nuxt Dev Server", "Nuxt Client"]
+    },
+    {
+      "name": "Fullstack Debug (Go + Nuxt)",
+      "stopAll": true,
+      "configurations": ["Go API (Delve)", "Nuxt Dev Server"]
     }
   ]
 }
