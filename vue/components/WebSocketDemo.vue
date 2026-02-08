@@ -5,20 +5,32 @@
         <h3>WebSocket Demo</h3>
         <p class="ws-subtitle">Endpoint: <code>/ws-go/v1/chat-demo</code></p>
       </div>
-      <div class="ws-status" :class="{ online: isOpen }">{{ isOpen ? 'Connected' : 'Disconnected' }}</div>
+      <div class="ws-status" :class="{ online: isOpen }">
+        {{ isOpen ? 'Connected' : 'Disconnected' }}
+      </div>
     </div>
 
     <div class="ws-actions">
-      <button class="btn" type="button" @click="connect" :disabled="isOpen">Connect</button>
-      <button class="btn" type="button" @click="disconnect" :disabled="!isOpen">Disconnect</button>
-      <button class="btn" type="button" @click="sendWhoAmI" :disabled="!isOpen">WhoAmI</button>
-      <button class="btn" type="button" @click="sendPing" :disabled="!isOpen">Ping</button>
+      <button class="btn" type="button" @click="connect" :disabled="isOpen">
+        Connect
+      </button>
+      <button class="btn" type="button" @click="disconnect" :disabled="!isOpen">
+        Disconnect
+      </button>
+      <button class="btn" type="button" @click="sendWhoAmI" :disabled="!isOpen">
+        WhoAmI
+      </button>
+      <button class="btn" type="button" @click="sendPing" :disabled="!isOpen">
+        Ping
+      </button>
     </div>
 
     <form class="chat-form" @submit.prevent="sendChat">
       <input v-model.trim="user" placeholder="user" />
       <input v-model.trim="chatText" placeholder="message" />
-      <button class="btn primary" type="submit" :disabled="!isOpen">Send Chat</button>
+      <button class="btn primary" type="submit" :disabled="!isOpen">
+        Send Chat
+      </button>
     </form>
 
     <p v-if="error" class="error">{{ error }}</p>
@@ -123,7 +135,7 @@ onBeforeUnmount(() => {
 
 <style scoped lang="scss">
 .ws-card {
-  margin-top: 18px;
+  margin: 10px 10px 10px 10px;
   padding: 16px;
   border-radius: 14px;
   background: #111214;
