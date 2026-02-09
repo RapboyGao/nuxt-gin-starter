@@ -78,7 +78,13 @@
 
 <script setup lang="ts">
 import axios from 'axios';
-import type { ProductModelResponse } from '@/composables/auto-generated-api';
+import {
+  CreateProductPost,
+  DeleteProductDelete,
+  ListProductsGet,
+  UpdateProductPut,
+  type ProductModelResponse,
+} from '@/composables/auto-generated-api';
 
 type EditState = {
   name: string;
@@ -194,8 +200,9 @@ const update = async (id: number) => {
   try {
     error.value = '';
     const next = getEdit(id);
+    const pathParams = { ID: String(id) };
     await UpdateProductPut.request(
-      { path: { ID: String(id) } },
+      { path: pathParams },
       {
         name: next.name,
         price: next.price,
@@ -212,7 +219,8 @@ const update = async (id: number) => {
 const remove = async (id: number) => {
   try {
     error.value = '';
-    await DeleteProductDelete.request({ path: { ID: String(id) } });
+    const pathParams = { ID: String(id) };
+    await DeleteProductDelete.request({ path: pathParams });
     await refresh();
   } catch (err) {
     console.error(err);

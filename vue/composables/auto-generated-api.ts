@@ -118,19 +118,19 @@ export class CreateProductPost {
   }
 
   static buildURL(): string {
-    return this.PATH;
+    return CreateProductPost.PATH;
   }
 
   static requestConfig(
     requestBody: ProductCreateRequest,
     options?: AxiosConvertOptions<ProductCreateRequest, ProductModelResponse>
   ): AxiosRequestConfig {
-    const url = this.buildURL();
+    const url = CreateProductPost.buildURL();
     const requestData = options?.serializeRequest
       ? options.serializeRequest(requestBody)
       : requestBody;
     return {
-      method: this.METHOD,
+      method: CreateProductPost.METHOD,
       url,
       data: requestData,
     };
@@ -141,7 +141,7 @@ export class CreateProductPost {
     options?: AxiosConvertOptions<ProductCreateRequest, ProductModelResponse>
   ): Promise<ProductModelResponse> {
     const response = await axiosClient.request<ProductModelResponse>(
-      this.requestConfig(requestBody, options)
+      CreateProductPost.requestConfig(requestBody, options)
     );
     const responseData = response.data as unknown;
     if (options?.deserializeResponse) {
@@ -158,19 +158,19 @@ export class GetProductByIDGet {
   static readonly PATH = '/api-go/v1/products/:id' as const;
 
   static pathParamsShape(): readonly string[] {
-    return ['ID'] as const;
+    return ['id'] as const;
   }
 
   static buildURL(params: { path: ProductIDPathParams }): string {
-    return `/api-go/v1/products/${encodeURIComponent(String(params.path?.ID ?? ''))}`;
+    return `/api-go/v1/products/${encodeURIComponent(String(params.path?.id ?? ''))}`;
   }
 
   static requestConfig(params: {
     path: ProductIDPathParams;
   }): AxiosRequestConfig {
-    const url = this.buildURL(params);
+    const url = GetProductByIDGet.buildURL(params);
     return {
-      method: this.METHOD,
+      method: GetProductByIDGet.METHOD,
       url,
     };
   }
@@ -182,7 +182,7 @@ export class GetProductByIDGet {
     options?: AxiosConvertOptions<never, ProductModelResponse>
   ): Promise<ProductModelResponse> {
     const response = await axiosClient.request<ProductModelResponse>(
-      this.requestConfig(params)
+      GetProductByIDGet.requestConfig(params)
     );
     const responseData = response.data as unknown;
     if (options?.deserializeResponse) {
@@ -199,11 +199,11 @@ export class UpdateProductPut {
   static readonly PATH = '/api-go/v1/products/:id' as const;
 
   static pathParamsShape(): readonly string[] {
-    return ['ID'] as const;
+    return ['id'] as const;
   }
 
   static buildURL(params: { path: ProductIDPathParams }): string {
-    return `/api-go/v1/products/${encodeURIComponent(String(params.path?.ID ?? ''))}`;
+    return `/api-go/v1/products/${encodeURIComponent(String(params.path?.id ?? ''))}`;
   }
 
   static requestConfig(
@@ -213,12 +213,12 @@ export class UpdateProductPut {
     requestBody: ProductUpdateRequest,
     options?: AxiosConvertOptions<ProductUpdateRequest, ProductModelResponse>
   ): AxiosRequestConfig {
-    const url = this.buildURL(params);
+    const url = UpdateProductPut.buildURL(params);
     const requestData = options?.serializeRequest
       ? options.serializeRequest(requestBody)
       : requestBody;
     return {
-      method: this.METHOD,
+      method: UpdateProductPut.METHOD,
       url,
       data: requestData,
     };
@@ -232,7 +232,7 @@ export class UpdateProductPut {
     options?: AxiosConvertOptions<ProductUpdateRequest, ProductModelResponse>
   ): Promise<ProductModelResponse> {
     const response = await axiosClient.request<ProductModelResponse>(
-      this.requestConfig(params, requestBody, options)
+      UpdateProductPut.requestConfig(params, requestBody, options)
     );
     const responseData = response.data as unknown;
     if (options?.deserializeResponse) {
@@ -249,19 +249,19 @@ export class DeleteProductDelete {
   static readonly PATH = '/api-go/v1/products/:id' as const;
 
   static pathParamsShape(): readonly string[] {
-    return ['ID'] as const;
+    return ['id'] as const;
   }
 
   static buildURL(params: { path: ProductIDPathParams }): string {
-    return `/api-go/v1/products/${encodeURIComponent(String(params.path?.ID ?? ''))}`;
+    return `/api-go/v1/products/${encodeURIComponent(String(params.path?.id ?? ''))}`;
   }
 
   static requestConfig(params: {
     path: ProductIDPathParams;
   }): AxiosRequestConfig {
-    const url = this.buildURL(params);
+    const url = DeleteProductDelete.buildURL(params);
     return {
-      method: this.METHOD,
+      method: DeleteProductDelete.METHOD,
       url,
     };
   }
@@ -273,7 +273,7 @@ export class DeleteProductDelete {
     options?: AxiosConvertOptions<never, Record<string, unknown>>
   ): Promise<Record<string, unknown>> {
     const response = await axiosClient.request<Record<string, unknown>>(
-      this.requestConfig(params)
+      DeleteProductDelete.requestConfig(params)
     );
     const responseData = response.data as unknown;
     if (options?.deserializeResponse) {
@@ -294,18 +294,18 @@ export class ListProductsGet {
   }
 
   static buildURL(): string {
-    return this.PATH;
+    return ListProductsGet.PATH;
   }
 
   static requestConfig(params: {
     query: ProductListQueryParams;
   }): AxiosRequestConfig {
-    const url = this.buildURL();
+    const url = ListProductsGet.buildURL();
     const normalizedParams = normalizeParamKeys(params, {
-      query: { page: 'Page', pagesize: 'PageSize' },
+      query: { page: 'page', pagesize: 'pageSize' },
     });
     return {
-      method: this.METHOD,
+      method: ListProductsGet.METHOD,
       url,
       params: normalizedParams.query,
     };
@@ -318,7 +318,7 @@ export class ListProductsGet {
     options?: AxiosConvertOptions<never, ProductListResponse>
   ): Promise<ProductListResponse> {
     const response = await axiosClient.request<ProductListResponse>(
-      this.requestConfig(params)
+      ListProductsGet.requestConfig(params)
     );
     const responseData = response.data as unknown;
     if (options?.deserializeResponse) {
@@ -371,8 +371,8 @@ export interface ProductModelResponse {
   name: string;
   price: number;
   code: string;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: number;
+  updatedAt: number;
 }
 
 /**
@@ -393,9 +393,9 @@ export function validateProductModelResponse(
   if (!('code' in obj)) return false;
   if (!(typeof obj['code'] === 'string')) return false;
   if (!('createdAt' in obj)) return false;
-  if (!(typeof obj['createdAt'] === 'string')) return false;
+  if (!(typeof obj['createdAt'] === 'number')) return false;
   if (!('updatedAt' in obj)) return false;
-  if (!(typeof obj['updatedAt'] === 'string')) return false;
+  if (!(typeof obj['updatedAt'] === 'number')) return false;
   return true;
 }
 
@@ -476,7 +476,7 @@ export function validateProductListQueryParams(
 // -----------------------------------------------------
 export interface ProductListResponse {
   items: ProductModelResponse[];
-  total: string;
+  total: number;
   page: number;
   size: number;
 }
@@ -499,7 +499,7 @@ export function validateProductListResponse(
   )
     return false;
   if (!('total' in obj)) return false;
-  if (!(typeof obj['total'] === 'string')) return false;
+  if (!(typeof obj['total'] === 'number')) return false;
   if (!('page' in obj)) return false;
   if (!(typeof obj['page'] === 'number')) return false;
   if (!('size' in obj)) return false;

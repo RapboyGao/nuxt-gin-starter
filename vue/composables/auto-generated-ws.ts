@@ -331,7 +331,7 @@ export interface WsServerEnvelope {
   type: string;
   client: string;
   message: string;
-  at: string;
+  at: number;
 }
 
 /**
@@ -350,7 +350,7 @@ export function validateWsServerEnvelope(
   if (!('message' in obj)) return false;
   if (!(typeof obj['message'] === 'string')) return false;
   if (!('at' in obj)) return false;
-  if (!(typeof obj['at'] === 'string')) return false;
+  if (!(typeof obj['at'] === 'number')) return false;
   return true;
 }
 
