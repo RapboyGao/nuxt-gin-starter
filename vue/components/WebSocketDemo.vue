@@ -42,24 +42,19 @@
 </template>
 
 <script setup lang="ts">
-type WsEnvelope = {
+import type { TypedWebSocketClient, WsServerEnvelope } from '@/composables/auto-generated-ws';
+
+type WsClientMessage = {
   type: string;
-  client?: string;
-  message?: string;
-  at?: number;
+  payload: unknown;
 };
 
-const ws = ref<WebSocket | null>(null);
+const ws = ref<TypedWebSocketClient<WsServerEnvelope, WsClientMessage> | null>(null);
 const isOpen = ref(false);
 const error = ref('');
 const user = ref('demo-user');
 const chatText = ref('');
 const logs = ref<string[]>([]);
-
-const wsURL = () => {
-  const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-  return `${protocol}//${window.location.host}/ws-go/v1/chat-demo`;
-};
 
 const appendLog = (line: string) => {
   logs.value.unshift(line);
@@ -71,33 +66,35 @@ const appendLog = (line: string) => {
 const connect = () => {
   if (ws.value) return;
   error.value = '';
-  const socket = new WebSocket(wsURL());
+  const client = chatDemo<WsClientMessage>({
+    serialize: (value) => value,
+    deserialize: (value) => value as WsServerEnvelope,
+  });
 
-  socket.onopen = () => {
+  const offOpen = client.onOpen(() => {
     isOpen.value = true;
     appendLog('connected');
-  };
+  });
 
-  socket.onmessage = (event) => {
-    try {
-      const payload = JSON.parse(event.data) as WsEnvelope;
-      appendLog(`[${payload.type}] ${payload.message ?? ''}`);
-    } catch {
-      appendLog(`raw: ${event.data}`);
-    }
-  };
+  const offMessage = client.onMessage((payload) => {
+    appendLog(`[${payload.type}] ${payload.message ?? ''}`);
+  });
 
-  socket.onerror = () => {
+  const offError = client.onError(() => {
     error.value = 'websocket error';
-  };
+  });
 
-  socket.onclose = () => {
+  const offClose = client.onClose(() => {
     isOpen.value = false;
     ws.value = null;
+    offOpen();
+    offMessage();
+    offError();
+    offClose();
     appendLog('disconnected');
-  };
+  });
 
-  ws.value = socket;
+  ws.value = client;
 };
 
 const disconnect = () => {
@@ -106,7 +103,7 @@ const disconnect = () => {
 
 const send = (type: string, payload: unknown) => {
   if (!ws.value || !isOpen.value) return;
-  ws.value.send(JSON.stringify({ type, payload }));
+  ws.value.send({ type, payload });
 };
 
 const sendWhoAmI = () => {

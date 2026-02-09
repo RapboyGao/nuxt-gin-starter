@@ -77,12 +77,6 @@
 </template>
 
 <script setup lang="ts">
-import {
-  createProduct,
-  deleteProduct,
-  listProducts,
-  updateProduct,
-} from '@/composables/auto-generated-api';
 import type { ProductModelResponse } from '@/composables/auto-generated-api';
 
 type EditState = {
@@ -154,7 +148,9 @@ const getEdit = (id: number) => {
 const refresh = async () => {
   try {
     error.value = '';
-    const res = await listProducts({ query: { Page: 1, PageSize: 50 } });
+    const res = await ListProductsGet.request({
+      query: { Page: 1, PageSize: 50 },
+    });
     items.value = res.items;
     syncEdits(res.items);
   } catch (err) {
@@ -170,7 +166,7 @@ const create = async () => {
       error.value = 'name and price are required';
       return;
     }
-    await createProduct({
+    await CreateProductPost.request({
       name: createForm.name,
       price: createForm.price,
       code: createForm.code,
@@ -187,7 +183,7 @@ const update = async (id: number) => {
   try {
     error.value = '';
     const next = getEdit(id);
-    await updateProduct(
+    await UpdateProductPut.request(
       { path: { ID: String(id) } },
       {
         name: next.name,
@@ -205,7 +201,7 @@ const update = async (id: number) => {
 const remove = async (id: number) => {
   try {
     error.value = '';
-    await deleteProduct({ path: { ID: String(id) } });
+    await DeleteProductDelete.request({ path: { ID: String(id) } });
     await refresh();
   } catch (err) {
     console.error(err);

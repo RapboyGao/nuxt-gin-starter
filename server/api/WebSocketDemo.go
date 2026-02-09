@@ -109,7 +109,3 @@ var ChatWebSocketEndpoint = func() *endpoint.WebSocketEndpoint {
 
 	return ws
 }()
-
-var AllWebSocketEndpoints = []endpoint.WebSocketEndpointLike{
-	ChatWebSocketEndpoint,
-}
