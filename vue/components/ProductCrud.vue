@@ -77,6 +77,7 @@
 </template>
 
 <script setup lang="ts">
+import axios from 'axios';
 import type { ProductModelResponse } from '@/composables/auto-generated-api';
 
 type EditState = {
@@ -93,6 +94,16 @@ const createForm = reactive<EditState>({
   code: '',
 });
 const edits = reactive<Record<number, EditState>>({});
+
+const toUserMessage = (err: unknown, fallback: string): string => {
+  if (axios.isAxiosError(err)) {
+    if (!err.response) {
+      return 'Cannot reach Gin API (http://127.0.0.1:8099). Start Go server or use `pnpm dev`.';
+    }
+    return `${fallback} (HTTP ${err.response.status})`;
+  }
+  return fallback;
+};
 
 const randomName = () => {
   const names = [
@@ -155,7 +166,7 @@ const refresh = async () => {
     syncEdits(res.items);
   } catch (err) {
     console.error(err);
-    error.value = 'failed to load products';
+    error.value = toUserMessage(err, 'failed to load products');
   }
 };
 
@@ -175,7 +186,7 @@ const create = async () => {
     await refresh();
   } catch (err) {
     console.error(err);
-    error.value = 'create failed';
+    error.value = toUserMessage(err, 'create failed');
   }
 };
 
@@ -194,7 +205,7 @@ const update = async (id: number) => {
     await refresh();
   } catch (err) {
     console.error(err);
-    error.value = 'update failed';
+    error.value = toUserMessage(err, 'update failed');
   }
 };
 
@@ -205,7 +216,7 @@ const remove = async (id: number) => {
     await refresh();
   } catch (err) {
     console.error(err);
-    error.value = 'delete failed';
+    error.value = toUserMessage(err, 'delete failed');
   }
 };
 

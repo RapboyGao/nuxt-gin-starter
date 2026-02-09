@@ -94,6 +94,15 @@ export class TypedWebSocketClient<
   TType extends string = string,
 > {
   public readonly socket: WebSocket;
+  public readonly url: string;
+  public status: 'connecting' | 'open' | 'closing' | 'closed' = 'connecting';
+  public lastError?: Event;
+  public lastClose?: CloseEvent;
+  public connectedAt?: Date;
+  public closedAt?: Date;
+  public messagesSent = 0;
+  public messagesReceived = 0;
+  public reconnectCount = 0;
   private readonly serialize: (value: TSend) => unknown;
   private readonly deserialize: (value: unknown) => TReceive;
   private readonly messageListeners = new Set<(message: TReceive) => void>();
@@ -106,7 +115,9 @@ export class TypedWebSocketClient<
   >();
 
   constructor(url: string, options: WebSocketConvertOptions<TSend, TReceive>) {
-    this.socket = new WebSocket(resolveWebSocketURL(url));
+    const resolvedURL = resolveWebSocketURL(url);
+    this.url = resolvedURL;
+    this.socket = new WebSocket(resolvedURL);
     this.serialize =
       options?.serialize ?? ((value: TSend) => normalizeWsRequestJSON(value));
     this.deserialize =
@@ -123,25 +134,43 @@ export class TypedWebSocketClient<
         }
       }
       const message = this.deserialize(payload);
+      this.messagesReceived += 1;
       this.emitMessage(message);
     });
     this.socket.addEventListener('open', (event) => {
+      this.status = 'open';
+      this.connectedAt = new Date();
+      this.closedAt = undefined;
       for (const listener of this.openListeners) listener(event);
     });
     this.socket.addEventListener('close', (event) => {
+      this.status = 'closed';
+      this.lastClose = event;
+      this.closedAt = new Date();
       for (const listener of this.closeListeners) listener(event);
     });
     this.socket.addEventListener('error', (event) => {
+      this.lastError = event;
       for (const listener of this.errorListeners) listener(event);
     });
+  }
+
+  get readyState(): number {
+    return this.socket.readyState;
+  }
+
+  get isOpen(): boolean {
+    return this.readyState === WebSocket.OPEN;
   }
 
   send(message: TSend): void {
     const data = this.serialize(message);
     this.socket.send(JSON.stringify(data));
+    this.messagesSent += 1;
   }
 
   close(): void {
+    this.status = 'closing';
     this.socket.close();
   }
 

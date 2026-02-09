@@ -42,19 +42,29 @@
 </template>
 
 <script setup lang="ts">
-import type { TypedWebSocketClient, WsServerEnvelope } from '@/composables/auto-generated-ws';
+import { chatDemo } from '@/composables/auto-generated-ws';
+import type { WsServerEnvelope } from '@/composables/auto-generated-ws';
 
 type WsClientMessage = {
   type: string;
   payload: unknown;
 };
 
-const ws = ref<TypedWebSocketClient<WsServerEnvelope, WsClientMessage> | null>(null);
+type ChatDemoClient = ReturnType<typeof chatDemo<WsClientMessage>>;
+
+const ws = shallowRef<ChatDemoClient | null>(null);
 const isOpen = ref(false);
 const error = ref('');
 const user = ref('demo-user');
 const chatText = ref('');
 const logs = ref<string[]>([]);
+let unbindEvents: (() => void) | null = null;
+
+const createClient = () =>
+  chatDemo<WsClientMessage>({
+    serialize: (value) => value,
+    deserialize: (value) => value as WsServerEnvelope,
+  });
 
 const appendLog = (line: string) => {
   logs.value.unshift(line);
@@ -63,13 +73,8 @@ const appendLog = (line: string) => {
   }
 };
 
-const connect = () => {
-  if (ws.value) return;
-  error.value = '';
-  const client = chatDemo<WsClientMessage>({
-    serialize: (value) => value,
-    deserialize: (value) => value as WsServerEnvelope,
-  });
+const bindClientEvents = (client: ChatDemoClient) => {
+  unbindEvents?.();
 
   const offOpen = client.onOpen(() => {
     isOpen.value = true;
@@ -80,21 +85,37 @@ const connect = () => {
     appendLog(`[${payload.type}] ${payload.message ?? ''}`);
   });
 
+  const offChat = client.onType('chat', (payload) => {
+    appendLog(`[chat-only] ${payload.message ?? ''}`);
+  });
+
   const offError = client.onError(() => {
     error.value = 'websocket error';
   });
 
   const offClose = client.onClose(() => {
     isOpen.value = false;
-    ws.value = null;
-    offOpen();
-    offMessage();
-    offError();
-    offClose();
     appendLog('disconnected');
   });
 
-  ws.value = client;
+  unbindEvents = () => {
+    offOpen();
+    offMessage();
+    offChat();
+    offError();
+    offClose();
+  };
+};
+
+const connect = () => {
+  error.value = '';
+  if (ws.value?.isOpen || ws.value?.readyState === WebSocket.CONNECTING) {
+    return;
+  }
+  if (!ws.value || ws.value.readyState >= WebSocket.CLOSING) {
+    ws.value = createClient();
+    bindClientEvents(ws.value);
+  }
 };
 
 const disconnect = () => {
@@ -122,11 +143,15 @@ const sendChat = () => {
 };
 
 onMounted(() => {
+  ws.value = createClient();
+  bindClientEvents(ws.value);
   connect();
 });
 
 onBeforeUnmount(() => {
   disconnect();
+  unbindEvents?.();
+  unbindEvents = null;
 });
 </script>
 
