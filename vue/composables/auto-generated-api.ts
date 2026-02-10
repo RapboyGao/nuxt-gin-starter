@@ -158,11 +158,11 @@ export class GetProductByIDGet {
   static readonly PATH = '/api-go/v1/products/:id' as const;
 
   static pathParamsShape(): readonly string[] {
-    return ['id'] as const;
+    return ['ID'] as const;
   }
 
   static buildURL(params: { path: ProductIDPathParams }): string {
-    return `/api-go/v1/products/${encodeURIComponent(String(params.path?.id ?? ''))}`;
+    return `/api-go/v1/products/${encodeURIComponent(String(params.path?.ID ?? ''))}`;
   }
 
   static requestConfig(params: {
@@ -199,11 +199,11 @@ export class UpdateProductPut {
   static readonly PATH = '/api-go/v1/products/:id' as const;
 
   static pathParamsShape(): readonly string[] {
-    return ['id'] as const;
+    return ['ID'] as const;
   }
 
   static buildURL(params: { path: ProductIDPathParams }): string {
-    return `/api-go/v1/products/${encodeURIComponent(String(params.path?.id ?? ''))}`;
+    return `/api-go/v1/products/${encodeURIComponent(String(params.path?.ID ?? ''))}`;
   }
 
   static requestConfig(
@@ -249,11 +249,11 @@ export class DeleteProductDelete {
   static readonly PATH = '/api-go/v1/products/:id' as const;
 
   static pathParamsShape(): readonly string[] {
-    return ['id'] as const;
+    return ['ID'] as const;
   }
 
   static buildURL(params: { path: ProductIDPathParams }): string {
-    return `/api-go/v1/products/${encodeURIComponent(String(params.path?.id ?? ''))}`;
+    return `/api-go/v1/products/${encodeURIComponent(String(params.path?.ID ?? ''))}`;
   }
 
   static requestConfig(params: {
