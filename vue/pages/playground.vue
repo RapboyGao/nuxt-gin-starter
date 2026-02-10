@@ -1,25 +1,24 @@
 <template>
   <div class="page">
     <NavigationMenu />
-    <ProjectIntro />
+    <ProductCrud />
+    <WebSocketDemo />
   </div>
 </template>
 
 <script setup lang="ts">
 useSeoMeta({
-  title: 'Nuxt Gin Starter',
+  title: 'Playground - Nuxt Gin Starter',
   applicationName: 'Nuxt Gin Starter',
 });
 </script>
 
-<style lang="scss">
+<style scoped lang="scss">
 .page {
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  background: #0b0c0e;
   min-height: 100vh;
-  min-width: 100vw;
+  background: #0b0c0e;
 }
-
 </style>

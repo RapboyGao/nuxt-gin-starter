@@ -1,5 +1,8 @@
 <template>
   <section class="intro-card">
+    <div class="intro-glow intro-glow-a" aria-hidden="true"></div>
+    <div class="intro-glow intro-glow-b" aria-hidden="true"></div>
+
     <header class="intro-header">
       <div class="intro-badge">{{ badge }}</div>
       <h2>{{ title }}</h2>
@@ -14,7 +17,12 @@
       </div>
 
       <div class="intro-grid">
-        <div v-for="feature in features" :key="feature.key" class="intro-item">
+        <div
+          v-for="(feature, idx) in features"
+          :key="feature.key"
+          class="intro-item"
+          :style="{ '--delay': `${idx * 70}ms` }"
+        >
           <h3>{{ feature.title }}</h3>
           <p>{{ feature.descriptionEn }}</p>
           <p class="intro-cn">{{ feature.descriptionZh }}</p>
@@ -92,121 +100,280 @@ const features: ReadonlyArray<IntroFeature> = [
 
 <style scoped lang="scss">
 .intro-card {
-  margin: 10px 10px 10px 10px;
-  padding: 20px;
-  border-radius: 16px;
-  background: linear-gradient(180deg, #141517 0%, #0f1113 100%);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  color: #e8e8e8;
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
+  --fg-main: #f1f4f9;
+  --fg-soft: #c8d0dc;
+  --fg-muted: #96a4b7;
+  --panel: rgba(255, 255, 255, 0.06);
+  --panel-strong: rgba(255, 255, 255, 0.1);
+  --edge: rgba(255, 255, 255, 0.13);
+  margin: 4px 12px 12px;
+  padding: 24px;
+  border-radius: 24px;
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  color: var(--fg-main);
+  background:
+    radial-gradient(120% 90% at 90% -10%, rgba(140, 214, 255, 0.22), transparent 65%),
+    radial-gradient(85% 80% at -15% 110%, rgba(255, 163, 107, 0.18), transparent 70%),
+    linear-gradient(135deg, #101418 0%, #111722 44%, #141826 100%);
+  border: 1px solid var(--edge);
+  box-shadow:
+    0 28px 50px rgba(0, 0, 0, 0.38),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  animation: card-in 560ms ease-out both;
+}
+
+.intro-glow {
+  position: absolute;
+  border-radius: 999px;
+  filter: blur(36px);
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+.intro-glow-a {
+  width: 220px;
+  height: 220px;
+  right: -60px;
+  top: -60px;
+  background: rgba(145, 227, 255, 0.35);
+}
+
+.intro-glow-b {
+  width: 200px;
+  height: 200px;
+  left: -70px;
+  bottom: -70px;
+  background: rgba(255, 171, 122, 0.3);
 }
 
 .intro-header h2 {
-  margin: 8px 0 6px;
-  font-size: 24px;
-  letter-spacing: 0.2px;
+  margin: 10px 0 8px;
+  font-size: clamp(26px, 4vw, 34px);
+  letter-spacing: 0.3px;
+  line-height: 1.16;
 }
 
 .intro-badge {
   display: inline-flex;
   align-items: center;
-  padding: 4px 10px;
+  gap: 8px;
+  padding: 6px 12px;
   border-radius: 999px;
-  font-size: 12px;
-  font-weight: 600;
-  color: #0b0e11;
-  background: #7cc0ff;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #09131b;
+  background: linear-gradient(135deg, #99dcff 0%, #8de5c6 100%);
+  box-shadow: 0 10px 22px rgba(116, 206, 240, 0.38);
+}
+
+.intro-badge::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #0c2b3b;
+  animation: pulse 1.7s ease-in-out infinite;
 }
 
 .intro-subtitle {
   margin: 0;
-  color: #b8c0cc;
+  color: var(--fg-soft);
+  line-height: 1.7;
+  max-width: 75ch;
 }
 
 .intro-subtitle-cn {
-  margin: 4px 0 0;
-  color: #95a2b3;
+  margin: 6px 0 0;
+  color: var(--fg-muted);
   font-size: 13px;
+  line-height: 1.7;
 }
 
 .intro-body {
-  margin-top: 16px;
+  margin-top: 20px;
   display: grid;
-  gap: 16px;
+  gap: 18px;
 }
 
 .intro-overview {
-  padding: 12px 14px;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 16px 18px;
+  border-radius: 16px;
+  background: linear-gradient(140deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.03));
+  border: 1px solid var(--panel-strong);
+  backdrop-filter: blur(8px);
+  animation: rise-in 500ms ease-out both;
+  animation-delay: 120ms;
 }
 
 .intro-overview p {
   margin: 0;
-  color: #aab4c2;
+  color: var(--fg-soft);
   line-height: 1.6;
 }
 
 .intro-overview .intro-cn {
   margin-top: 8px;
-  color: #8f9bad;
+  color: var(--fg-muted);
   font-size: 12px;
 }
 
 .intro-grid {
   display: grid;
-  gap: 12px;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
 }
 
 .intro-item {
-  padding: 12px 14px;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 14px 15px;
+  border-radius: 14px;
+  background: var(--panel);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  transition:
+    transform 220ms ease,
+    border-color 220ms ease,
+    background-color 220ms ease,
+    box-shadow 220ms ease;
+  animation: rise-in 500ms ease-out both;
+  animation-delay: calc(200ms + var(--delay, 0ms));
+}
+
+.intro-item:hover {
+  transform: translateY(-4px);
+  border-color: rgba(154, 225, 255, 0.5);
+  background: rgba(255, 255, 255, 0.095);
+  box-shadow: 0 14px 24px rgba(0, 0, 0, 0.25);
 }
 
 .intro-item h3 {
-  margin: 0 0 6px;
+  margin: 0 0 8px;
   font-size: 14px;
-  color: #dfe7f0;
+  color: #eff5fc;
+  line-height: 1.45;
 }
 
 .intro-item p {
   margin: 0;
-  color: #9ea7b3;
+  color: var(--fg-soft);
   line-height: 1.5;
+  font-size: 14px;
 }
 
 .intro-item .intro-cn {
   margin-top: 6px;
-  color: #8a96a5;
+  color: var(--fg-muted);
   font-size: 12px;
 }
 
 .intro-repo {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 10px;
   align-items: center;
-  padding: 10px 12px;
-  border-radius: 10px;
-  background: rgba(124, 192, 255, 0.08);
-  border: 1px solid rgba(124, 192, 255, 0.2);
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: linear-gradient(120deg, rgba(144, 221, 255, 0.14), rgba(157, 240, 201, 0.08));
+  border: 1px solid rgba(142, 216, 249, 0.36);
+  animation: rise-in 500ms ease-out both;
+  animation-delay: 260ms;
 }
 
 .intro-repo span {
-  color: #9db3c8;
+  color: #bccee0;
   font-size: 12px;
+  letter-spacing: 0.02em;
 }
 
 .intro-link {
-  color: #7cc0ff;
+  color: #caf2ff;
   text-decoration: none;
+  position: relative;
+  transition: color 180ms ease;
+}
+
+.intro-link::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  width: 100%;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0.18);
+  transform-origin: left center;
+  transition: transform 220ms ease;
 }
 
 .intro-link:hover {
-  text-decoration: underline;
+  color: #ffffff;
+}
+
+.intro-link:hover::after {
+  transform: scaleX(1);
+}
+
+@media (max-width: 640px) {
+  .intro-card {
+    margin: 10px;
+    padding: 16px;
+    border-radius: 18px;
+  }
+
+  .intro-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@keyframes card-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.992);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.35;
+    transform: scale(1.35);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .intro-card,
+  .intro-overview,
+  .intro-item,
+  .intro-repo,
+  .intro-badge::before {
+    animation: none;
+  }
+
+  .intro-item,
+  .intro-link::after {
+    transition: none;
+  }
 }
 </style>
