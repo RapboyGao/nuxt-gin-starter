@@ -1,7 +1,6 @@
 <template>
   <NuxtPage />
 </template>
-
 <style>
 html,
 body,

@@ -60,6 +60,38 @@ export interface TypeHandlerOptions<TReceive> {
   validate?: (message: TReceive) => boolean;
 }
 
+const isDevelopmentEnv = (): boolean => {
+  if (typeof import.meta !== 'undefined' && (import.meta as any)?.env) {
+    const dev = (import.meta as any).env?.DEV;
+    if (typeof dev === 'boolean') return dev;
+  }
+  return false;
+};
+
+const resolveGinPort = (): string => {
+  if (typeof window !== 'undefined') {
+    const ginPort = useRuntimeConfig().public.ginPort;
+    if (
+      ginPort !== undefined &&
+      ginPort !== null &&
+      String(ginPort).trim() !== ''
+    ) {
+      return String(ginPort);
+    }
+    if (window.location?.port && window.location.port.trim() !== '') {
+      return window.location.port;
+    }
+    return window.location?.protocol === 'https:' ? '443' : '80';
+  }
+  if (
+    typeof import.meta !== 'undefined' &&
+    (import.meta as any)?.env?.NUXT_GIN_PORT
+  ) {
+    return String((import.meta as any).env.NUXT_GIN_PORT);
+  }
+  return '80';
+};
+
 const resolveWebSocketURL = (url: string): string => {
   if (url.startsWith('ws://') || url.startsWith('wss://')) return url;
   if (url.startsWith('http://')) return `ws://${url.slice(7)}`;
@@ -67,8 +99,14 @@ const resolveWebSocketURL = (url: string): string => {
   if (url.startsWith('/')) {
     const isHttps =
       typeof window !== 'undefined' && window.location?.protocol === 'https:';
-    const host = typeof window !== 'undefined' ? window.location.host : '';
-    return `${isHttps ? 'wss' : 'ws'}://${host}${url}`;
+    const protocol = isHttps ? 'wss' : 'ws';
+    if (typeof window !== 'undefined') {
+      if (isDevelopmentEnv()) {
+        return `${protocol}://${window.location.hostname}:${resolveGinPort()}${url}`;
+      }
+      return `${protocol}://${window.location.host}${url}`;
+    }
+    return url;
   }
   return url;
 };
