@@ -143,7 +143,9 @@ const sendChat = () => {
 };
 
 onMounted(() => {
-  // Do not auto-connect; user triggers connect to avoid noisy reconnects during Go restarts.
+  ws.value = createClient();
+  bindClientEvents(ws.value);
+  connect();
 });
 
 onBeforeUnmount(() => {
