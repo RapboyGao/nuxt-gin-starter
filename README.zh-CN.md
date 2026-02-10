@@ -1,229 +1,212 @@
-# [Nuxt Gin starter 🚀](https://github.com/RapboyGao/nuxt-gin-starter.git)
+# Nuxt Gin Starter
 
-[![许可证：MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![GitHub 星标](https://img.shields.io/github/stars/RapboyGao/nuxt-gin-starter.svg?style=social)](https://github.com/RapboyGao/nuxt-gin-starter/stargazers)
-[![GitHub 分叉](https://img.shields.io/github/forks/RapboyGao/nuxt-gin-starter.svg?style=social)](https://github.com/RapboyGao/nuxt-gin-starter/network)
+基于 `Nuxt 4 + Gin` 的全栈模板，采用 endpoint-first 开发方式。
 
-想要深入了解相关知识，可以查阅
+- 前端：Nuxt + Vue
+- 后端：Gin + GORM
+- API 形态：类型化 `endpoint.Endpoint` / `endpoint.WebSocketEndpoint`
+- 客户端：由 `nuxtGin` 自动生成 TypeScript API/WS 客户端
 
-- [Nuxt 4 documentation](https://nuxt.com/docs/getting-started/introduction)
-- [Gin](https://gin-gonic.com)
-- [GORM](https://gorm.io)
-- [Vue](https://vuejs.org)
+英文文档： [README.md](./README.md)
 
-编程语言:
+## 环境要求
 
-- [Typescript](https://www.typescriptlang.org)
-- [Go](https://go.dev)
+- Go 1.24+
+- Node.js 20+
+- pnpm 9+
 
-## 推荐的IDE - [VS Code](https://code.visualstudio.com)
-
-## 环境配置 ⚙️
-
-### 1. PowerShell（Win10+）💻
-
-PowerShell 是 Windows 系统上功能强大的命令行 shell 和脚本语言。你可以通过以下方式安装：
-
-- **官方网站**：[Windows 系统安装指南](https://learn.microsoft.com/zh-cn/powershell/scripting/install/installing-powershell-on-windows)
-- **GitHub 发布页**：[获取最新版本](https://github.com/PowerShell/PowerShell/releases)
-- **镜像地址**：[从镜像下载](https://sourceforge.net/projects/powershell.mirror/files/)
-- **官方安装脚本**：
-  ```sh
-  winget install --id Microsoft.Powershell --source winget
-  ```
-
-### 2. Scoop（Win10+）📦
-
-Scoop 是 Windows 系统的命令行安装工具。
-
-- **官方网站**：[Scoop 官网](https://scoop.sh/)
-- **安装脚本**：
-  ```powershell
-  Set-ExecutionPolicy RemoteSigned -Scope CurrentUser # 可选：首次运行远程脚本时需要
-  irm get.scoop.sh | iex
-  ```
-
-### 3. HomeBrew（MacOS）🍎
-
-HomeBrew 是 macOS 系统上流行的包管理器。使用以下命令安装：
-
-```sh
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-```
-
-### 4. Go 语言 🐹
-
-Go 是本项目使用的编程语言。
-
-- **官方网站**：[下载 Go](https://go.dev/dl/)
-- **镜像地址**：[从镜像下载](https://studygolang.com/dl)
-
-**安装常用库（需使用 PowerShell）**：
-
-```powershell
-$env:GOPRIVATE = "10.10.110.90:8081" # 若需要本地代理
-$env:GOPROXY = "https://goproxy.io,direct"
-go get github.com/arduino/go-paths-helper
-go get github.com/gin-contrib/cors
-go get github.com/gin-gonic/gin
-go get github.com/golang-module/carbon
-go get github.com/mitchellh/mapstructure
-go get github.com/xuri/excelize/v2
-go get github.com/samber/lo
-go get gorm.io/driver/sqlite
-go get gorm.io/gorm
-```
-
-### 5. pnpm（需先安装 Scoop）📦
-
-pnpm 是一款快速、节省磁盘空间的包管理器。
-
-- **官方网站**：[pnpm 安装指南](https://www.pnpm.cn/installation)
-
-### 6. Node.js 🌐
-
-Node.js 是基于 Chrome V8 引擎的 JavaScript 运行时环境。
-
-- **官方网站**：[下载 Node.js](https://nodejs.org)
-- **镜像地址**：[从镜像下载](https://registry.npmmirror.com/binary.html?path=node/v18.13.0/)
-
-### 7. Air ♻️
-
-Air 是 Go 应用的热重载工具。使用以下命令安装：
-
-```sh
-go install github.com/cosmtrek/air@latest
-```
-
-## 在 Mac 上设置 `GOPROXY` 环境变量 🔧
-
-### 步骤 1：打开终端 🖥️
-
-按下 `Command + Space` 打开 Spotlight 搜索，输入“终端”并按回车即可打开终端。
-
-### 步骤 2：编辑 Shell 配置文件 📝
-
-根据你使用的 Shell 选择对应的配置文件：
-
-#### 如果你使用 Zsh（macOS 默认 Shell）
+## 快速开始
 
 ```bash
-nano ~/.zshrc
+pnpm install
+pnpm dev
 ```
 
-#### 如果你使用 Bash
+默认端口配置见 `server.config.json`。
 
-```bash
-nano ~/.bashrc
-```
+## 项目结构
 
-### 步骤 3：添加环境变量 ➕
-
-在打开的文件末尾添加以下内容：
-
-```bash
-export GOPROXY="https://goproxy.io,direct"
-```
-
-### 步骤 4：保存并关闭文件 💾
-
-- 按下 `Control + X`
-- 然后按 `Y` 确认保存
-- 最后按 `Enter` 退出编辑器
-
-### 步骤 5：应用配置 🔄
-
-```bash
-source ~/.zshrc  # 如果你使用 Zsh
-source ~/.bashrc  # 如果你使用 Bash
-```
-
-### 步骤 6：验证设置 ✅
-
-```bash
-go env GOPROXY
-```
-
-如果设置成功，终端会输出：`https://goproxy.io,direct`
-
-### 补充说明 📌
-
-- **同时设置多个代理**：你可以按优先级添加多个代理地址，用逗号分隔。例如：
-  ```bash
-  export GOPROXY="https://goproxy.io,https://goproxy.cn,direct"
-  ```
-- **设置 `GOPRIVATE`**：如果你有私有模块，还需要设置 `GOPRIVATE` 来跳过代理。例如：
-  ```bash
-  export GOPRIVATE="github.com/你的公司/*"
-  ```
-
-完成上述配置后，每次启动终端时，Go 都会自动使用指定的代理服务器。
-
-## 文件结构
-
-```plaintext
+```text
 nuxt-gin-starter/
-├── .gitignore                    # Git版本控制忽略规则
-├── .npmrc                        # npm/pnpm配置
-├── .prettierrc                   # Prettier格式化配置
-├── LICENSE                       # 开源许可证（MIT）
-├── README.md                     # 英文项目说明
-├── README.zh-CN.md               # 中文项目说明
-├── ecosystem.config.js           # PM2进程管理配置
-├── go.mod                        # Go模块依赖管理
-├── main.go                       # Go服务器入口
-├── nuxt.config.ts                # Nuxt.js核心配置
-├── package.json                  # Node.js项目配置
-├── server.config.json            # 服务器配置（端口等）
-├── tsconfig.json                 # TypeScript编译配置
-│
-├── vue/                          # Nuxt.js前端代码 (可编辑)
-│   ├── composables/              # Vue全局复用代码
-│   │   ├── api-base.ts           # API基础路径配置
-│   │   └── auto-generated-api.ts # endpoint API客户端
-│   └── pages/                    # 页面组件
-│       └── index.vue             # 首页组件
-│
-├── server/                       # Gin后端代码
-│   ├── Framework.server.go       # 框架服务器配置
-│   ├── model/                    # 数据库模型      (可编辑)
-│   │   ├── DB.go                 # 数据库初始化
-│   │   └── Example.Product.go    # 示例产品模型
-│   └── v2/                        # endpoint 定义    (可编辑)
-│       ├── index.go              # endpoint 注册
-│       ├── Product.go            # 示例 endpoint
-│       └── Test.go               # 测试 endpoint
-│
-└── .vscode/                      # VSCode开发配置
-    ├── extensions.json           # 推荐扩展
-    ├── launch.json               # 调试配置
-    └── settings.json             # VSCode设置
+├── main.go
+├── nuxt.config.ts
+├── server.config.json
+├── server/
+│   ├── api/
+│   │   ├── index.go
+│   │   ├── ProductCRUD.go
+│   │   ├── Product.go
+│   │   └── WebSocketDemo.go
+│   └── model/
+│       ├── DB.go
+│       └── Example.Product.go
+└── vue/
+    ├── components/
+    ├── pages/
+    └── composables/
+        ├── auto-generated-api.ts
+        └── auto-generated-ws.ts
 ```
 
-## 创建你自己的项目 🛠️
+## Endpoint（HTTP）怎么写
 
-### 1. API 📄
+核心流程：定义模型 -> 定义 Endpoint -> 注册到 `ServerAPI`。
 
-在 [server/v2](server/v2/index.go) 中通过 nuxtGin endpoint 定义 API，然后在 [vue/composables/auto-generated-api.ts](vue/composables/auto-generated-api.ts) 中同步前端客户端。🚀
-
-### 2. 服务器逻辑 💻
-
-在 [server/v2](server/v2/Product.go) 的 endpoint 处理函数中编写你的服务器逻辑，定义服务器如何响应请求。📡
-
-### 3. 模型 📐
-
-#### 1. 在 [server/model](server/model/Example.Product.go) 中定义自己的模型。📝
-
-#### 2. 在 [Framework.DB.go](server/model/Framework.DB.go) 中注册模型。📚
+### 1. 定义请求/响应模型
 
 ```go
-db.AutoMigrate(&Product{}) // 以及你的其他模型
+type ProductCreateRequest struct {
+    Name  string  `json:"name" tsdoc:"商品名称"`
+    Price float64 `json:"price" tsdoc:"商品单价"`
+    Code  string  `json:"code" tsdoc:"商品编码"`
+}
+
+type ProductModelResponse struct {
+    ID    uint    `json:"id" tsdoc:"商品ID"`
+    Name  string  `json:"name" tsdoc:"商品名称"`
+    Price float64 `json:"price" tsdoc:"商品单价"`
+    Code  string  `json:"code" tsdoc:"商品编码"`
+}
 ```
 
-### 4. 前端 🌈
+### 2. 定义 Endpoint
 
-在 [vue](vue/pages/index.vue) 中创建你自己的前端页面。🎨
+```go
+var ProductCreateEndpoint = endpoint.NewEndpointNoParams(
+    "CreateProduct",
+    endpoint.HTTPMethodPost,
+    "/products",
+    func(req ProductCreateRequest, _ *gin.Context) (ProductModelResponse, error) {
+        // 业务逻辑
+        return ProductModelResponse{}, nil
+    },
+)
+```
 
-### 5. 开发 🚧
+### 3. 统一注册到 HTTPAPI
 
-运行 [package.json](package.json) 中的 `dev` 脚本。🏃‍♂️
+```go
+const httpBasePath = "/api-go/v1"
+
+var HTTPAPI = endpoint.ServerAPI{
+    BasePath:  httpBasePath,
+    GroupPath: httpBasePath,
+    Endpoints: []endpoint.EndpointLike{
+        ProductCreateEndpoint,
+        ProductGetEndpoint,
+        ProductUpdateEndpoint,
+        ProductDeleteEndpoint,
+        ProductListEndpoint,
+    },
+}
+```
+
+## WebSocketEndpoint 怎么写
+
+核心流程：定义消息模型 -> 定义 WebSocketEndpoint -> 注册到 `WebSocketAPI`。
+
+### 1. 定义消息模型
+
+```go
+type wsChatPayload struct {
+    User    string `json:"user" tsdoc:"发送者"`
+    Content string `json:"content" tsdoc:"消息内容"`
+}
+
+type wsServerEnvelope struct {
+    Type    string `json:"type" tsdoc:"服务端消息类型"`
+    Client  string `json:"client" tsdoc:"客户端ID"`
+    Message string `json:"message" tsdoc:"消息文本"`
+    At      int64  `json:"at" tsdoc:"时间戳(毫秒)"`
+}
+```
+
+### 2. 构建 WebSocketEndpoint
+
+```go
+var ChatWebSocketEndpoint = func() *endpoint.WebSocketEndpoint {
+    ws := endpoint.NewWebSocketEndpoint()
+    ws.Name = "ChatDemo"
+    ws.Path = "/chat-demo"
+    ws.ServerMessageType = reflect.TypeOf(wsServerEnvelope{})
+
+    ws.OnConnect = func(ctx *endpoint.WebSocketContext) error {
+        return ctx.Publish(wsServerEnvelope{Type: "system", Client: ctx.ID, Message: "connected", At: time.Now().UnixMilli()})
+    }
+
+    endpoint.RegisterWebSocketTypedHandler(ws, "chat", func(payload wsChatPayload, ctx *endpoint.WebSocketContext) (any, error) {
+        event := wsServerEnvelope{Type: "chat", Client: ctx.ID, Message: payload.User + ": " + payload.Content, At: time.Now().UnixMilli()}
+        return event, ctx.Publish(event)
+    })
+
+    return ws
+}()
+```
+
+### 3. 注册到 WSAPI
+
+```go
+const wsBasePath = "/ws-go/v1"
+
+var WSAPI = endpoint.WebSocketAPI{
+    BasePath:  wsBasePath,
+    GroupPath: wsBasePath,
+    Endpoints: []endpoint.WebSocketEndpointLike{
+        ChatWebSocketEndpoint,
+    },
+}
+```
+
+## 启动方式
+
+在 `main.go` 中同时挂载 HTTP + WS：
+
+```go
+func main() {
+    nuxtGin.MustRunServerWithWebSockets(api.HTTPAPI.Endpoints, api.WSAPI.Endpoints)
+}
+```
+
+## 前端调用示例
+
+生成文件位置：
+
+- HTTP：`vue/composables/auto-generated-api.ts`
+- WebSocket：`vue/composables/auto-generated-ws.ts`
+
+HTTP 调用：
+
+```ts
+import { ListProductsGet } from '@/composables/auto-generated-api';
+
+const data = await ListProductsGet.request({
+  query: { Page: 1, PageSize: 20 },
+});
+```
+
+WS 调用：
+
+```ts
+import { chatDemo } from '@/composables/auto-generated-ws';
+
+const ws = chatDemo();
+ws.onType('chat', (msg) => console.log(msg));
+ws.send({ type: 'chat', payload: { user: 'demo', content: 'hello' } });
+```
+
+## 常用命令
+
+```bash
+pnpm dev        # 启动 Nuxt + Gin 开发环境
+pnpm build      # 构建
+pnpm cleanup    # 清理生成物
+pnpm update:dep # 更新工具链依赖
+```
+
+## 说明
+
+- 当你修改 Endpoint 模型后，请通过常规开发/构建流程触发客户端更新。
+
+## License
+
+MIT

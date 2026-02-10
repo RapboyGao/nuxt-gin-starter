@@ -303,9 +303,10 @@ const features: ReadonlyArray<IntroFeature> = [
   width: 100%;
   height: 1px;
   background: currentColor;
-  transform: scaleX(0.18);
+  opacity: 0;
+  transform: scaleX(0);
   transform-origin: left center;
-  transition: transform 220ms ease;
+  transition: transform 220ms ease, opacity 220ms ease;
 }
 
 .intro-link:hover {
@@ -313,6 +314,7 @@ const features: ReadonlyArray<IntroFeature> = [
 }
 
 .intro-link:hover::after {
+  opacity: 1;
   transform: scaleX(1);
 }
 

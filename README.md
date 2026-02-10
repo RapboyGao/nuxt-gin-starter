@@ -1,232 +1,215 @@
-# [Nuxt Gin Starter 🚀](https://github.com/RapboyGao/nuxt-gin-starter.git)
+# Nuxt Gin Starter
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![GitHub stars](https://img.shields.io/github/stars/RapboyGao/nuxt-gin-starter.svg?style=social)](https://github.com/RapboyGao/nuxt-gin-starter/stargazers)
-[![GitHub forks](https://img.shields.io/github/forks/RapboyGao/nuxt-gin-starter.svg?style=social)](https://github.com/RapboyGao/nuxt-gin-starter/network)
+A full-stack starter template built with `Nuxt 4 + Gin`, using an endpoint-first workflow.
 
-[🇨🇳简体中文](./README.zh-CN.md)
+- Frontend: Nuxt + Vue
+- Backend: Gin + GORM
+- API style: typed `endpoint.Endpoint` / `endpoint.WebSocketEndpoint`
+- Client generation: `nuxtGin` auto-generates TypeScript clients
 
-Explore the following to gain in-depth knowledge:
+Chinese README: [README.zh-CN.md](./README.zh-CN.md)
 
-- [Nuxt 4 documentation](https://nuxt.com/docs/getting-started/introduction)
-- [Gin](https://gin-gonic.com)
-- [GORM](https://gorm.io)
-- [Vue](https://vuejs.org)
+## Requirements
 
-Programming Languages:
+- Go 1.24+
+- Node.js 20+
+- pnpm 9+
 
-- [Typescript](https://www.typescriptlang.org)
-- [Go](https://go.dev)
-
-## Recommended IDE - [VS Code](https://code.visualstudio.com)
-
-## Environment Setup ⚙️
-
-### 1. Powershell (Win10+) 💻
-
-Powershell is a powerful command-line shell and scripting language on Windows. You can install it through the following methods:
-
-- **Official Website**: [Learn about installation on Windows](https://learn.microsoft.com/zh-cn/powershell/scripting/install/installing-powershell-on-windows)
-- **Github Releases**: [Get the latest release on GitHub](https://github.com/PowerShell/PowerShell/releases)
-- **Mirror**: [Download from the mirror](https://sourceforge.net/projects/powershell.mirror/files/)
-- **Official Installation Script**:
-
-```sh
-winget install --id Microsoft.Powershell --source winget
-```
-
-### 2. Scoop (Win10+) 📦
-
-Scoop is a command-line installer for Windows.
-
-- **Official Website**: [Scoop official site](https://scoop.sh/)
-- **Installation Script**:
-  ```powershell
-  Set-ExecutionPolicy RemoteSigned -Scope CurrentUser # Optional: Required to run a remote script for the first time
-  irm get.scoop.sh | iex
-  ```
-
-### 3. HomeBrew (MacOS) 🍎
-
-HomeBrew is a popular package manager for macOS. Install it using the following command:
-
-```sh
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-```
-
-### 4. Go Language 🐹
-
-Go is a programming language used in this project.
-
-- **Official Website**: [Download Go](https://go.dev/dl/)
-- **Mirror**: [Download from the mirror](https://studygolang.com/dl)
-
-**Install Common Libraries (Requires Powershell)**:
-
-```powershell
-$env:GOPRIVATE = "10.10.110.90:8081" # If a local proxy is needed
-$env:GOPROXY = "https://goproxy.io,direct"
-go get github.com/arduino/go-paths-helper
-go get github.com/gin-contrib/cors
-go get github.com/gin-gonic/gin
-go get github.com/golang-module/carbon
-go get github.com/mitchellh/mapstructure
-go get github.com/xuri/excelize/v2
-go get github.com/samber/lo
-go get gorm.io/driver/sqlite
-go get gorm.io/gorm
-```
-
-### 5. pnpm (Requires Scoop) 📦
-
-pnpm is a fast, disk-space efficient package manager.
-
-- **Official Website**: [pnpm installation guide](https://www.pnpm.cn/installation)
-
-### 6. Nodejs 🌐
-
-Node.js is a JavaScript runtime built on Chrome's V8 JavaScript engine.
-
-- **Official Website**: [Download Node.js](https://nodejs.org)
-- **Mirror**: [Download from the mirror](https://registry.npmmirror.com/binary.html?path=node/v18.13.0/)
-
-### 7. Air ♻️
-
-Air is a live reload utility for Go applications. Install it with:
-
-```sh
-go install github.com/cosmtrek/air@latest
-```
-
-## Set the `GOPROXY` Environment Variable on Mac 🔧
-
-### Step 1: Open the Terminal 🖥️
-
-You can open the terminal by pressing `Command + Space` to open the Spotlight Search, then typing "Terminal" and hitting Enter.
-
-### Step 2: Edit the Shell Configuration File 📝
-
-Choose the appropriate configuration file based on your shell:
-
-#### If you are using Zsh (the default shell on macOS)
+## Quick Start
 
 ```bash
-nano ~/.zshrc
+pnpm install
+pnpm dev
 ```
 
-#### If you are using Bash
+Default ports are configured in `server.config.json`.
 
-```bash
-nano ~/.bashrc
-```
+## Project Structure
 
-### Step 3: Add the Environment Variable ➕
-
-At the end of the opened file, add the following line:
-
-```bash
-export GOPROXY="https://goproxy.io,direct"
-```
-
-### Step 4: Save and Close the File 💾
-
-- Press `Control + X`.
-- Then press `Y` to confirm the save.
-- Finally, press `Enter` to exit the editor.
-
-### Step 5: Apply the Configuration 🔄
-
-```bash
-source ~/.zshrc  # If you are using Zsh
-source ~/.bashrc  # If you are using Bash
-```
-
-### Step 6: Verify the Settings ✅
-
-```bash
-go env GOPROXY
-```
-
-If the setting is successful, the terminal will output: `https://goproxy.io,direct`
-
-### Supplementary Notes 📌
-
-- **Set Multiple Proxies Simultaneously**: You can add multiple proxy addresses in order of priority, separated by commas. For example:
-  ```bash
-  export GOPROXY="https://goproxy.io,https://goproxy.cn,direct"
-  ```
-- **Set `GOPRIVATE`**: If you have private modules, you also need to set `GOPRIVATE` to skip the proxy. For example:
-  ```bash
-  export GOPRIVATE="github.com/your-company/*"
-  ```
-
-After completing the above configuration, Go will automatically use the specified proxy server every time you start the terminal.
-
-## File Structure
-
-```plaintext
+```text
 nuxt-gin-starter/
-├── .gitignore                    # Git version control ignore rules
-├── .npmrc                        # npm/pnpm configuration
-├── .prettierrc                   # Prettier configuration
-├── LICENSE                       # Open source license (MIT)
-├── README.md                     # English project description
-├── README.zh-CN.md               # Chinese project description
-├── ecosystem.config.js           # PM2 process management configuration
-├── go.mod                        # Go module dependency management
-├── main.go                       # Go server entry point
-├── nuxt.config.ts                # Nuxt.js core configuration
-├── package.json                  # Node.js project configuration
-├── server.config.json            # Server configuration (ports, etc.)
-├── tsconfig.json                 # TypeScript compilation configuration
-│
-├── vue/                          # Nuxt.js frontend code (editable)
-│   ├── composables/              # Vue global reusable code
-│   │   ├── api-base.ts           # API base path configuration
-│   │   └── auto-generated-api.ts # API client for endpoint routes
-│   └── pages/                    # Page components
-│       └── index.vue             # Homepage component
-│
-├── server/                       # Gin backend code
-│   ├── Framework.server.go       # Framework server configuration
-│   ├── model/                    # Database models (editable)
-│   │   ├── DB.go                 # Database initialization
-│   │   └── Example.Product.go    # Example product model
-│   └── v2/                        # Endpoint definitions (editable)
-│       ├── index.go              # Endpoint registry
-│       ├── Product.go            # Example endpoint
-│       └── Test.go               # Test endpoint
-│
-└── .vscode/                      # VSCode development configuration
-    ├── extensions.json           # Recommended extensions
-    ├── launch.json               # Debug configuration
-    └── settings.json             # VSCode settings
+├── main.go
+├── nuxt.config.ts
+├── server.config.json
+├── server/
+│   ├── api/
+│   │   ├── index.go
+│   │   ├── ProductCRUD.go
+│   │   ├── Product.go
+│   │   └── WebSocketDemo.go
+│   └── model/
+│       ├── DB.go
+│       └── Example.Product.go
+└── vue/
+    ├── components/
+    ├── pages/
+    └── composables/
+        ├── auto-generated-api.ts
+        └── auto-generated-ws.ts
 ```
 
-## Create your own project 🛠️
+## How Endpoint Works
 
-### 1. API 📄
+You define typed HTTP endpoints in Go, then `nuxtGin` handles routing + TS client generation.
 
-Define your API via nuxtGin endpoints in [server/v2](server/v2/index.go), then update the frontend client in [vue/composables/auto-generated-api.ts](vue/composables/auto-generated-api.ts) if you add or change routes. 🚀
-
-### 2. Server Logics 💻
-
-Write your own server logic in each endpoint handler under [server/v2](server/v2/Product.go). 📡
-
-### 3. Models 📐
-
-#### 1. Define your own models in [server/model](server/model/Example.Product.go). 📝
-
-#### 2. Register the models in [Framework.DB.go](server/model/Framework.DB.go). 📚
+### 1. Define request/response models
 
 ```go
-db.AutoMigrate(&Product{}) // and your own models
+type ProductCreateRequest struct {
+    Name  string  `json:"name" tsdoc:"Product name"`
+    Price float64 `json:"price" tsdoc:"Product unit price"`
+    Code  string  `json:"code" tsdoc:"Product code"`
+}
+
+type ProductModelResponse struct {
+    ID    uint    `json:"id" tsdoc:"Product id"`
+    Name  string  `json:"name" tsdoc:"Product name"`
+    Price float64 `json:"price" tsdoc:"Product price"`
+    Code  string  `json:"code" tsdoc:"Product code"`
+}
 ```
 
-### 4. Frontend 🌈
+### 2. Define endpoint handler
 
-Create your own frontend pages in [vue](vue/pages/index.vue). 🎨
+```go
+var ProductCreateEndpoint = endpoint.NewEndpointNoParams(
+    "CreateProduct",
+    endpoint.HTTPMethodPost,
+    "/products",
+    func(req ProductCreateRequest, _ *gin.Context) (ProductModelResponse, error) {
+        // business logic
+        return ProductModelResponse{}, nil
+    },
+)
+```
 
-### 5. Develop 🚧
+### 3. Register all endpoints in one API group
 
-Run `dev` script in [package.json](package.json). 🏃‍♂️
+```go
+const httpBasePath = "/api-go/v1"
+
+var HTTPAPI = endpoint.ServerAPI{
+    BasePath:  httpBasePath,
+    GroupPath: httpBasePath,
+    Endpoints: []endpoint.EndpointLike{
+        ProductCreateEndpoint,
+        ProductGetEndpoint,
+        ProductUpdateEndpoint,
+        ProductDeleteEndpoint,
+        ProductListEndpoint,
+    },
+}
+```
+
+### 4. Start server with HTTP + WS
+
+```go
+func main() {
+    nuxtGin.MustRunServerWithWebSockets(api.HTTPAPI.Endpoints, api.WSAPI.Endpoints)
+}
+```
+
+## How WebSocketEndpoint Works
+
+`nuxtGin` provides a typed WebSocket endpoint abstraction. You define:
+
+- path
+- server message type
+- connect/disconnect behavior
+- typed message handlers by message `type`
+
+### 1. Define payload and server message models
+
+```go
+type wsChatPayload struct {
+    User    string `json:"user" tsdoc:"Sender"`
+    Content string `json:"content" tsdoc:"Message text"`
+}
+
+type wsServerEnvelope struct {
+    Type    string `json:"type" tsdoc:"Server event type"`
+    Client  string `json:"client" tsdoc:"Client id"`
+    Message string `json:"message" tsdoc:"Event message"`
+    At      int64  `json:"at" tsdoc:"Timestamp(ms)"`
+}
+```
+
+### 2. Build WebSocket endpoint
+
+```go
+var ChatWebSocketEndpoint = func() *endpoint.WebSocketEndpoint {
+    ws := endpoint.NewWebSocketEndpoint()
+    ws.Name = "ChatDemo"
+    ws.Path = "/chat-demo"
+    ws.ServerMessageType = reflect.TypeOf(wsServerEnvelope{})
+
+    ws.OnConnect = func(ctx *endpoint.WebSocketContext) error {
+        return ctx.Publish(wsServerEnvelope{Type: "system", Client: ctx.ID, Message: "connected", At: time.Now().UnixMilli()})
+    }
+
+    endpoint.RegisterWebSocketTypedHandler(ws, "chat", func(payload wsChatPayload, ctx *endpoint.WebSocketContext) (any, error) {
+        event := wsServerEnvelope{Type: "chat", Client: ctx.ID, Message: payload.User + ": " + payload.Content, At: time.Now().UnixMilli()}
+        return event, ctx.Publish(event)
+    })
+
+    return ws
+}()
+```
+
+### 3. Register WebSocket API group
+
+```go
+const wsBasePath = "/ws-go/v1"
+
+var WSAPI = endpoint.WebSocketAPI{
+    BasePath:  wsBasePath,
+    GroupPath: wsBasePath,
+    Endpoints: []endpoint.WebSocketEndpointLike{
+        ChatWebSocketEndpoint,
+    },
+}
+```
+
+## Frontend Usage
+
+Generated clients are in:
+
+- HTTP: `vue/composables/auto-generated-api.ts`
+- WebSocket: `vue/composables/auto-generated-ws.ts`
+
+Example HTTP usage:
+
+```ts
+import { ListProductsGet } from '@/composables/auto-generated-api';
+
+const data = await ListProductsGet.request({
+  query: { Page: 1, PageSize: 20 },
+});
+```
+
+Example WS usage:
+
+```ts
+import { chatDemo } from '@/composables/auto-generated-ws';
+
+const ws = chatDemo();
+ws.onType('chat', (msg) => console.log(msg));
+ws.send({ type: 'chat', payload: { user: 'demo', content: 'hello' } });
+```
+
+## Common Commands
+
+```bash
+pnpm dev        # start Nuxt + Gin in dev mode
+pnpm build      # build project
+pnpm cleanup    # clean generated/build artifacts
+pnpm update:dep # update toolchain dependencies
+```
+
+## Notes
+
+- If you add or change endpoint models, regenerate clients via normal project workflow (`pnpm dev` / build pipeline).
+
+## License
+
+MIT
