@@ -1,12 +1,14 @@
 <template>
   <div class="page">
     <NavigationMenu />
-    <ProductCrud />
+    <ProductCRUDDemo />
     <WebSocketDemo />
   </div>
 </template>
 
 <script setup lang="ts">
+import ProductCRUDDemo from '@/components/ProductCRUDDemo.vue';
+
 useSeoMeta({
   title: 'Playground - Nuxt Gin Starter',
   applicationName: 'Nuxt Gin Starter',
