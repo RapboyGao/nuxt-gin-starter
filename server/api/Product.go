@@ -11,21 +11,21 @@ import (
 )
 
 type ProductPathParams struct {
-	ID string `uri:"id"`
+	ID string `uri:"id" tsdoc:"Product identifier in route path"`
 }
 
 type ProductQueryParams struct {
-	WithStock bool `form:"withStock"`
+	WithStock bool `form:"withStock" tsdoc:"Whether to include stock information in response"`
 }
 
 type ProductResponseBody struct {
-	ID    string  `json:"id"`
-	Name  string  `json:"name"`
-	Price float64 `json:"price"`
+	ID    string  `json:"id" tsdoc:"Product identifier"`
+	Name  string  `json:"name" tsdoc:"Product display name"`
+	Price float64 `json:"price" tsdoc:"Product unit price"`
 }
 
 type ErrorResponseBody struct {
-	Message string `json:"message"`
+	Message string `json:"message" tsdoc:"Human readable error message"`
 }
 
 var ProductEndpoint = endpoint.NewEndpointNoBody(

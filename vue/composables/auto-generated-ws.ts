@@ -366,9 +366,13 @@ export function ensureWebSocketMessage(value: unknown): WebSocketMessage {
 // TYPE: WsServerEnvelope
 // -----------------------------------------------------
 export interface WsServerEnvelope {
+  /** Server event type */
   type: string;
+  /** Current websocket client id */
   client: string;
+  /** Event message body */
   message: string;
+  /** Server timestamp in milliseconds */
   at: number;
 }
 

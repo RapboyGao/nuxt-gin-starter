@@ -340,8 +340,11 @@ export class ListProductsGet {
 // TYPE: ProductCreateRequest
 // -----------------------------------------------------
 export interface ProductCreateRequest {
+  /** Product name */
   name: string;
+  /** Product unit price, must be greater than 0 */
   price: number;
+  /** Product unique code */
   code: string;
 }
 
@@ -367,11 +370,17 @@ export function validateProductCreateRequest(
 // TYPE: ProductModelResponse
 // -----------------------------------------------------
 export interface ProductModelResponse {
+  /** Product primary key */
   id: number;
+  /** Product name */
   name: string;
+  /** Product unit price */
   price: number;
+  /** Product unique code */
   code: string;
+  /** Creation timestamp in milliseconds */
   createdAt: number;
+  /** Last update timestamp in milliseconds */
   updatedAt: number;
 }
 
@@ -403,6 +412,7 @@ export function validateProductModelResponse(
 // TYPE: ProductIDPathParams
 // -----------------------------------------------------
 export interface ProductIDPathParams {
+  /** Product identifier in route path */
   ID: string;
 }
 
@@ -424,8 +434,11 @@ export function validateProductIDPathParams(
 // TYPE: ProductUpdateRequest
 // -----------------------------------------------------
 export interface ProductUpdateRequest {
+  /** Product name, optional in partial update */
   name: string;
+  /** Product unit price, optional in partial update */
   price: number;
+  /** Product code, optional in partial update */
   code: string;
 }
 
@@ -451,7 +464,9 @@ export function validateProductUpdateRequest(
 // TYPE: ProductListQueryParams
 // -----------------------------------------------------
 export interface ProductListQueryParams {
+  /** Page number, starting from 1 */
   Page: number;
+  /** Page size, max 100 */
   PageSize: number;
 }
 
@@ -475,9 +490,13 @@ export function validateProductListQueryParams(
 // TYPE: ProductListResponse
 // -----------------------------------------------------
 export interface ProductListResponse {
+  /** Current page product items */
   items: ProductModelResponse[];
+  /** Total item count */
   total: number;
+  /** Current page number */
   page: number;
+  /** Current page size */
   size: number;
 }
 

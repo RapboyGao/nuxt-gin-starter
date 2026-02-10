@@ -13,43 +13,43 @@ import (
 )
 
 type ProductIDPathParams struct {
-	ID string `uri:"id"`
+	ID string `uri:"id" tsdoc:"Product identifier in route path"`
 }
 
 // ProductCreateRequest is the input model for creating a product.
 type ProductCreateRequest struct {
-	Name  string  `json:"name"`
-	Price float64 `json:"price"`
-	Code  string  `json:"code"`
+	Name  string  `json:"name" tsdoc:"Product name"`
+	Price float64 `json:"price" tsdoc:"Product unit price, must be greater than 0"`
+	Code  string  `json:"code" tsdoc:"Product unique code"`
 }
 
 // ProductUpdateRequest is the partial input model for updating a product.
 type ProductUpdateRequest struct {
-	Name  *string  `json:"name"`
-	Price *float64 `json:"price"`
-	Code  *string  `json:"code"`
+	Name  *string  `json:"name" tsdoc:"Product name, optional in partial update"`
+	Price *float64 `json:"price" tsdoc:"Product unit price, optional in partial update"`
+	Code  *string  `json:"code" tsdoc:"Product code, optional in partial update"`
 }
 
 // ProductModelResponse is the normalized API response model for product records.
 type ProductModelResponse struct {
-	ID        uint    `json:"id"`
-	Name      string  `json:"name"`
-	Price     float64 `json:"price"`
-	Code      string  `json:"code"`
-	CreatedAt int64   `json:"createdAt"`
-	UpdatedAt int64   `json:"updatedAt"`
+	ID        uint    `json:"id" tsdoc:"Product primary key"`
+	Name      string  `json:"name" tsdoc:"Product name"`
+	Price     float64 `json:"price" tsdoc:"Product unit price"`
+	Code      string  `json:"code" tsdoc:"Product unique code"`
+	CreatedAt int64   `json:"createdAt" tsdoc:"Creation timestamp in milliseconds"`
+	UpdatedAt int64   `json:"updatedAt" tsdoc:"Last update timestamp in milliseconds"`
 }
 
 type ProductListQueryParams struct {
-	Page     int `form:"page"`
-	PageSize int `form:"pageSize"`
+	Page     int `form:"page" tsdoc:"Page number, starting from 1"`
+	PageSize int `form:"pageSize" tsdoc:"Page size, max 100"`
 }
 
 type ProductListResponse struct {
-	Items []ProductModelResponse `json:"items"`
-	Total int64                  `json:"total"`
-	Page  int                    `json:"page"`
-	Size  int                    `json:"size"`
+	Items []ProductModelResponse `json:"items" tsdoc:"Current page product items"`
+	Total int64                  `json:"total" tsdoc:"Total item count"`
+	Page  int                    `json:"page" tsdoc:"Current page number"`
+	Size  int                    `json:"size" tsdoc:"Current page size"`
 }
 
 func toProductResponse(p model.Product) ProductModelResponse {

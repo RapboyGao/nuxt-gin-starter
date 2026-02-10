@@ -10,21 +10,21 @@ import (
 )
 
 type wsPingPayload struct {
-	At int64 `json:"at"`
+	At int64 `json:"at" tsdoc:"Client local timestamp in milliseconds when sending ping"`
 }
 
 type wsChatPayload struct {
-	User    string `json:"user"`
-	Content string `json:"content"`
+	User    string `json:"user" tsdoc:"Sender display name"`
+	Content string `json:"content" tsdoc:"Chat content text"`
 }
 
 type wsWhoAmIPayload struct{}
 
 type wsServerEnvelope struct {
-	Type    string `json:"type"`
-	Client  string `json:"client"`
-	Message string `json:"message"`
-	At      int64  `json:"at"`
+	Type    string `json:"type" tsdoc:"Server event type"`
+	Client  string `json:"client" tsdoc:"Current websocket client id"`
+	Message string `json:"message" tsdoc:"Event message body"`
+	At      int64  `json:"at" tsdoc:"Server timestamp in milliseconds"`
 }
 
 // ChatWebSocketEndpoint handles a small event protocol:
