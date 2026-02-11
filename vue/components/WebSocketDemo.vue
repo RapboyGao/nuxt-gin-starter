@@ -52,7 +52,12 @@ type ChatDemoClient = ChatDemo<WsClientMessage>;
 const ws = shallowRef<ChatDemoClient | null>(null);
 const isOpen = ref(false);
 const error = ref('');
-const user = ref('demo-user');
+const randomUser = () => {
+  const pool = ['nova', 'echo', 'atlas', 'pixel', 'zen', 'orbit', 'pulse'];
+  const suffix = Math.floor(1000 + Math.random() * 9000);
+  return `${pool[Math.floor(Math.random() * pool.length)]}-${suffix}`;
+};
+const user = ref(randomUser());
 const chatText = ref('');
 const logs = ref<string[]>([]);
 let unbindEvents: (() => void) | null = null;
@@ -82,8 +87,20 @@ const bindClientEvents = (client: ChatDemoClient) => {
     appendLog(`[${payload.type}] ${payload.message ?? ''}`);
   });
 
-  const offChat = client.onType('chat', (payload) => {
-    appendLog(`[chat-only] ${payload.message ?? ''}`);
+  const offChat = client.onChatType((payload) => {
+    appendLog(`[chat] ${payload.message ?? ''}`);
+  });
+  const offWhoami = client.onWhoamiType((payload) => {
+    appendLog(`[whoami] ${payload.client ?? ''}`);
+  });
+  const offPong = client.onPongType((payload) => {
+    appendLog(`[pong] ${payload.message ?? ''}`);
+  });
+  const offSystem = client.onSystemType((payload) => {
+    appendLog(`[system] ${payload.message ?? ''}`);
+  });
+  const offServerError = client.onErrorType((payload) => {
+    appendLog(`[error] ${payload.message ?? ''}`);
   });
 
   const offError = client.onError(() => {
@@ -99,6 +116,10 @@ const bindClientEvents = (client: ChatDemoClient) => {
     offOpen();
     offMessage();
     offChat();
+    offWhoami();
+    offPong();
+    offSystem();
+    offServerError();
     offError();
     offClose();
   };

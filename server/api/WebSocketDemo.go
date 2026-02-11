@@ -37,6 +37,13 @@ var ChatWebSocketEndpoint = func() *endpoint.WebSocketEndpoint {
 	ws.Path = "/chat-demo"
 	ws.Description = "WebSocket demo with typed message handlers"
 	ws.ServerMessageType = reflect.TypeOf(wsServerEnvelope{})
+	ws.MessageTypes = []string{
+		"chat",
+		"error",
+		"pong",
+		"system",
+		"whoami",
+	}
 
 	ws.OnConnect = func(ctx *endpoint.WebSocketContext) error {
 		return ctx.Publish(wsServerEnvelope{

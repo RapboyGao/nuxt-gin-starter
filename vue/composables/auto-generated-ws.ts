@@ -462,7 +462,12 @@ export function ensureWsServerEnvelope(value: unknown): WsServerEnvelope {
  */
 // Literal union is emitted as type because interface cannot model union values.
 // 字面量联合类型使用 type，因为 interface 不能表达联合值。
-export type ChatDemoMessageType = string;
+export type ChatDemoMessageType =
+  | 'chat'
+  | 'error'
+  | 'pong'
+  | 'system'
+  | 'whoami';
 export class ChatDemo<TSend = WebSocketMessage> extends TypedWebSocketClient<
   WsServerEnvelope,
   TSend,
@@ -470,13 +475,209 @@ export class ChatDemo<TSend = WebSocketMessage> extends TypedWebSocketClient<
 > {
   static readonly NAME = 'chatDemo' as const;
   static readonly PATH = '/chat-demo' as const;
-  static readonly MESSAGE_TYPES = [] as const;
+  static readonly MESSAGE_TYPES = [
+    'chat',
+    'error',
+    'pong',
+    'system',
+    'whoami',
+  ] as const;
   public readonly endpointName = ChatDemo.NAME;
   public readonly endpointPath = ChatDemo.PATH;
 
   constructor(options: WebSocketConvertOptions<TSend, WsServerEnvelope>) {
     const url = joinURLPath('/ws-go/v1', '/chat-demo');
     super(url, options);
+  }
+
+  /**
+   * Subscribe to messages with type "chat" for ChatDemo.
+   * 订阅 ChatDemo 中 type="chat" 的完整消息。
+   */
+  onChatType(
+    handler: (message: WsServerEnvelope) => void,
+    options?: TypeHandlerOptions<WsServerEnvelope>
+  ): () => void {
+    if (options === undefined) {
+      options = { validate: validateWsServerEnvelope };
+    }
+    return this.onType('chat' as ChatDemoMessageType, handler, options);
+  }
+
+  /**
+   * Subscribe to payload of messages with type "chat" for ChatDemo.
+   * 订阅 ChatDemo 中 type="chat" 的 payload，并可通过 options 做选择、校验与解码。
+   */
+  onChatPayload<TPayload>(
+    handler: (payload: TPayload, message: WsServerEnvelope) => void,
+    options?: TypedHandlerOptions<WsServerEnvelope, TPayload>
+  ): () => void {
+    if (options === undefined) {
+      function defaultValidatePayload(
+        _payload: unknown,
+        message: WsServerEnvelope
+      ): boolean {
+        return validateWsServerEnvelope(message);
+      }
+      options = { validate: defaultValidatePayload };
+    }
+    return this.onTyped<TPayload>(
+      'chat' as ChatDemoMessageType,
+      handler,
+      options
+    );
+  }
+
+  /**
+   * Subscribe to messages with type "error" for ChatDemo.
+   * 订阅 ChatDemo 中 type="error" 的完整消息。
+   */
+  onErrorType(
+    handler: (message: WsServerEnvelope) => void,
+    options?: TypeHandlerOptions<WsServerEnvelope>
+  ): () => void {
+    if (options === undefined) {
+      options = { validate: validateWsServerEnvelope };
+    }
+    return this.onType('error' as ChatDemoMessageType, handler, options);
+  }
+
+  /**
+   * Subscribe to payload of messages with type "error" for ChatDemo.
+   * 订阅 ChatDemo 中 type="error" 的 payload，并可通过 options 做选择、校验与解码。
+   */
+  onErrorPayload<TPayload>(
+    handler: (payload: TPayload, message: WsServerEnvelope) => void,
+    options?: TypedHandlerOptions<WsServerEnvelope, TPayload>
+  ): () => void {
+    if (options === undefined) {
+      function defaultValidatePayload(
+        _payload: unknown,
+        message: WsServerEnvelope
+      ): boolean {
+        return validateWsServerEnvelope(message);
+      }
+      options = { validate: defaultValidatePayload };
+    }
+    return this.onTyped<TPayload>(
+      'error' as ChatDemoMessageType,
+      handler,
+      options
+    );
+  }
+
+  /**
+   * Subscribe to messages with type "pong" for ChatDemo.
+   * 订阅 ChatDemo 中 type="pong" 的完整消息。
+   */
+  onPongType(
+    handler: (message: WsServerEnvelope) => void,
+    options?: TypeHandlerOptions<WsServerEnvelope>
+  ): () => void {
+    if (options === undefined) {
+      options = { validate: validateWsServerEnvelope };
+    }
+    return this.onType('pong' as ChatDemoMessageType, handler, options);
+  }
+
+  /**
+   * Subscribe to payload of messages with type "pong" for ChatDemo.
+   * 订阅 ChatDemo 中 type="pong" 的 payload，并可通过 options 做选择、校验与解码。
+   */
+  onPongPayload<TPayload>(
+    handler: (payload: TPayload, message: WsServerEnvelope) => void,
+    options?: TypedHandlerOptions<WsServerEnvelope, TPayload>
+  ): () => void {
+    if (options === undefined) {
+      function defaultValidatePayload(
+        _payload: unknown,
+        message: WsServerEnvelope
+      ): boolean {
+        return validateWsServerEnvelope(message);
+      }
+      options = { validate: defaultValidatePayload };
+    }
+    return this.onTyped<TPayload>(
+      'pong' as ChatDemoMessageType,
+      handler,
+      options
+    );
+  }
+
+  /**
+   * Subscribe to messages with type "system" for ChatDemo.
+   * 订阅 ChatDemo 中 type="system" 的完整消息。
+   */
+  onSystemType(
+    handler: (message: WsServerEnvelope) => void,
+    options?: TypeHandlerOptions<WsServerEnvelope>
+  ): () => void {
+    if (options === undefined) {
+      options = { validate: validateWsServerEnvelope };
+    }
+    return this.onType('system' as ChatDemoMessageType, handler, options);
+  }
+
+  /**
+   * Subscribe to payload of messages with type "system" for ChatDemo.
+   * 订阅 ChatDemo 中 type="system" 的 payload，并可通过 options 做选择、校验与解码。
+   */
+  onSystemPayload<TPayload>(
+    handler: (payload: TPayload, message: WsServerEnvelope) => void,
+    options?: TypedHandlerOptions<WsServerEnvelope, TPayload>
+  ): () => void {
+    if (options === undefined) {
+      function defaultValidatePayload(
+        _payload: unknown,
+        message: WsServerEnvelope
+      ): boolean {
+        return validateWsServerEnvelope(message);
+      }
+      options = { validate: defaultValidatePayload };
+    }
+    return this.onTyped<TPayload>(
+      'system' as ChatDemoMessageType,
+      handler,
+      options
+    );
+  }
+
+  /**
+   * Subscribe to messages with type "whoami" for ChatDemo.
+   * 订阅 ChatDemo 中 type="whoami" 的完整消息。
+   */
+  onWhoamiType(
+    handler: (message: WsServerEnvelope) => void,
+    options?: TypeHandlerOptions<WsServerEnvelope>
+  ): () => void {
+    if (options === undefined) {
+      options = { validate: validateWsServerEnvelope };
+    }
+    return this.onType('whoami' as ChatDemoMessageType, handler, options);
+  }
+
+  /**
+   * Subscribe to payload of messages with type "whoami" for ChatDemo.
+   * 订阅 ChatDemo 中 type="whoami" 的 payload，并可通过 options 做选择、校验与解码。
+   */
+  onWhoamiPayload<TPayload>(
+    handler: (payload: TPayload, message: WsServerEnvelope) => void,
+    options?: TypedHandlerOptions<WsServerEnvelope, TPayload>
+  ): () => void {
+    if (options === undefined) {
+      function defaultValidatePayload(
+        _payload: unknown,
+        message: WsServerEnvelope
+      ): boolean {
+        return validateWsServerEnvelope(message);
+      }
+      options = { validate: defaultValidatePayload };
+    }
+    return this.onTyped<TPayload>(
+      'whoami' as ChatDemoMessageType,
+      handler,
+      options
+    );
   }
 }
 export function createChatDemo<TSend = WebSocketMessage>(
