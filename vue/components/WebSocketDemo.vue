@@ -140,11 +140,15 @@ import {
   createProductCrudWsDemo,
 } from '@/composables/auto-generated-ws';
 import {
-  ensureWebSocketMessage,
   ensureWsProductOverview,
 } from '@/composables/auto-generated-types';
 
 type ProductWsClientMessage = {
+  type: string;
+  payload: unknown;
+};
+
+type ProductWsIncomingMessage = {
   type: string;
   payload: unknown;
 };
@@ -258,10 +262,21 @@ const parseOverviewPayload = (value: unknown) => {
   return ensureWsProductOverview(value);
 };
 
+const normalizeIncomingMessage = (value: unknown): ProductWsIncomingMessage => {
+  if (!value || typeof value !== 'object') {
+    return { type: 'unknown', payload: value };
+  }
+  const record = value as Record<string, unknown>;
+  return {
+    type: typeof record.type === 'string' ? record.type : 'unknown',
+    payload: record.payload,
+  };
+};
+
 const createClient = () =>
   createProductCrudWsDemo<ProductWsClientMessage>({
     serialize: (value) => value,
-    deserialize: (value) => ensureWebSocketMessage(value),
+    deserialize: (value) => normalizeIncomingMessage(value) as any,
   });
 
 const requestList = () => {
@@ -319,10 +334,14 @@ const remove = (id: number) => {
 const bindClientEvents = (client: ProductCrudWsClient) => {
   unbindEvents?.();
 
-  const offOpen = client.onOpen(() => {
+  const handleConnected = () => {
     isOpen.value = true;
     appendLog('connected');
     requestList();
+  };
+
+  const offOpen = client.onOpen(() => {
+    handleConnected();
   });
 
   const offClose = client.onClose(() => {
@@ -352,6 +371,9 @@ const bindClientEvents = (client: ProductCrudWsClient) => {
   }, decodeOptions);
   const offSystem = client.onSystemPayload((payload) => {
     appendLog(`[system] ${payload.message ?? ''}`);
+    if ((payload.items?.length ?? 0) > 0) {
+      applyList(payload.items ?? []);
+    }
   }, decodeOptions);
   const offServerError = client.onErrorPayload((payload) => {
     error.value = payload.message || 'server error';
@@ -370,6 +392,11 @@ const bindClientEvents = (client: ProductCrudWsClient) => {
     offSystem();
     offServerError();
   };
+
+  // Avoid missing initial open event when socket opens before handlers are attached.
+  if (client.isOpen) {
+    handleConnected();
+  }
 };
 
 const connect = () => {
