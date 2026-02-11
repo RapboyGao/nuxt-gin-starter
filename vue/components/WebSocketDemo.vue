@@ -62,12 +62,14 @@ const chatText = ref('');
 const logs = ref<string[]>([]);
 let unbindEvents: (() => void) | null = null;
 
-const createClient = () =>
-  createChatDemo<WsClientMessage>({
+const createClient = () => {
+  let demo = createChatDemo<WsClientMessage>({
     serialize: (value) => value,
     deserialize: (value) => ensureWsServerEnvelope(value),
   });
-
+  console.log('createClient', demo);
+  return demo;
+};
 const appendLog = (line: string) => {
   logs.value.unshift(line);
   if (logs.value.length > 30) {
