@@ -13,6 +13,8 @@ import (
 	"gorm.io/gorm"
 )
 
+const productWSDemoFullPath = "/ws-go/v1/products-demo"
+
 type wsProductUpdatePayload struct {
 	ID    uint    `json:"id" tsdoc:"Product id"`
 	Name  string  `json:"name" tsdoc:"Product name"`
@@ -105,6 +107,14 @@ func wrapProductWSMessage(eventType string, payload wsProductOverview) endpoint.
 	}
 }
 
+func wsErrorMessage(msg string) endpoint.WebSocketMessage {
+	return wrapProductWSMessage("error", newProductWSEnvelope(msg))
+}
+
+func wsErrorFromErr(err error) endpoint.WebSocketMessage {
+	return wsErrorMessage(err.Error())
+}
+
 func validateProductInput(name string, price float64, levelRaw string) (string, error) {
 	if strings.TrimSpace(name) == "" {
 		return "", errors.New("name is required")
@@ -124,7 +134,7 @@ func publishProductCRUDSync(db *gorm.DB) {
 	if err != nil {
 		return
 	}
-	_ = endpoint.BroadcastWebSocketJSON("/ws-go/v1/products-demo", wrapProductWSMessage("sync", syncResp))
+	_ = endpoint.BroadcastWebSocketJSON(productWSDemoFullPath, wrapProductWSMessage("sync", syncResp))
 }
 
 // ProductCRUDWebSocketEndpoint provides CRUD actions over WebSocket.
@@ -139,26 +149,23 @@ var ProductCRUDWebSocketEndpoint = func() *endpoint.WebSocketEndpoint {
 	ws.OnConnect = func(ctx *endpoint.WebSocketContext) error {
 		db, err := ensureDB()
 		if err != nil {
-			return ctx.Send(wrapProductWSMessage("error", newProductWSEnvelope(err.Error())))
+			return ctx.Send(wsErrorFromErr(err))
 		}
 		systemResp, err := buildProductListEnvelope(db, "connected", 1, 0)
 		if err != nil {
-			return ctx.Send(wrapProductWSMessage("error", newProductWSEnvelope(err.Error())))
+			return ctx.Send(wsErrorFromErr(err))
 		}
-		if err := ctx.Send(wrapProductWSMessage("system", systemResp)); err != nil {
-			return err
-		}
-		return nil
+		return ctx.Send(wrapProductWSMessage("system", systemResp))
 	}
 
 	endpoint.RegisterWebSocketTypedHandler(ws, "list", func(payload ProductListQueryParams, _ *endpoint.WebSocketContext) (any, error) {
 		db, err := ensureDB()
 		if err != nil {
-			return wrapProductWSMessage("error", newProductWSEnvelope(err.Error())), nil
+			return wsErrorFromErr(err), nil
 		}
 		resp, err := buildProductListEnvelope(db, "ok", payload.Page, payload.PageSize)
 		if err != nil {
-			return wrapProductWSMessage("error", newProductWSEnvelope(err.Error())), nil
+			return wsErrorFromErr(err), nil
 		}
 		return wrapProductWSMessage("list", resp), nil
 	})
@@ -166,12 +173,12 @@ var ProductCRUDWebSocketEndpoint = func() *endpoint.WebSocketEndpoint {
 	endpoint.RegisterWebSocketTypedHandler(ws, "create", func(payload ProductCreateRequest, _ *endpoint.WebSocketContext) (any, error) {
 		level, err := validateProductInput(payload.Name, payload.Price, payload.Level)
 		if err != nil {
-			return wrapProductWSMessage("error", newProductWSEnvelope(err.Error())), nil
+			return wsErrorFromErr(err), nil
 		}
 
 		db, err := ensureDB()
 		if err != nil {
-			return wrapProductWSMessage("error", newProductWSEnvelope(err.Error())), nil
+			return wsErrorFromErr(err), nil
 		}
 
 		product := model.Product{
@@ -181,7 +188,7 @@ var ProductCRUDWebSocketEndpoint = func() *endpoint.WebSocketEndpoint {
 			Level: level,
 		}
 		if err := db.Create(&product).Error; err != nil {
-			return wrapProductWSMessage("error", newProductWSEnvelope(err.Error())), nil
+			return wsErrorFromErr(err), nil
 		}
 
 		resp := newProductWSEnvelope("product created")
@@ -194,24 +201,24 @@ var ProductCRUDWebSocketEndpoint = func() *endpoint.WebSocketEndpoint {
 
 	endpoint.RegisterWebSocketTypedHandler(ws, "update", func(payload wsProductUpdatePayload, _ *endpoint.WebSocketContext) (any, error) {
 		if payload.ID == 0 {
-			return wrapProductWSMessage("error", newProductWSEnvelope("invalid product id")), nil
+			return wsErrorMessage("invalid product id"), nil
 		}
 		level, err := validateProductInput(payload.Name, payload.Price, payload.Level)
 		if err != nil {
-			return wrapProductWSMessage("error", newProductWSEnvelope(err.Error())), nil
+			return wsErrorFromErr(err), nil
 		}
 
 		db, err := ensureDB()
 		if err != nil {
-			return wrapProductWSMessage("error", newProductWSEnvelope(err.Error())), nil
+			return wsErrorFromErr(err), nil
 		}
 
 		var product model.Product
 		if err := db.First(&product, payload.ID).Error; err != nil {
 			if errors.Is(err, gorm.ErrRecordNotFound) {
-				return wrapProductWSMessage("error", newProductWSEnvelope("product not found")), nil
+				return wsErrorMessage("product not found"), nil
 			}
-			return wrapProductWSMessage("error", newProductWSEnvelope(err.Error())), nil
+			return wsErrorFromErr(err), nil
 		}
 
 		product.Name = strings.TrimSpace(payload.Name)
@@ -219,7 +226,7 @@ var ProductCRUDWebSocketEndpoint = func() *endpoint.WebSocketEndpoint {
 		product.Code = strings.TrimSpace(payload.Code)
 		product.Level = level
 		if err := db.Save(&product).Error; err != nil {
-			return wrapProductWSMessage("error", newProductWSEnvelope(err.Error())), nil
+			return wsErrorFromErr(err), nil
 		}
 
 		resp := newProductWSEnvelope("product updated")
@@ -232,20 +239,20 @@ var ProductCRUDWebSocketEndpoint = func() *endpoint.WebSocketEndpoint {
 
 	endpoint.RegisterWebSocketTypedHandler(ws, "delete", func(payload wsProductDeletePayload, _ *endpoint.WebSocketContext) (any, error) {
 		if payload.ID == 0 {
-			return wrapProductWSMessage("error", newProductWSEnvelope("invalid product id")), nil
+			return wsErrorMessage("invalid product id"), nil
 		}
 
 		db, err := ensureDB()
 		if err != nil {
-			return wrapProductWSMessage("error", newProductWSEnvelope(err.Error())), nil
+			return wsErrorFromErr(err), nil
 		}
 
 		result := db.Delete(&model.Product{}, payload.ID)
 		if result.Error != nil {
-			return wrapProductWSMessage("error", newProductWSEnvelope(result.Error.Error())), nil
+			return wsErrorFromErr(result.Error), nil
 		}
 		if result.RowsAffected == 0 {
-			return wrapProductWSMessage("error", newProductWSEnvelope("product not found")), nil
+			return wsErrorMessage("product not found"), nil
 		}
 
 		resp := newProductWSEnvelope("product deleted")
