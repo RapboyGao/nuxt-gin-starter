@@ -473,7 +473,7 @@ export function ensureWebSocketMessage(value: unknown): WebSocketMessage {
 }
 
 // -----------------------------------------------------
-// TYPE: ProductListQueryParams
+// TYPE: ProductCreateRequest
 // -----------------------------------------------------
 
 // -----------------------------------------------------
@@ -594,6 +594,8 @@ export function ensureWsProductDeletePayload(
   return value;
 }
 
-// #endregion Interfaces & Validators
+// -----------------------------------------------------
+// TYPE: ProductListQueryParams
+// -----------------------------------------------------
 
 // #endregion Interfaces & Validators

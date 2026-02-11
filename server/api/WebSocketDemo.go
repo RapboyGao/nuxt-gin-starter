@@ -25,7 +25,7 @@ type wsProductDeletePayload struct {
 	ID uint `json:"id" tsdoc:"Product id"`
 }
 
-type wsProductServerEnvelope struct {
+type wsProductOverview struct {
 	Message   string                 `json:"message" tsdoc:"Event message"`
 	Item      ProductModelResponse   `json:"item" tsdoc:"Single product payload"`
 	Items     []ProductModelResponse `json:"items" tsdoc:"Product list payload"`
@@ -36,8 +36,8 @@ type wsProductServerEnvelope struct {
 	At        int64                  `json:"at" tsdoc:"Server timestamp in milliseconds"`
 }
 
-func newProductWSEnvelope(msg string) wsProductServerEnvelope {
-	return wsProductServerEnvelope{
+func newProductWSEnvelope(msg string) wsProductOverview {
+	return wsProductOverview{
 		Message: msg,
 		Item: ProductModelResponse{
 			ID:        0,
@@ -53,7 +53,7 @@ func newProductWSEnvelope(msg string) wsProductServerEnvelope {
 	}
 }
 
-func buildProductListEnvelope(db *gorm.DB, msg string, page int, size int) (wsProductServerEnvelope, error) {
+func buildProductListEnvelope(db *gorm.DB, msg string, page int, size int) (wsProductOverview, error) {
 	if page <= 0 {
 		page = 1
 	}
@@ -64,18 +64,18 @@ func buildProductListEnvelope(db *gorm.DB, msg string, page int, size int) (wsPr
 
 	var total int64
 	if err := db.Model(&model.Product{}).Count(&total).Error; err != nil {
-		return wsProductServerEnvelope{}, err
+		return wsProductOverview{}, err
 	}
 
 	var products []model.Product
 	if fetchAll {
 		if err := db.Order("id desc").Find(&products).Error; err != nil {
-			return wsProductServerEnvelope{}, err
+			return wsProductOverview{}, err
 		}
 	} else {
 		offset := (page - 1) * size
 		if err := db.Order("id desc").Limit(size).Offset(offset).Find(&products).Error; err != nil {
-			return wsProductServerEnvelope{}, err
+			return wsProductOverview{}, err
 		}
 	}
 
@@ -97,7 +97,7 @@ func buildProductListEnvelope(db *gorm.DB, msg string, page int, size int) (wsPr
 	return resp, nil
 }
 
-func wrapProductWSMessage(eventType string, payload wsProductServerEnvelope) endpoint.WebSocketMessage {
+func wrapProductWSMessage(eventType string, payload wsProductOverview) endpoint.WebSocketMessage {
 	body, _ := json.Marshal(payload)
 	return endpoint.WebSocketMessage{
 		Type:    eventType,
