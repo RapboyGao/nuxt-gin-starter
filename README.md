@@ -107,16 +107,24 @@ ws.ClientMessageType = reflect.TypeOf(endpoint.WebSocketMessage{})
 ws.ServerMessageType = reflect.TypeOf(endpoint.WebSocketMessage{})
 ```
 
-Server sends typed business payload through `payload`:
+To generate `onXXXPayload(...)` in TS client, endpoint needs:
+
+- `MessageTypes`
+- `ServerMessageType` as `endpoint.WebSocketMessage`
+- `RegisterWebSocketServerPayloadType[...]` for each message type
+- `RegisterWebSocketTypedHandler(...)` mapping for each message type
+
+Backend setup (simplified):
 
 ```go
-func wrapProductWSMessage(eventType string, payload wsProductOverview) endpoint.WebSocketMessage {
-	body, _ := json.Marshal(payload)
-	return endpoint.WebSocketMessage{
-		Type:    eventType,
-		Payload: body,
-	}
+ws.MessageTypes = []string{"created", "deleted", "error", "list", "sync", "system", "updated"}
+for _, t := range ws.MessageTypes {
+  endpoint.RegisterWebSocketServerPayloadType[wsProductOverview](ws, t)
 }
+
+endpoint.RegisterWebSocketTypedHandler(ws, "list", func(p ProductListQueryParams, _ *endpoint.WebSocketContext) (any, error) {
+  return wrapProductWSMessage("list", overview), nil
+})
 ```
 
 Client send example:
@@ -128,21 +136,26 @@ ws.sendTypedMessage({
 })
 ```
 
-Client receive example:
+Client receive example (`onXXXPayload`):
 
 ```ts
-ws.onMessage((message) => {
-  if (message.type === 'list') {
-    // parse message.payload then render items
-  }
-})
+const decodeOptions = { decode: parseOverviewPayload };
+
+ws.onListPayload((payload) => {
+  items.value = payload.items ?? [];
+}, decodeOptions);
+
+ws.onSyncPayload((payload) => {
+  items.value = payload.items ?? [];
+}, decodeOptions);
 ```
 
 ### Notes
 
 - This project does not use Air.
 - `ProductCRUD.go` HTTP mutations also trigger WebSocket `sync`.
-- On first connect, frontend requests list via payload (`type: "list"`), instead of relying on an auto list push.
+- On first connect, frontend requests list via payload (`type: "list"`), and also handles `system` payload as fallback.
+- Current generated `auto-generated-ws.ts` may need local TS cast patching in this repo to satisfy strict `nuxi typecheck`.
 
 ### Ecosystem
 
@@ -248,16 +261,24 @@ ws.ClientMessageType = reflect.TypeOf(endpoint.WebSocketMessage{})
 ws.ServerMessageType = reflect.TypeOf(endpoint.WebSocketMessage{})
 ```
 
-服务端把业务结构编码到 `payload`：
+想让 TS 客户端出现 `onXXXPayload(...)`，后端需要同时满足：
+
+- 设置 `MessageTypes`
+- `ServerMessageType` 使用 `endpoint.WebSocketMessage`
+- 每个 message type 调用 `RegisterWebSocketServerPayloadType[...]`
+- 每个 message type 有 `RegisterWebSocketTypedHandler(...)` 映射
+
+后端示例（简化）：
 
 ```go
-func wrapProductWSMessage(eventType string, payload wsProductOverview) endpoint.WebSocketMessage {
-	body, _ := json.Marshal(payload)
-	return endpoint.WebSocketMessage{
-		Type:    eventType,
-		Payload: body,
-	}
+ws.MessageTypes = []string{"created", "deleted", "error", "list", "sync", "system", "updated"}
+for _, t := range ws.MessageTypes {
+  endpoint.RegisterWebSocketServerPayloadType[wsProductOverview](ws, t)
 }
+
+endpoint.RegisterWebSocketTypedHandler(ws, "list", func(p ProductListQueryParams, _ *endpoint.WebSocketContext) (any, error) {
+  return wrapProductWSMessage("list", overview), nil
+})
 ```
 
 前端发送：
@@ -269,21 +290,26 @@ ws.sendTypedMessage({
 })
 ```
 
-前端接收：
+前端接收（`onXXXPayload`）：
 
 ```ts
-ws.onMessage((message) => {
-  if (message.type === 'list') {
-    // 解析 payload 后渲染 items
-  }
-})
+const decodeOptions = { decode: parseOverviewPayload };
+
+ws.onListPayload((payload) => {
+  items.value = payload.items ?? [];
+}, decodeOptions);
+
+ws.onSyncPayload((payload) => {
+  items.value = payload.items ?? [];
+}, decodeOptions);
 ```
 
 ### 说明
 
 - 本项目不再使用 Air。
 - `ProductCRUD.go` 的 HTTP 写操作会联动触发 WebSocket `sync`。
-- 首次连接后，前端通过 `type: "list"` + payload 主动拉取全量列表。
+- 首次连接后，前端通过 `type: "list"` + payload 主动拉取全量列表，并用 `system` 消息兜底更新。
+- 当前仓库里生成的 `auto-generated-ws.ts` 在严格类型检查下可能需要本地 cast 补丁。
 
 ### 生态
 

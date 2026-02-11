@@ -2,7 +2,7 @@
   <section class="crud-card">
     <div class="crud-header">
       <div>
-        <h3>ProductCRUDDemo (WebSocket)</h3>
+        <h3>Product CRUD Demo (WebSocket)</h3>
         <p class="crud-subtitle">
           Endpoint: <code>/ws-go/v1/products-demo</code>
         </p>

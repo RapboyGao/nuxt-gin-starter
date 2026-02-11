@@ -2,7 +2,7 @@
   <section class="crud-card">
     <div class="crud-header">
       <div>
-        <h3>ProductCRUDDemo (Http)</h3>
+        <h3>Product CRUD Demo (Http)</h3>
         <p class="crud-subtitle">
           Create, update, list, and delete products using GORM.
         </p>
