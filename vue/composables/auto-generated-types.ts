@@ -570,59 +570,6 @@ export function ensureWsProductServerEnvelope(
 }
 
 // -----------------------------------------------------
-// TYPE: WsProductListPayload
-// -----------------------------------------------------
-
-// -----------------------------------------------------
-// TYPE: WsProductListPayload
-// -----------------------------------------------------
-export interface WsProductListPayload {
-  /** Page number, starting from 1 */
-  page: number;
-  /** Page size, max 100; set 0 to fetch all products */
-  pageSize: number;
-}
-
-/**
- * Validate whether a value matches WsProductListPayload.
- * 校验一个值是否符合 WsProductListPayload 结构。
- */
-
-/**
- * Validate whether a value matches WsProductListPayload.
- * 校验一个值是否符合 WsProductListPayload 结构。
- */
-export function validateWsProductListPayload(
-  value: unknown
-): value is WsProductListPayload {
-  if (!isPlainObject(value)) return false;
-  const obj = value as Record<string, unknown>;
-  if (!('page' in obj)) return false;
-  if (!(typeof obj['page'] === 'number')) return false;
-  if (!('pageSize' in obj)) return false;
-  if (!(typeof obj['pageSize'] === 'number')) return false;
-  return true;
-}
-
-/**
- * Ensure a typed WsProductListPayload after validation.
- * 先校验，再确保得到类型化的 WsProductListPayload。
- */
-
-/**
- * Ensure a typed WsProductListPayload after validation.
- * 先校验，再确保得到类型化的 WsProductListPayload。
- */
-export function ensureWsProductListPayload(
-  value: unknown
-): WsProductListPayload {
-  if (!validateWsProductListPayload(value)) {
-    throw new Error('Invalid WsProductListPayload');
-  }
-  return value;
-}
-
-// -----------------------------------------------------
 // TYPE: WsProductCreatePayload
 // -----------------------------------------------------
 
@@ -809,6 +756,59 @@ export function ensureWsProductDeletePayload(
 ): WsProductDeletePayload {
   if (!validateWsProductDeletePayload(value)) {
     throw new Error('Invalid WsProductDeletePayload');
+  }
+  return value;
+}
+
+// -----------------------------------------------------
+// TYPE: WsProductListPayload
+// -----------------------------------------------------
+
+// -----------------------------------------------------
+// TYPE: WsProductListPayload
+// -----------------------------------------------------
+export interface WsProductListPayload {
+  /** Page number, starting from 1 */
+  page: number;
+  /** Page size, max 100; set 0 to fetch all products */
+  pageSize: number;
+}
+
+/**
+ * Validate whether a value matches WsProductListPayload.
+ * 校验一个值是否符合 WsProductListPayload 结构。
+ */
+
+/**
+ * Validate whether a value matches WsProductListPayload.
+ * 校验一个值是否符合 WsProductListPayload 结构。
+ */
+export function validateWsProductListPayload(
+  value: unknown
+): value is WsProductListPayload {
+  if (!isPlainObject(value)) return false;
+  const obj = value as Record<string, unknown>;
+  if (!('page' in obj)) return false;
+  if (!(typeof obj['page'] === 'number')) return false;
+  if (!('pageSize' in obj)) return false;
+  if (!(typeof obj['pageSize'] === 'number')) return false;
+  return true;
+}
+
+/**
+ * Ensure a typed WsProductListPayload after validation.
+ * 先校验，再确保得到类型化的 WsProductListPayload。
+ */
+
+/**
+ * Ensure a typed WsProductListPayload after validation.
+ * 先校验，再确保得到类型化的 WsProductListPayload。
+ */
+export function ensureWsProductListPayload(
+  value: unknown
+): WsProductListPayload {
+  if (!validateWsProductListPayload(value)) {
+    throw new Error('Invalid WsProductListPayload');
   }
   return value;
 }

@@ -154,6 +154,18 @@ var ProductCRUDWebSocketEndpoint = func() *endpoint.WebSocketEndpoint {
 		"system",
 		"updated",
 	}
+	
+	if ws.ClientPayloadTypes == nil {
+		ws.ClientPayloadTypes = map[string]reflect.Type{}
+	}
+	noopPayloadType := reflect.TypeOf(map[string]any{})
+
+	for _, messageType := range ws.MessageTypes {
+		if _, ok := ws.ClientPayloadTypes[messageType]; !ok {
+			ws.ClientPayloadTypes[messageType] = noopPayloadType
+		}
+		endpoint.RegisterWebSocketServerPayloadType[wsProductServerEnvelope](ws, messageType)
+	}
 
 	ws.OnConnect = func(ctx *endpoint.WebSocketContext) error {
 		db, err := ensureDB()
