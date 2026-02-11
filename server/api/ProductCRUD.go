@@ -12,6 +12,22 @@ import (
 	"gorm.io/gorm"
 )
 
+const (
+	productLevelBasic    = "basic"
+	productLevelStandard = "standard"
+	productLevelPremium  = "premium"
+)
+
+func normalizeProductLevel(raw string) (string, bool) {
+	level := strings.ToLower(strings.TrimSpace(raw))
+	switch level {
+	case productLevelBasic, productLevelStandard, productLevelPremium:
+		return level, true
+	default:
+		return "", false
+	}
+}
+
 type ProductIDPathParams struct {
 	ID string `uri:"id" tsdoc:"Product identifier in route path"`
 }
@@ -21,6 +37,7 @@ type ProductCreateRequest struct {
 	Name  string  `json:"name" tsdoc:"Product name"`
 	Price float64 `json:"price" tsdoc:"Product unit price, must be greater than 0"`
 	Code  string  `json:"code" tsdoc:"Product unique code"`
+	Level string  `json:"level" tsunion:"basic,standard,premium" tsdoc:"Product level"`
 }
 
 // ProductUpdateRequest is the partial input model for updating a product.
@@ -28,6 +45,7 @@ type ProductUpdateRequest struct {
 	Name  *string  `json:"name" tsdoc:"Product name, optional in partial update"`
 	Price *float64 `json:"price" tsdoc:"Product unit price, optional in partial update"`
 	Code  *string  `json:"code" tsdoc:"Product code, optional in partial update"`
+	Level *string  `json:"level" tsunion:"basic,standard,premium" tsdoc:"Product level, optional in partial update"`
 }
 
 // ProductModelResponse is the normalized API response model for product records.
@@ -36,6 +54,7 @@ type ProductModelResponse struct {
 	Name      string  `json:"name" tsdoc:"Product name"`
 	Price     float64 `json:"price" tsdoc:"Product unit price"`
 	Code      string  `json:"code" tsdoc:"Product unique code"`
+	Level     string  `json:"level" tsunion:"basic,standard,premium" tsdoc:"Product level"`
 	CreatedAt int64   `json:"createdAt" tsdoc:"Creation timestamp in milliseconds"`
 	UpdatedAt int64   `json:"updatedAt" tsdoc:"Last update timestamp in milliseconds"`
 }
@@ -58,6 +77,7 @@ func toProductResponse(p model.Product) ProductModelResponse {
 		Name:      p.Name,
 		Price:     p.Price,
 		Code:      p.Code,
+		Level:     p.Level,
 		CreatedAt: p.CreatedAt.UnixMilli(),
 		UpdatedAt: p.UpdatedAt.UnixMilli(),
 	}
@@ -83,6 +103,10 @@ var ProductCreateEndpoint = endpoint.NewEndpointNoParams(
 		if req.Price <= 0 {
 			return ProductModelResponse{}, errors.New("price must be greater than 0")
 		}
+		level, ok := normalizeProductLevel(req.Level)
+		if !ok {
+			return ProductModelResponse{}, errors.New("level must be one of: basic, standard, premium")
+		}
 
 		db, err := ensureDB()
 		if err != nil {
@@ -93,6 +117,7 @@ var ProductCreateEndpoint = endpoint.NewEndpointNoParams(
 			Name:  strings.TrimSpace(req.Name),
 			Price: req.Price,
 			Code:  strings.TrimSpace(req.Code),
+			Level: level,
 		}
 		if err := db.Create(&product).Error; err != nil {
 			return ProductModelResponse{}, err
@@ -168,6 +193,13 @@ var ProductUpdateEndpoint = endpoint.NewEndpoint(
 		}
 		if req.Code != nil {
 			product.Code = strings.TrimSpace(*req.Code)
+		}
+		if req.Level != nil {
+			level, ok := normalizeProductLevel(*req.Level)
+			if !ok {
+				return ProductModelResponse{}, errors.New("level must be one of: basic, standard, premium")
+			}
+			product.Level = level
 		}
 
 		if err := db.Save(&product).Error; err != nil {

@@ -31,6 +31,14 @@
         <input v-model.trim="createForm.code" placeholder="e.g. ZC-1001" />
       </div>
       <div class="field">
+        <label>Level</label>
+        <select v-model="createForm.level">
+          <option value="basic">basic</option>
+          <option value="standard">standard</option>
+          <option value="premium">premium</option>
+        </select>
+      </div>
+      <div class="field">
         <label></label>
         <button class="btn ghost" type="submit">Create</button>
       </div>
@@ -44,6 +52,7 @@
         <div>Name</div>
         <div>Price</div>
         <div>Code</div>
+        <div>Level</div>
         <div>Actions</div>
       </div>
       <div v-for="item in items" :key="item.id" class="row">
@@ -61,6 +70,13 @@
         </div>
         <div>
           <input v-model.trim="getEdit(item.id).code" />
+        </div>
+        <div>
+          <select v-model="getEdit(item.id).level">
+            <option value="basic">basic</option>
+            <option value="standard">standard</option>
+            <option value="premium">premium</option>
+          </select>
         </div>
         <div class="actions">
           <button class="btn ghost" type="button" @click="update(item.id)">
@@ -83,6 +99,7 @@ type EditState = {
   name: string;
   price: number;
   code: string;
+  level: 'basic' | 'standard' | 'premium';
 };
 
 const items = ref<ProductModelResponse[]>([]);
@@ -91,6 +108,7 @@ const createForm = reactive<EditState>({
   name: '',
   price: 0,
   code: '',
+  level: 'standard',
 });
 const edits = reactive<Record<number, EditState>>({});
 
@@ -128,10 +146,20 @@ const randomCode = () => {
   return `${prefix}-${suffix}`;
 };
 
+const randomLevel = (): 'basic' | 'standard' | 'premium' => {
+  const levels: Array<'basic' | 'standard' | 'premium'> = [
+    'basic',
+    'standard',
+    'premium',
+  ];
+  return levels[Math.floor(Math.random() * levels.length)] ?? 'standard';
+};
+
 const fillRandomCreateForm = () => {
   createForm.name = randomName();
   createForm.price = randomPrice();
   createForm.code = randomCode();
+  createForm.level = randomLevel();
 };
 
 const syncEdits = (list: ProductModelResponse[]) => {
@@ -140,6 +168,7 @@ const syncEdits = (list: ProductModelResponse[]) => {
       name: item.name,
       price: item.price,
       code: item.code,
+      level: item.level,
     };
   }
 };
@@ -150,6 +179,7 @@ const getEdit = (id: number) => {
       name: '',
       price: 0,
       code: '',
+      level: 'standard',
     };
   }
   return edits[id];
@@ -180,6 +210,7 @@ const create = async () => {
       name: createForm.name,
       price: createForm.price,
       code: createForm.code,
+      level: createForm.level,
     });
     fillRandomCreateForm();
     await refresh();
@@ -200,6 +231,7 @@ const update = async (id: number) => {
         name: next.name,
         price: next.price,
         code: next.code,
+        level: next.level,
       }
     );
     await refresh();
@@ -281,6 +313,14 @@ onMounted(() => {
   color: #e5e7eb;
 }
 
+.field select {
+  background: #0f1113;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 8px 10px;
+  color: #e5e7eb;
+}
+
 .btn {
   border: none;
   background: transparent;
@@ -329,7 +369,7 @@ onMounted(() => {
 .row {
   display: grid;
   gap: 8px;
-  grid-template-columns: 60px minmax(120px, 1fr) 100px 120px 160px;
+  grid-template-columns: 60px minmax(220px, 1fr) 100px 120px 100px 150px;
   align-items: center;
   padding: 8px;
   border-radius: 10px;
@@ -361,5 +401,8 @@ onMounted(() => {
 .actions {
   display: flex;
   gap: 8px;
+  flex-wrap: nowrap;
+  white-space: nowrap;
+  align-items: center;
 }
 </style>

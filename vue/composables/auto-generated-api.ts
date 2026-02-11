@@ -138,6 +138,8 @@ export interface ProductCreateRequest {
   price: number;
   /** Product unique code */
   code: string;
+  /** Product level */
+  level: 'basic' | 'standard' | 'premium';
 }
 
 /**
@@ -155,6 +157,16 @@ export function validateProductCreateRequest(
   if (!(typeof obj['price'] === 'number')) return false;
   if (!('code' in obj)) return false;
   if (!(typeof obj['code'] === 'string')) return false;
+  if (!('level' in obj)) return false;
+  if (
+    !(
+      typeof obj['level'] === 'string' &&
+      (obj['level'] === 'basic' ||
+        obj['level'] === 'standard' ||
+        obj['level'] === 'premium')
+    )
+  )
+    return false;
   return true;
 }
 
@@ -170,6 +182,8 @@ export interface ProductModelResponse {
   price: number;
   /** Product unique code */
   code: string;
+  /** Product level */
+  level: 'basic' | 'standard' | 'premium';
   /** Creation timestamp in milliseconds */
   createdAt: number;
   /** Last update timestamp in milliseconds */
@@ -193,6 +207,16 @@ export function validateProductModelResponse(
   if (!(typeof obj['price'] === 'number')) return false;
   if (!('code' in obj)) return false;
   if (!(typeof obj['code'] === 'string')) return false;
+  if (!('level' in obj)) return false;
+  if (
+    !(
+      typeof obj['level'] === 'string' &&
+      (obj['level'] === 'basic' ||
+        obj['level'] === 'standard' ||
+        obj['level'] === 'premium')
+    )
+  )
+    return false;
   if (!('createdAt' in obj)) return false;
   if (!(typeof obj['createdAt'] === 'number')) return false;
   if (!('updatedAt' in obj)) return false;
@@ -232,6 +256,8 @@ export interface ProductUpdateRequest {
   price: number;
   /** Product code, optional in partial update */
   code: string;
+  /** Product level, optional in partial update */
+  level: 'basic' | 'standard' | 'premium';
 }
 
 /**
@@ -249,6 +275,16 @@ export function validateProductUpdateRequest(
   if (!(typeof obj['price'] === 'number')) return false;
   if (!('code' in obj)) return false;
   if (!(typeof obj['code'] === 'string')) return false;
+  if (!('level' in obj)) return false;
+  if (
+    !(
+      typeof obj['level'] === 'string' &&
+      (obj['level'] === 'basic' ||
+        obj['level'] === 'standard' ||
+        obj['level'] === 'premium')
+    )
+  )
+    return false;
   return true;
 }
 
