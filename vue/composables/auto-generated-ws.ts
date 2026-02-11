@@ -479,5 +479,10 @@ export class ChatDemo<TSend = WebSocketMessage> extends TypedWebSocketClient<
     super(url, options);
   }
 }
+export function createChatDemo<TSend = WebSocketMessage>(
+  options: WebSocketConvertOptions<TSend, WsServerEnvelope>
+): ChatDemo<TSend> {
+  return new ChatDemo<TSend>(options);
+}
 
 // #endregion Endpoint Classes
