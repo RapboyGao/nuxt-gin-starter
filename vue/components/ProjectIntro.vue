@@ -1,5 +1,10 @@
 <template>
-  <section class="intro-card">
+  <section
+    class="intro-card"
+    :style="glowStyle"
+    @mousemove="handleMouseMove"
+    @mouseleave="handleMouseLeave"
+  >
     <div class="intro-glow intro-glow-a" aria-hidden="true"></div>
     <div class="intro-glow intro-glow-b" aria-hidden="true"></div>
 
@@ -96,6 +101,39 @@ const features: ReadonlyArray<IntroFeature> = [
     descriptionZh: '最少样板代码，稳定的 API 基础路径，改动更快落地。',
   },
 ];
+
+const glowStyle = ref<Record<string, string>>({
+  '--glow-a-x': '88%',
+  '--glow-a-y': '6%',
+  '--glow-b-x': '8%',
+  '--glow-b-y': '92%',
+});
+
+const handleMouseMove = (event: MouseEvent) => {
+  const target = event.currentTarget as HTMLElement | null;
+  if (!target) return;
+  const rect = target.getBoundingClientRect();
+  if (!rect.width || !rect.height) return;
+
+  const x = ((event.clientX - rect.left) / rect.width) * 100;
+  const y = ((event.clientY - rect.top) / rect.height) * 100;
+
+  glowStyle.value = {
+    '--glow-a-x': `${x}%`,
+    '--glow-a-y': `${y}%`,
+    '--glow-b-x': `${100 - x}%`,
+    '--glow-b-y': `${100 - y}%`,
+  };
+};
+
+const handleMouseLeave = () => {
+  glowStyle.value = {
+    '--glow-a-x': '88%',
+    '--glow-a-y': '6%',
+    '--glow-b-x': '8%',
+    '--glow-b-y': '92%',
+  };
+};
 </script>
 
 <style scoped lang="scss">
@@ -136,17 +174,19 @@ const features: ReadonlyArray<IntroFeature> = [
 .intro-glow-a {
   width: 220px;
   height: 220px;
-  right: -60px;
-  top: -60px;
+  left: calc(var(--glow-a-x) - 110px);
+  top: calc(var(--glow-a-y) - 110px);
   background: rgba(145, 227, 255, 0.35);
+  transition: left 120ms ease-out, top 120ms ease-out;
 }
 
 .intro-glow-b {
   width: 200px;
   height: 200px;
-  left: -70px;
-  bottom: -70px;
+  left: calc(var(--glow-b-x) - 100px);
+  top: calc(var(--glow-b-y) - 100px);
   background: rgba(255, 171, 122, 0.3);
+  transition: left 120ms ease-out, top 120ms ease-out;
 }
 
 .intro-header h2 {
