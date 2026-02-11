@@ -570,128 +570,6 @@ export function ensureWsProductServerEnvelope(
 }
 
 // -----------------------------------------------------
-// TYPE: WsProductUpdatePayload
-// -----------------------------------------------------
-
-// -----------------------------------------------------
-// TYPE: WsProductUpdatePayload
-// -----------------------------------------------------
-export interface WsProductUpdatePayload {
-  /** Product id */
-  id: number;
-  /** Product name */
-  name: string;
-  /** Product unit price, must be greater than 0 */
-  price: number;
-  /** Product code */
-  code: string;
-  /** Product level */
-  level: 'basic' | 'standard' | 'premium';
-}
-
-/**
- * Validate whether a value matches WsProductUpdatePayload.
- * 校验一个值是否符合 WsProductUpdatePayload 结构。
- */
-
-/**
- * Validate whether a value matches WsProductUpdatePayload.
- * 校验一个值是否符合 WsProductUpdatePayload 结构。
- */
-export function validateWsProductUpdatePayload(
-  value: unknown
-): value is WsProductUpdatePayload {
-  if (!isPlainObject(value)) return false;
-  const obj = value as Record<string, unknown>;
-  if (!('id' in obj)) return false;
-  if (!(typeof obj['id'] === 'number')) return false;
-  if (!('name' in obj)) return false;
-  if (!(typeof obj['name'] === 'string')) return false;
-  if (!('price' in obj)) return false;
-  if (!(typeof obj['price'] === 'number')) return false;
-  if (!('code' in obj)) return false;
-  if (!(typeof obj['code'] === 'string')) return false;
-  if (!('level' in obj)) return false;
-  if (
-    !(
-      typeof obj['level'] === 'string' &&
-      (obj['level'] === 'basic' ||
-        obj['level'] === 'standard' ||
-        obj['level'] === 'premium')
-    )
-  )
-    return false;
-  return true;
-}
-
-/**
- * Ensure a typed WsProductUpdatePayload after validation.
- * 先校验，再确保得到类型化的 WsProductUpdatePayload。
- */
-
-/**
- * Ensure a typed WsProductUpdatePayload after validation.
- * 先校验，再确保得到类型化的 WsProductUpdatePayload。
- */
-export function ensureWsProductUpdatePayload(
-  value: unknown
-): WsProductUpdatePayload {
-  if (!validateWsProductUpdatePayload(value)) {
-    throw new Error('Invalid WsProductUpdatePayload');
-  }
-  return value;
-}
-
-// -----------------------------------------------------
-// TYPE: WsProductDeletePayload
-// -----------------------------------------------------
-
-// -----------------------------------------------------
-// TYPE: WsProductDeletePayload
-// -----------------------------------------------------
-export interface WsProductDeletePayload {
-  /** Product id */
-  id: number;
-}
-
-/**
- * Validate whether a value matches WsProductDeletePayload.
- * 校验一个值是否符合 WsProductDeletePayload 结构。
- */
-
-/**
- * Validate whether a value matches WsProductDeletePayload.
- * 校验一个值是否符合 WsProductDeletePayload 结构。
- */
-export function validateWsProductDeletePayload(
-  value: unknown
-): value is WsProductDeletePayload {
-  if (!isPlainObject(value)) return false;
-  const obj = value as Record<string, unknown>;
-  if (!('id' in obj)) return false;
-  if (!(typeof obj['id'] === 'number')) return false;
-  return true;
-}
-
-/**
- * Ensure a typed WsProductDeletePayload after validation.
- * 先校验，再确保得到类型化的 WsProductDeletePayload。
- */
-
-/**
- * Ensure a typed WsProductDeletePayload after validation.
- * 先校验，再确保得到类型化的 WsProductDeletePayload。
- */
-export function ensureWsProductDeletePayload(
-  value: unknown
-): WsProductDeletePayload {
-  if (!validateWsProductDeletePayload(value)) {
-    throw new Error('Invalid WsProductDeletePayload');
-  }
-  return value;
-}
-
-// -----------------------------------------------------
 // TYPE: WsProductListPayload
 // -----------------------------------------------------
 
@@ -809,6 +687,128 @@ export function ensureWsProductCreatePayload(
 ): WsProductCreatePayload {
   if (!validateWsProductCreatePayload(value)) {
     throw new Error('Invalid WsProductCreatePayload');
+  }
+  return value;
+}
+
+// -----------------------------------------------------
+// TYPE: WsProductUpdatePayload
+// -----------------------------------------------------
+
+// -----------------------------------------------------
+// TYPE: WsProductUpdatePayload
+// -----------------------------------------------------
+export interface WsProductUpdatePayload {
+  /** Product id */
+  id: number;
+  /** Product name */
+  name: string;
+  /** Product unit price, must be greater than 0 */
+  price: number;
+  /** Product code */
+  code: string;
+  /** Product level */
+  level: 'basic' | 'standard' | 'premium';
+}
+
+/**
+ * Validate whether a value matches WsProductUpdatePayload.
+ * 校验一个值是否符合 WsProductUpdatePayload 结构。
+ */
+
+/**
+ * Validate whether a value matches WsProductUpdatePayload.
+ * 校验一个值是否符合 WsProductUpdatePayload 结构。
+ */
+export function validateWsProductUpdatePayload(
+  value: unknown
+): value is WsProductUpdatePayload {
+  if (!isPlainObject(value)) return false;
+  const obj = value as Record<string, unknown>;
+  if (!('id' in obj)) return false;
+  if (!(typeof obj['id'] === 'number')) return false;
+  if (!('name' in obj)) return false;
+  if (!(typeof obj['name'] === 'string')) return false;
+  if (!('price' in obj)) return false;
+  if (!(typeof obj['price'] === 'number')) return false;
+  if (!('code' in obj)) return false;
+  if (!(typeof obj['code'] === 'string')) return false;
+  if (!('level' in obj)) return false;
+  if (
+    !(
+      typeof obj['level'] === 'string' &&
+      (obj['level'] === 'basic' ||
+        obj['level'] === 'standard' ||
+        obj['level'] === 'premium')
+    )
+  )
+    return false;
+  return true;
+}
+
+/**
+ * Ensure a typed WsProductUpdatePayload after validation.
+ * 先校验，再确保得到类型化的 WsProductUpdatePayload。
+ */
+
+/**
+ * Ensure a typed WsProductUpdatePayload after validation.
+ * 先校验，再确保得到类型化的 WsProductUpdatePayload。
+ */
+export function ensureWsProductUpdatePayload(
+  value: unknown
+): WsProductUpdatePayload {
+  if (!validateWsProductUpdatePayload(value)) {
+    throw new Error('Invalid WsProductUpdatePayload');
+  }
+  return value;
+}
+
+// -----------------------------------------------------
+// TYPE: WsProductDeletePayload
+// -----------------------------------------------------
+
+// -----------------------------------------------------
+// TYPE: WsProductDeletePayload
+// -----------------------------------------------------
+export interface WsProductDeletePayload {
+  /** Product id */
+  id: number;
+}
+
+/**
+ * Validate whether a value matches WsProductDeletePayload.
+ * 校验一个值是否符合 WsProductDeletePayload 结构。
+ */
+
+/**
+ * Validate whether a value matches WsProductDeletePayload.
+ * 校验一个值是否符合 WsProductDeletePayload 结构。
+ */
+export function validateWsProductDeletePayload(
+  value: unknown
+): value is WsProductDeletePayload {
+  if (!isPlainObject(value)) return false;
+  const obj = value as Record<string, unknown>;
+  if (!('id' in obj)) return false;
+  if (!(typeof obj['id'] === 'number')) return false;
+  return true;
+}
+
+/**
+ * Ensure a typed WsProductDeletePayload after validation.
+ * 先校验，再确保得到类型化的 WsProductDeletePayload。
+ */
+
+/**
+ * Ensure a typed WsProductDeletePayload after validation.
+ * 先校验，再确保得到类型化的 WsProductDeletePayload。
+ */
+export function ensureWsProductDeletePayload(
+  value: unknown
+): WsProductDeletePayload {
+  if (!validateWsProductDeletePayload(value)) {
+    throw new Error('Invalid WsProductDeletePayload');
   }
   return value;
 }
