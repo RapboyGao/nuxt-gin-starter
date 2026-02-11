@@ -139,7 +139,7 @@ import {
   ProductCrudWsDemo,
   createProductCrudWsDemo,
 } from '@/composables/auto-generated-ws';
-import { ensureWsProductServerEnvelope } from '@/composables/auto-generated-types';
+import { ensureWsProductServerMessage } from '@/composables/auto-generated-types';
 
 type ProductWsClientMessage = {
   type: string;
@@ -247,12 +247,12 @@ const applyList = (list: ProductModelResponse[]) => {
 const createClient = () =>
   createProductCrudWsDemo<ProductWsClientMessage>({
     serialize: (value) => value,
-    deserialize: (value) => ensureWsProductServerEnvelope(value),
+    deserialize: (value) => ensureWsProductServerMessage(value),
   });
 
 const requestList = () => {
   if (!ws.value || !isOpen.value) return;
-  ws.value.sendListPayload({ page: 1, pageSize: 0 });
+  ws.value.sendTypedMessage({ type: 'list', payload: { page: 1, pageSize: 0 } });
 };
 
 const create = () => {
@@ -262,13 +262,13 @@ const create = () => {
     return;
   }
   error.value = '';
-  ws.value?.send({
+  ws.value?.sendTypedMessage({
     type: 'create',
     payload: {
-    name: createForm.name,
-    price: createForm.price,
-    code: createForm.code,
-    level: createForm.level,
+      name: createForm.name,
+      price: createForm.price,
+      code: createForm.code,
+      level: createForm.level,
     },
   });
   fillRandomCreateForm();
@@ -278,7 +278,7 @@ const update = (id: number) => {
   if (!isOpen.value) return;
   const next = getEdit(id);
   error.value = '';
-  ws.value?.send({
+  ws.value?.sendTypedMessage({
     type: 'update',
     payload: {
       id,
@@ -293,7 +293,7 @@ const update = (id: number) => {
 const remove = (id: number) => {
   if (!isOpen.value) return;
   error.value = '';
-  ws.value?.send({
+  ws.value?.sendTypedMessage({
     type: 'delete',
     payload: { id },
   });
@@ -317,46 +317,39 @@ const bindClientEvents = (client: ProductCrudWsClient) => {
     error.value = 'websocket error';
   });
 
-  const offList = client.onListType((message) => {
-    applyList(message.items ?? []);
-  });
-
-  const offSync = client.onSyncType((message) => {
-    applyList(message.items ?? []);
-  });
-
-  const offCreated = client.onCreatedType((message) => {
-    appendLog(`[created] ${message.item?.name ?? ''}`);
-  });
-
-  const offUpdated = client.onUpdatedType((message) => {
-    appendLog(`[updated] ${message.item?.name ?? ''}`);
-  });
-
-  const offDeleted = client.onDeletedType((message) => {
-    appendLog(`[deleted] ${message.deletedId}`);
-  });
-
-  const offSystem = client.onSystemType((message) => {
-    appendLog(`[system] ${message.message ?? ''}`);
-  });
-
-  const offServerError = client.onErrorType((message) => {
-    error.value = message.message || 'server error';
-    appendLog(`[error] ${message.message ?? ''}`);
+  const offMessage = client.onMessage((message) => {
+    const payload = message.payload;
+    if (message.type === 'list' || message.type === 'sync') {
+      applyList(payload.items ?? []);
+      return;
+    }
+    if (message.type === 'created') {
+      appendLog(`[created] ${payload.item?.name ?? ''}`);
+      return;
+    }
+    if (message.type === 'updated') {
+      appendLog(`[updated] ${payload.item?.name ?? ''}`);
+      return;
+    }
+    if (message.type === 'deleted') {
+      appendLog(`[deleted] ${payload.deletedId}`);
+      return;
+    }
+    if (message.type === 'system') {
+      appendLog(`[system] ${payload.message ?? ''}`);
+      return;
+    }
+    if (message.type === 'error') {
+      error.value = payload.message || 'server error';
+      appendLog(`[error] ${payload.message ?? ''}`);
+    }
   });
 
   unbindEvents = () => {
     offOpen();
     offClose();
     offError();
-    offList();
-    offSync();
-    offCreated();
-    offUpdated();
-    offDeleted();
-    offSystem();
-    offServerError();
+    offMessage();
   };
 };
 
