@@ -57,8 +57,17 @@ func newProductWSEnvelope(t string, msg string) wsProductServerEnvelope {
 	return wsProductServerEnvelope{
 		Type:    t,
 		Message: msg,
-		Items:   []ProductModelResponse{},
-		At:      time.Now().UnixMilli(),
+		Item: ProductModelResponse{
+			ID:        0,
+			Name:      "",
+			Price:     0,
+			Code:      "",
+			Level:     "standard",
+			CreatedAt: 0,
+			UpdatedAt: 0,
+		},
+		Items: []ProductModelResponse{},
+		At:    time.Now().UnixMilli(),
 	}
 }
 
