@@ -13,8 +13,14 @@ import (
 	"gorm.io/gorm"
 )
 
+// productWSDemoFullPath
+// Full WS route used by server-side broadcast helper.
+// 服务端广播时使用的 WebSocket 完整路径。
 const productWSDemoFullPath = "/ws-go/v1/products-demo"
 
+// wsProductUpdatePayload
+// Client payload for update action.
+// 客户端 update 动作的负载结构。
 type wsProductUpdatePayload struct {
 	ID    uint    `json:"id" tsdoc:"Product id"`
 	Name  string  `json:"name" tsdoc:"Product name"`
@@ -23,10 +29,16 @@ type wsProductUpdatePayload struct {
 	Level string  `json:"level" tsunion:"basic,standard,premium" tsdoc:"Product level"`
 }
 
+// wsProductDeletePayload
+// Client payload for delete action.
+// 客户端 delete 动作的负载结构。
 type wsProductDeletePayload struct {
 	ID uint `json:"id" tsdoc:"Product id"`
 }
 
+// wsProductOverview
+// Business payload wrapped into endpoint.WebSocketMessage.payload.
+// 业务负载体，最终会包装进 endpoint.WebSocketMessage.payload。
 type wsProductOverview struct {
 	Message   string                 `json:"message" tsdoc:"Event message"`
 	Item      ProductModelResponse   `json:"item" tsdoc:"Single product payload"`
@@ -38,6 +50,9 @@ type wsProductOverview struct {
 	At        int64                  `json:"at" tsdoc:"Server timestamp in milliseconds"`
 }
 
+// newProductWSEnvelope
+// Build a default payload shell for all WS responses.
+// 构建所有 WS 返回共用的默认 payload 外壳。
 func newProductWSEnvelope(msg string) wsProductOverview {
 	return wsProductOverview{
 		Message: msg,
@@ -55,6 +70,17 @@ func newProductWSEnvelope(msg string) wsProductOverview {
 	}
 }
 
+// buildProductListEnvelope
+//
+// 1) Normalize paging parameters.
+// 2) Query total count + product rows.
+// 3) Map rows to ProductModelResponse.
+// 4) Fill paging metadata in wsProductOverview.
+//
+// 1）规范化分页参数。
+// 2）查询总数与商品列表。
+// 3）映射为 ProductModelResponse。
+// 4）补齐分页元信息返回。
 func buildProductListEnvelope(db *gorm.DB, msg string, page int, size int) (wsProductOverview, error) {
 	if page <= 0 {
 		page = 1
@@ -99,6 +125,9 @@ func buildProductListEnvelope(db *gorm.DB, msg string, page int, size int) (wsPr
 	return resp, nil
 }
 
+// wrapProductWSMessage
+// Convert typed payload into endpoint.WebSocketMessage (JSON string payload).
+// 将强类型业务负载转成 endpoint.WebSocketMessage（payload 为 JSON 字符串）。
 func wrapProductWSMessage(eventType string, payload wsProductOverview) endpoint.WebSocketMessage {
 	body, _ := json.Marshal(payload)
 	return endpoint.WebSocketMessage{
@@ -107,14 +136,23 @@ func wrapProductWSMessage(eventType string, payload wsProductOverview) endpoint.
 	}
 }
 
+// wsErrorMessage
+// Convenience helper for uniform error message format.
+// 统一错误消息格式的便捷函数。
 func wsErrorMessage(msg string) endpoint.WebSocketMessage {
 	return wrapProductWSMessage("error", newProductWSEnvelope(msg))
 }
 
+// wsErrorFromErr
+// Wrap Go error into websocket error envelope.
+// 将 Go error 包装为 websocket 错误消息。
 func wsErrorFromErr(err error) endpoint.WebSocketMessage {
 	return wsErrorMessage(err.Error())
 }
 
+// validateProductInput
+// Shared validation for create/update payload fields.
+// create/update 共享字段校验逻辑。
 func validateProductInput(name string, price float64, levelRaw string) (string, error) {
 	if strings.TrimSpace(name) == "" {
 		return "", errors.New("name is required")
@@ -129,6 +167,9 @@ func validateProductInput(name string, price float64, levelRaw string) (string, 
 	return level, nil
 }
 
+// publishProductCRUDSync
+// Broadcast latest full product snapshot to all WS subscribers.
+// 将最新全量商品快照广播给所有 WS 订阅者。
 func publishProductCRUDSync(db *gorm.DB) {
 	syncResp, err := buildProductListEnvelope(db, "products synced", 1, 0)
 	if err != nil {
@@ -139,6 +180,8 @@ func publishProductCRUDSync(db *gorm.DB) {
 
 // ProductCRUDWebSocketEndpoint provides CRUD actions over WebSocket.
 var ProductCRUDWebSocketEndpoint = func() *endpoint.WebSocketEndpoint {
+	// Initialize endpoint metadata for route registration + TS generation.
+	// 初始化端点元信息，用于路由注册与 TS 代码生成。
 	ws := endpoint.NewWebSocketEndpoint()
 	ws.Name = "ProductCrudWsDemo"
 	ws.Path = "/products-demo"
@@ -146,6 +189,12 @@ var ProductCRUDWebSocketEndpoint = func() *endpoint.WebSocketEndpoint {
 	ws.ClientMessageType = reflect.TypeOf(endpoint.WebSocketMessage{})
 	ws.ServerMessageType = reflect.TypeOf(endpoint.WebSocketMessage{})
 
+	//
+	// 1) Ensure DB is ready on connect.
+	// 2) Send a `system` message containing latest snapshot (items).
+	//
+	// 1）连接建立时确保数据库可用。
+	// 2）发送包含最新快照（items）的 system 消息。
 	ws.OnConnect = func(ctx *endpoint.WebSocketContext) error {
 		db, err := ensureDB()
 		if err != nil {
@@ -158,6 +207,14 @@ var ProductCRUDWebSocketEndpoint = func() *endpoint.WebSocketEndpoint {
 		return ctx.Send(wrapProductWSMessage("system", systemResp))
 	}
 
+	//
+	// Handle `list` request:
+	// 1) Read paging payload.
+	// 2) Query list and return list envelope.
+	//
+	// 处理 `list` 请求：
+	// 1）读取分页参数。
+	// 2）查询列表并返回 list 消息。
 	endpoint.RegisterWebSocketTypedHandler(ws, "list", func(payload ProductListQueryParams, _ *endpoint.WebSocketContext) (any, error) {
 		db, err := ensureDB()
 		if err != nil {
@@ -170,6 +227,18 @@ var ProductCRUDWebSocketEndpoint = func() *endpoint.WebSocketEndpoint {
 		return wrapProductWSMessage("list", resp), nil
 	})
 
+	//
+	// Handle `create` request:
+	// 1) Validate payload.
+	// 2) Insert product into DB.
+	// 3) Return created item.
+	// 4) Broadcast sync snapshot.
+	//
+	// 处理 `create` 请求：
+	// 1）校验负载。
+	// 2）写入数据库。
+	// 3）返回 created 单条记录。
+	// 4）广播 sync 快照。
 	endpoint.RegisterWebSocketTypedHandler(ws, "create", func(payload ProductCreateRequest, _ *endpoint.WebSocketContext) (any, error) {
 		level, err := validateProductInput(payload.Name, payload.Price, payload.Level)
 		if err != nil {
@@ -199,6 +268,18 @@ var ProductCRUDWebSocketEndpoint = func() *endpoint.WebSocketEndpoint {
 		return wrapProductWSMessage("created", resp), nil
 	})
 
+	//
+	// Handle `update` request:
+	// 1) Validate id + fields.
+	// 2) Load target row.
+	// 3) Apply updates and save.
+	// 4) Return updated item and broadcast sync.
+	//
+	// 处理 `update` 请求：
+	// 1）校验 id 与字段。
+	// 2）加载目标记录。
+	// 3）应用更新并保存。
+	// 4）返回 updated 单条记录并广播 sync。
 	endpoint.RegisterWebSocketTypedHandler(ws, "update", func(payload wsProductUpdatePayload, _ *endpoint.WebSocketContext) (any, error) {
 		if payload.ID == 0 {
 			return wsErrorMessage("invalid product id"), nil
@@ -237,6 +318,16 @@ var ProductCRUDWebSocketEndpoint = func() *endpoint.WebSocketEndpoint {
 		return wrapProductWSMessage("updated", resp), nil
 	})
 
+	//
+	// Handle `delete` request:
+	// 1) Validate id.
+	// 2) Delete row by id.
+	// 3) Return deleted summary and broadcast sync.
+	//
+	// 处理 `delete` 请求：
+	// 1）校验 id。
+	// 2）按 id 删除记录。
+	// 3）返回 deleted 摘要并广播 sync。
 	endpoint.RegisterWebSocketTypedHandler(ws, "delete", func(payload wsProductDeletePayload, _ *endpoint.WebSocketContext) (any, error) {
 		if payload.ID == 0 {
 			return wsErrorMessage("invalid product id"), nil
