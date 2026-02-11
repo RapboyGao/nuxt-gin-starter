@@ -135,7 +135,11 @@
 </template>
 
 <script setup lang="ts">
-import { ProductCrudWsDemo } from '@/composables/auto-generated-ws';
+import {
+  ProductCrudWsDemo,
+  createProductCrudWsDemo,
+} from '@/composables/auto-generated-ws';
+import { ensureWsProductServerEnvelope } from '@/composables/auto-generated-types';
 
 type ProductWsClientMessage = {
   type: string;
@@ -241,18 +245,14 @@ const applyList = (list: ProductModelResponse[]) => {
 };
 
 const createClient = () =>
-  new ProductCrudWsDemo<ProductWsClientMessage>({
+  createProductCrudWsDemo<ProductWsClientMessage>({
     serialize: (value) => value,
     deserialize: (value) => ensureWsProductServerEnvelope(value),
   });
 
-const send = (type: string, payload: unknown) => {
-  if (!ws.value || !isOpen.value) return;
-  ws.value.send({ type, payload });
-};
-
 const requestList = () => {
-  send('list', { page: 1, pageSize: 0 });
+  if (!ws.value || !isOpen.value) return;
+  ws.value.sendListPayload({ page: 1, pageSize: 0 });
 };
 
 const create = () => {
@@ -262,11 +262,14 @@ const create = () => {
     return;
   }
   error.value = '';
-  send('create', {
+  ws.value?.send({
+    type: 'create',
+    payload: {
     name: createForm.name,
     price: createForm.price,
     code: createForm.code,
     level: createForm.level,
+    },
   });
   fillRandomCreateForm();
 };
@@ -275,19 +278,25 @@ const update = (id: number) => {
   if (!isOpen.value) return;
   const next = getEdit(id);
   error.value = '';
-  send('update', {
-    id,
-    name: next.name,
-    price: next.price,
-    code: next.code,
-    level: next.level,
+  ws.value?.send({
+    type: 'update',
+    payload: {
+      id,
+      name: next.name,
+      price: next.price,
+      code: next.code,
+      level: next.level,
+    },
   });
 };
 
 const remove = (id: number) => {
   if (!isOpen.value) return;
   error.value = '';
-  send('delete', { id });
+  ws.value?.send({
+    type: 'delete',
+    payload: { id },
+  });
 };
 
 const bindClientEvents = (client: ProductCrudWsClient) => {

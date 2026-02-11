@@ -126,14 +126,19 @@ export class CreateProductPost {
   static readonly NAME = 'createProduct' as const;
   static readonly SUMMARY = '' as const;
   static readonly METHOD = 'POST' as const;
-  static readonly PATH = '/api-go/v1/products' as const;
+  static readonly PATHS = {
+    base: '/api-go',
+    group: '/v1',
+    api: '/products',
+  } as const;
+  static readonly FULL_PATH = '/api-go/v1/products' as const;
 
   static pathParamsShape(): readonly string[] {
     return [] as const;
   }
 
   static buildURL(): string {
-    return CreateProductPost.PATH;
+    return CreateProductPost.FULL_PATH;
   }
 
   static requestConfig(
@@ -177,7 +182,12 @@ export class GetProductByIDGet {
   static readonly NAME = 'getProductByID' as const;
   static readonly SUMMARY = '' as const;
   static readonly METHOD = 'GET' as const;
-  static readonly PATH = '/api-go/v1/products/:id' as const;
+  static readonly PATHS = {
+    base: '/api-go',
+    group: '/v1',
+    api: '/products/:id',
+  } as const;
+  static readonly FULL_PATH = '/api-go/v1/products/:id' as const;
 
   static pathParamsShape(): readonly string[] {
     return ['ID'] as const;
@@ -227,7 +237,12 @@ export class UpdateProductPut {
   static readonly NAME = 'updateProduct' as const;
   static readonly SUMMARY = '' as const;
   static readonly METHOD = 'PUT' as const;
-  static readonly PATH = '/api-go/v1/products/:id' as const;
+  static readonly PATHS = {
+    base: '/api-go',
+    group: '/v1',
+    api: '/products/:id',
+  } as const;
+  static readonly FULL_PATH = '/api-go/v1/products/:id' as const;
 
   static pathParamsShape(): readonly string[] {
     return ['ID'] as const;
@@ -287,7 +302,12 @@ export class DeleteProductDelete {
   static readonly NAME = 'deleteProduct' as const;
   static readonly SUMMARY = '' as const;
   static readonly METHOD = 'DELETE' as const;
-  static readonly PATH = '/api-go/v1/products/:id' as const;
+  static readonly PATHS = {
+    base: '/api-go',
+    group: '/v1',
+    api: '/products/:id',
+  } as const;
+  static readonly FULL_PATH = '/api-go/v1/products/:id' as const;
 
   static pathParamsShape(): readonly string[] {
     return ['ID'] as const;
@@ -337,14 +357,19 @@ export class ListProductsGet {
   static readonly NAME = 'listProducts' as const;
   static readonly SUMMARY = '' as const;
   static readonly METHOD = 'GET' as const;
-  static readonly PATH = '/api-go/v1/products' as const;
+  static readonly PATHS = {
+    base: '/api-go',
+    group: '/v1',
+    api: '/products',
+  } as const;
+  static readonly FULL_PATH = '/api-go/v1/products' as const;
 
   static pathParamsShape(): readonly string[] {
     return [] as const;
   }
 
   static buildURL(): string {
-    return ListProductsGet.PATH;
+    return ListProductsGet.FULL_PATH;
   }
 
   static requestConfig(params: {

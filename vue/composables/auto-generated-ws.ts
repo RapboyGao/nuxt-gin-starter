@@ -12,7 +12,7 @@
  * =====================================================
  */
 
-import type { WsProductClientMessage, WsProductServerEnvelope } from './auto-generated-types';
+import type { WsProductClientMessage, WsProductCreatePayload, WsProductDeletePayload, WsProductListPayload, WsProductServerEnvelope, WsProductUpdatePayload } from './auto-generated-types';
 import { validateWsProductServerEnvelope } from './auto-generated-types';
 
 
@@ -381,6 +381,12 @@ export type ProductCrudWsDemoMessageType =
   | 'sync'
   | 'system'
   | 'updated';
+export interface ProductCrudWsDemoClientPayloadByType {
+  list: WsProductListPayload;
+  create: WsProductCreatePayload;
+  delete: WsProductDeletePayload;
+  update: WsProductUpdatePayload;
+}
 export class ProductCrudWsDemo<
   TSend = WsProductClientMessage,
 > extends TypedWebSocketClient<
@@ -389,7 +395,12 @@ export class ProductCrudWsDemo<
   ProductCrudWsDemoMessageType
 > {
   static readonly NAME = 'productCrudWsDemo' as const;
-  static readonly PATH = '/products-demo' as const;
+  static readonly PATHS = {
+    base: '/ws-go',
+    group: '/v1',
+    api: '/products-demo',
+  } as const;
+  static readonly FULL_PATH = '/ws-go/v1/products-demo' as const;
   static readonly MESSAGE_TYPES = [
     'created',
     'deleted',
@@ -400,12 +411,12 @@ export class ProductCrudWsDemo<
     'updated',
   ] as const;
   public readonly endpointName = ProductCrudWsDemo.NAME;
-  public readonly endpointPath = ProductCrudWsDemo.PATH;
+  public readonly endpointPath = ProductCrudWsDemo.FULL_PATH;
 
   constructor(
     options: WebSocketConvertOptions<TSend, WsProductServerEnvelope>
   ) {
-    const url = joinURLPath('/ws-go/v1', '/products-demo');
+    const url = ProductCrudWsDemo.FULL_PATH;
     super(url, options);
   }
 
@@ -431,9 +442,9 @@ export class ProductCrudWsDemo<
    * Subscribe to payload of messages with type "created" for ProductCrudWsDemo.
    * 订阅 ProductCrudWsDemo 中 type="created" 的 payload，并可通过 options 做选择、校验与解码。
    */
-  onCreatedPayload<TPayload>(
-    handler: (payload: TPayload, message: WsProductServerEnvelope) => void,
-    options?: TypedHandlerOptions<WsProductServerEnvelope, TPayload>
+  onCreatedPayload(
+    handler: (payload: unknown, message: WsProductServerEnvelope) => void,
+    options?: TypedHandlerOptions<WsProductServerEnvelope, unknown>
   ): () => void {
     if (options === undefined) {
       function defaultValidatePayload(
@@ -444,11 +455,19 @@ export class ProductCrudWsDemo<
       }
       options = { validate: defaultValidatePayload };
     }
-    return this.onTyped<TPayload>(
+    return this.onTyped<unknown>(
       'created' as ProductCrudWsDemoMessageType,
       handler,
       options
     );
+  }
+
+  /**
+   * Send payload with fixed message type "created".
+   * 发送固定 type="created" 的 payload。
+   */
+  sendCreatedPayload(payload: unknown): void {
+    this.send({ type: 'created', payload } as TSend);
   }
 
   /**
@@ -473,9 +492,9 @@ export class ProductCrudWsDemo<
    * Subscribe to payload of messages with type "deleted" for ProductCrudWsDemo.
    * 订阅 ProductCrudWsDemo 中 type="deleted" 的 payload，并可通过 options 做选择、校验与解码。
    */
-  onDeletedPayload<TPayload>(
-    handler: (payload: TPayload, message: WsProductServerEnvelope) => void,
-    options?: TypedHandlerOptions<WsProductServerEnvelope, TPayload>
+  onDeletedPayload(
+    handler: (payload: unknown, message: WsProductServerEnvelope) => void,
+    options?: TypedHandlerOptions<WsProductServerEnvelope, unknown>
   ): () => void {
     if (options === undefined) {
       function defaultValidatePayload(
@@ -486,11 +505,19 @@ export class ProductCrudWsDemo<
       }
       options = { validate: defaultValidatePayload };
     }
-    return this.onTyped<TPayload>(
+    return this.onTyped<unknown>(
       'deleted' as ProductCrudWsDemoMessageType,
       handler,
       options
     );
+  }
+
+  /**
+   * Send payload with fixed message type "deleted".
+   * 发送固定 type="deleted" 的 payload。
+   */
+  sendDeletedPayload(payload: unknown): void {
+    this.send({ type: 'deleted', payload } as TSend);
   }
 
   /**
@@ -515,9 +542,9 @@ export class ProductCrudWsDemo<
    * Subscribe to payload of messages with type "error" for ProductCrudWsDemo.
    * 订阅 ProductCrudWsDemo 中 type="error" 的 payload，并可通过 options 做选择、校验与解码。
    */
-  onErrorPayload<TPayload>(
-    handler: (payload: TPayload, message: WsProductServerEnvelope) => void,
-    options?: TypedHandlerOptions<WsProductServerEnvelope, TPayload>
+  onErrorPayload(
+    handler: (payload: unknown, message: WsProductServerEnvelope) => void,
+    options?: TypedHandlerOptions<WsProductServerEnvelope, unknown>
   ): () => void {
     if (options === undefined) {
       function defaultValidatePayload(
@@ -528,11 +555,19 @@ export class ProductCrudWsDemo<
       }
       options = { validate: defaultValidatePayload };
     }
-    return this.onTyped<TPayload>(
+    return this.onTyped<unknown>(
       'error' as ProductCrudWsDemoMessageType,
       handler,
       options
     );
+  }
+
+  /**
+   * Send payload with fixed message type "error".
+   * 发送固定 type="error" 的 payload。
+   */
+  sendErrorPayload(payload: unknown): void {
+    this.send({ type: 'error', payload } as TSend);
   }
 
   /**
@@ -557,9 +592,9 @@ export class ProductCrudWsDemo<
    * Subscribe to payload of messages with type "list" for ProductCrudWsDemo.
    * 订阅 ProductCrudWsDemo 中 type="list" 的 payload，并可通过 options 做选择、校验与解码。
    */
-  onListPayload<TPayload>(
-    handler: (payload: TPayload, message: WsProductServerEnvelope) => void,
-    options?: TypedHandlerOptions<WsProductServerEnvelope, TPayload>
+  onListPayload(
+    handler: (payload: unknown, message: WsProductServerEnvelope) => void,
+    options?: TypedHandlerOptions<WsProductServerEnvelope, unknown>
   ): () => void {
     if (options === undefined) {
       function defaultValidatePayload(
@@ -570,11 +605,19 @@ export class ProductCrudWsDemo<
       }
       options = { validate: defaultValidatePayload };
     }
-    return this.onTyped<TPayload>(
+    return this.onTyped<unknown>(
       'list' as ProductCrudWsDemoMessageType,
       handler,
       options
     );
+  }
+
+  /**
+   * Send payload with fixed message type "list".
+   * 发送固定 type="list" 的 payload。
+   */
+  sendListPayload(payload: WsProductListPayload): void {
+    this.send({ type: 'list', payload } as TSend);
   }
 
   /**
@@ -599,9 +642,9 @@ export class ProductCrudWsDemo<
    * Subscribe to payload of messages with type "sync" for ProductCrudWsDemo.
    * 订阅 ProductCrudWsDemo 中 type="sync" 的 payload，并可通过 options 做选择、校验与解码。
    */
-  onSyncPayload<TPayload>(
-    handler: (payload: TPayload, message: WsProductServerEnvelope) => void,
-    options?: TypedHandlerOptions<WsProductServerEnvelope, TPayload>
+  onSyncPayload(
+    handler: (payload: unknown, message: WsProductServerEnvelope) => void,
+    options?: TypedHandlerOptions<WsProductServerEnvelope, unknown>
   ): () => void {
     if (options === undefined) {
       function defaultValidatePayload(
@@ -612,11 +655,19 @@ export class ProductCrudWsDemo<
       }
       options = { validate: defaultValidatePayload };
     }
-    return this.onTyped<TPayload>(
+    return this.onTyped<unknown>(
       'sync' as ProductCrudWsDemoMessageType,
       handler,
       options
     );
+  }
+
+  /**
+   * Send payload with fixed message type "sync".
+   * 发送固定 type="sync" 的 payload。
+   */
+  sendSyncPayload(payload: unknown): void {
+    this.send({ type: 'sync', payload } as TSend);
   }
 
   /**
@@ -641,9 +692,9 @@ export class ProductCrudWsDemo<
    * Subscribe to payload of messages with type "system" for ProductCrudWsDemo.
    * 订阅 ProductCrudWsDemo 中 type="system" 的 payload，并可通过 options 做选择、校验与解码。
    */
-  onSystemPayload<TPayload>(
-    handler: (payload: TPayload, message: WsProductServerEnvelope) => void,
-    options?: TypedHandlerOptions<WsProductServerEnvelope, TPayload>
+  onSystemPayload(
+    handler: (payload: unknown, message: WsProductServerEnvelope) => void,
+    options?: TypedHandlerOptions<WsProductServerEnvelope, unknown>
   ): () => void {
     if (options === undefined) {
       function defaultValidatePayload(
@@ -654,11 +705,19 @@ export class ProductCrudWsDemo<
       }
       options = { validate: defaultValidatePayload };
     }
-    return this.onTyped<TPayload>(
+    return this.onTyped<unknown>(
       'system' as ProductCrudWsDemoMessageType,
       handler,
       options
     );
+  }
+
+  /**
+   * Send payload with fixed message type "system".
+   * 发送固定 type="system" 的 payload。
+   */
+  sendSystemPayload(payload: unknown): void {
+    this.send({ type: 'system', payload } as TSend);
   }
 
   /**
@@ -683,9 +742,9 @@ export class ProductCrudWsDemo<
    * Subscribe to payload of messages with type "updated" for ProductCrudWsDemo.
    * 订阅 ProductCrudWsDemo 中 type="updated" 的 payload，并可通过 options 做选择、校验与解码。
    */
-  onUpdatedPayload<TPayload>(
-    handler: (payload: TPayload, message: WsProductServerEnvelope) => void,
-    options?: TypedHandlerOptions<WsProductServerEnvelope, TPayload>
+  onUpdatedPayload(
+    handler: (payload: unknown, message: WsProductServerEnvelope) => void,
+    options?: TypedHandlerOptions<WsProductServerEnvelope, unknown>
   ): () => void {
     if (options === undefined) {
       function defaultValidatePayload(
@@ -696,11 +755,19 @@ export class ProductCrudWsDemo<
       }
       options = { validate: defaultValidatePayload };
     }
-    return this.onTyped<TPayload>(
+    return this.onTyped<unknown>(
       'updated' as ProductCrudWsDemoMessageType,
       handler,
       options
     );
+  }
+
+  /**
+   * Send payload with fixed message type "updated".
+   * 发送固定 type="updated" 的 payload。
+   */
+  sendUpdatedPayload(payload: unknown): void {
+    this.send({ type: 'updated', payload } as TSend);
   }
 }
 export function createProductCrudWsDemo<TSend = WsProductClientMessage>(
