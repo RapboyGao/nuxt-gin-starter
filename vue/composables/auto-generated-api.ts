@@ -12,7 +12,15 @@
  * =====================================================
  */
 
+// #region Imports
+// =====================================================
+
 import axios, { type AxiosRequestConfig } from 'axios';
+
+// #endregion Imports
+
+// #region Runtime Helpers
+// =====================================================
 
 const axiosClient = axios.create();
 
@@ -106,6 +114,11 @@ const normalizeParamKeys = (
   }
   return out;
 };
+
+// #endregion Runtime Helpers
+
+// #region Endpoint Classes
+// =====================================================
 
 export class CreateProductPost {
   static readonly NAME = 'createProduct' as const;
@@ -328,6 +341,11 @@ export class ListProductsGet {
   }
 }
 
+// #endregion Endpoint Classes
+
+// #region Interfaces & Validators
+// =====================================================
+
 // =====================================================
 // INTERFACES & VALIDATORS
 // Default: object schemas use interface.
@@ -525,3 +543,5 @@ export function validateProductListResponse(
   if (!(typeof obj['size'] === 'number')) return false;
   return true;
 }
+
+// #endregion Interfaces & Validators

@@ -177,8 +177,6 @@ func main() {
 HTTP 调用：
 
 ```ts
-import { ListProductsGet } from '@/composables/auto-generated-api';
-
 const data = await ListProductsGet.request({
   query: { Page: 1, PageSize: 20 },
 });
@@ -187,8 +185,6 @@ const data = await ListProductsGet.request({
 WS 调用：
 
 ```ts
-import { chatDemo } from '@/composables/auto-generated-ws';
-
 const ws = chatDemo();
 ws.onType('chat', (msg) => console.log(msg));
 ws.send({ type: 'chat', payload: { user: 'demo', content: 'hello' } });

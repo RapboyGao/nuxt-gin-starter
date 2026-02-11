@@ -12,6 +12,9 @@
  * =====================================================
  */
 
+// #region Runtime Helpers
+// =====================================================
+
 const isPlainObject = (value: unknown): value is Record<string, unknown> =>
   Object.prototype.toString.call(value) === '[object Object]';
 
@@ -126,6 +129,15 @@ const joinURLPath = (baseURL: string, path: string): string => {
     : `/${trimmedBase}/${trimmedPath}`;
 };
 
+// #endregion Runtime Helpers
+
+// #region Typed WebSocket Client
+// =====================================================
+
+/**
+ * Generic typed WebSocket client with message and type-based subscriptions.
+ * 通用的类型化 WebSocket 客户端，支持全量消息订阅与按 type 订阅。
+ */
 export class TypedWebSocketClient<
   TReceive = unknown,
   TSend = unknown,
@@ -152,6 +164,10 @@ export class TypedWebSocketClient<
     Set<(message: TReceive) => void>
   >();
 
+  /**
+   * Create a websocket client and connect immediately.
+   * 创建 websocket 客户端并立即发起连接。
+   */
   constructor(url: string, options: WebSocketConvertOptions<TSend, TReceive>) {
     const resolvedURL = resolveWebSocketURL(url);
     this.url = resolvedURL;
@@ -193,45 +209,81 @@ export class TypedWebSocketClient<
     });
   }
 
+  /**
+   * Current WebSocket readyState.
+   * 当前 WebSocket 连接状态。
+   */
   get readyState(): number {
     return this.socket.readyState;
   }
 
+  /**
+   * Whether the socket is currently open.
+   * 当前连接是否处于打开状态。
+   */
   get isOpen(): boolean {
     return this.readyState === WebSocket.OPEN;
   }
 
+  /**
+   * Send one typed message.
+   * 发送一条类型化消息。
+   */
   send(message: TSend): void {
     const data = this.serialize(message);
     this.socket.send(JSON.stringify(data));
     this.messagesSent += 1;
   }
 
+  /**
+   * Close the websocket connection.
+   * 主动关闭 websocket 连接。
+   */
   close(): void {
     this.status = 'closing';
     this.socket.close();
   }
 
+  /**
+   * Subscribe to all incoming messages.
+   * 订阅所有接收到的消息。
+   */
   onMessage(handler: (message: TReceive) => void): () => void {
     this.messageListeners.add(handler);
     return () => this.messageListeners.delete(handler);
   }
 
+  /**
+   * Subscribe to websocket open event.
+   * 订阅 websocket 打开事件。
+   */
   onOpen(handler: (event: Event) => void): () => void {
     this.openListeners.add(handler);
     return () => this.openListeners.delete(handler);
   }
 
+  /**
+   * Subscribe to websocket close event.
+   * 订阅 websocket 关闭事件。
+   */
   onClose(handler: (event: CloseEvent) => void): () => void {
     this.closeListeners.add(handler);
     return () => this.closeListeners.delete(handler);
   }
 
+  /**
+   * Subscribe to websocket error event.
+   * 订阅 websocket 错误事件。
+   */
   onError(handler: (event: Event) => void): () => void {
     this.errorListeners.add(handler);
     return () => this.errorListeners.delete(handler);
   }
 
+  /**
+   * Subscribe to messages by the `type` field.
+   * 按消息的 `type` 字段进行订阅。
+   */
   onType(
     type: TType,
     handler: (message: TReceive) => void,
@@ -253,6 +305,10 @@ export class TypedWebSocketClient<
     };
   }
 
+  /**
+   * Subscribe to typed payload messages with optional select/validate/decode steps.
+   * 订阅类型化 payload 消息，并可通过 select/validate/decode 进行处理。
+   */
   onTyped<TPayload>(
     type: TType,
     handler: (payload: TPayload, message: TReceive) => void,
@@ -303,21 +359,10 @@ export class TypedWebSocketClient<
   }
 }
 
-/**
- * WebSocket demo with typed message handlers
- */
-// Literal union is emitted as type because interface cannot model union values.
-// 字面量联合类型使用 type，因为 interface 不能表达联合值。
-export type ChatDemoMessageType = string;
-export function chatDemo<TSend = WebSocketMessage>(
-  options: WebSocketConvertOptions<TSend, WsServerEnvelope>
-): TypedWebSocketClient<WsServerEnvelope, TSend, ChatDemoMessageType> {
-  const url = joinURLPath('/ws-go/v1', '/chat-demo');
-  return new TypedWebSocketClient<WsServerEnvelope, TSend, ChatDemoMessageType>(
-    url,
-    options
-  );
-}
+// #endregion Typed WebSocket Client
+
+// #region Interfaces & Validators
+// =====================================================
 
 // =====================================================
 // INTERFACES & VALIDATORS
@@ -406,3 +451,33 @@ export function ensureWsServerEnvelope(value: unknown): WsServerEnvelope {
   }
   return value;
 }
+
+// #endregion Interfaces & Validators
+
+// #region Endpoint Classes
+// =====================================================
+
+/**
+ * WebSocket demo with typed message handlers
+ */
+// Literal union is emitted as type because interface cannot model union values.
+// 字面量联合类型使用 type，因为 interface 不能表达联合值。
+export type ChatDemoMessageType = string;
+export class ChatDemo<TSend = WebSocketMessage> extends TypedWebSocketClient<
+  WsServerEnvelope,
+  TSend,
+  ChatDemoMessageType
+> {
+  static readonly NAME = 'chatDemo' as const;
+  static readonly PATH = '/chat-demo' as const;
+  static readonly MESSAGE_TYPES = [] as const;
+  public readonly endpointName = ChatDemo.NAME;
+  public readonly endpointPath = ChatDemo.PATH;
+
+  constructor(options: WebSocketConvertOptions<TSend, WsServerEnvelope>) {
+    const url = joinURLPath('/ws-go/v1', '/chat-demo');
+    super(url, options);
+  }
+}
+
+// #endregion Endpoint Classes

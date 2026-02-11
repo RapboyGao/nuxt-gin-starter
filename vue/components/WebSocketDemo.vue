@@ -42,9 +42,6 @@
 </template>
 
 <script setup lang="ts">
-import { chatDemo } from '@/composables/auto-generated-ws';
-import type { WsServerEnvelope } from '@/composables/auto-generated-ws';
-
 type WsClientMessage = {
   type: string;
   payload: unknown;
