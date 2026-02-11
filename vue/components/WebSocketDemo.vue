@@ -3,7 +3,9 @@
     <div class="crud-header">
       <div>
         <h3>ProductCRUDDemo (WebSocket)</h3>
-        <p class="crud-subtitle">Endpoint: <code>/ws-go/v1/products-demo</code></p>
+        <p class="crud-subtitle">
+          Endpoint: <code>/ws-go/v1/products-demo</code>
+        </p>
       </div>
       <div class="ws-toolbar">
         <div class="ws-status" :class="{ online: isOpen }">
@@ -64,7 +66,9 @@
       </div>
       <div class="field">
         <label></label>
-        <button class="btn ghost" type="submit" :disabled="!isOpen">Create</button>
+        <button class="btn ghost" type="submit" :disabled="!isOpen">
+          Create
+        </button>
       </div>
     </form>
 
@@ -103,10 +107,20 @@
           </select>
         </div>
         <div class="actions">
-          <button class="btn ghost" type="button" @click="update(item.id)" :disabled="!isOpen">
+          <button
+            class="btn ghost"
+            type="button"
+            @click="update(item.id)"
+            :disabled="!isOpen"
+          >
             Update
           </button>
-          <button class="btn danger" type="button" @click="remove(item.id)" :disabled="!isOpen">
+          <button
+            class="btn danger"
+            type="button"
+            @click="remove(item.id)"
+            :disabled="!isOpen"
+          >
             Delete
           </button>
         </div>
@@ -121,10 +135,7 @@
 </template>
 
 <script setup lang="ts">
-import {
-  ProductCrudWsDemo,
-  ensureWsProductServerEnvelope,
-} from '@/composables/auto-generated-ws';
+import { ProductCrudWsDemo } from '@/composables/auto-generated-ws';
 
 type ProductWsClientMessage = {
   type: string;
