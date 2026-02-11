@@ -139,22 +139,14 @@ import {
   ProductCrudWsDemo,
   createProductCrudWsDemo,
 } from '@/composables/auto-generated-ws';
+import {
+  ensureWebSocketMessage,
+  ensureWsProductOverview,
+} from '@/composables/auto-generated-types';
 
 type ProductWsClientMessage = {
   type: string;
   payload: unknown;
-};
-
-type ProductWsServerMessage = {
-  type: string;
-  payload: unknown;
-};
-
-type ProductWsServerPayload = {
-  message?: string;
-  item?: ProductModelResponse;
-  items?: ProductModelResponse[];
-  deletedId?: number;
 };
 
 type EditState = {
@@ -255,33 +247,21 @@ const applyList = (list: ProductModelResponse[]) => {
   syncEdits(list);
 };
 
-const asProductWsPayload = (value: unknown): ProductWsServerPayload | null => {
+const parseOverviewPayload = (value: unknown) => {
   if (typeof value === 'string') {
     try {
-      const parsed = JSON.parse(value) as unknown;
-      if (!parsed || typeof parsed !== 'object') return null;
-      return parsed as ProductWsServerPayload;
+      return ensureWsProductOverview(JSON.parse(value));
     } catch {
-      return null;
+      throw new Error('invalid ws payload json');
     }
   }
-  if (!value || typeof value !== 'object') return null;
-  return value as ProductWsServerPayload;
-};
-
-const normalizeWsMessage = (value: unknown): ProductWsServerMessage => {
-  if (!value || typeof value !== 'object') {
-    return { type: 'error', payload: { message: 'invalid websocket payload' } };
-  }
-  const record = value as Record<string, unknown>;
-  const type = typeof record.type === 'string' ? record.type : 'unknown';
-  return { type, payload: record.payload };
+  return ensureWsProductOverview(value);
 };
 
 const createClient = () =>
   createProductCrudWsDemo<ProductWsClientMessage>({
     serialize: (value) => value,
-    deserialize: (value) => normalizeWsMessage(value) as any,
+    deserialize: (value) => ensureWebSocketMessage(value),
   });
 
 const requestList = () => {
@@ -354,40 +334,41 @@ const bindClientEvents = (client: ProductCrudWsClient) => {
     error.value = 'websocket error';
   });
 
-  const offMessage = client.onMessage((message) => {
-    const payload = asProductWsPayload(message.payload);
-    if (!payload) return;
-    if (message.type === 'list' || message.type === 'sync') {
-      applyList(payload.items ?? []);
-      return;
-    }
-    if (message.type === 'created') {
-      appendLog(`[created] ${payload.item?.name ?? ''}`);
-      return;
-    }
-    if (message.type === 'updated') {
-      appendLog(`[updated] ${payload.item?.name ?? ''}`);
-      return;
-    }
-    if (message.type === 'deleted') {
-      appendLog(`[deleted] ${payload.deletedId}`);
-      return;
-    }
-    if (message.type === 'system') {
-      appendLog(`[system] ${payload.message ?? ''}`);
-      return;
-    }
-    if (message.type === 'error') {
-      error.value = payload.message || 'server error';
-      appendLog(`[error] ${payload.message ?? ''}`);
-    }
-  });
+  const decodeOptions = { decode: parseOverviewPayload };
+  const offList = client.onListPayload((payload) => {
+    applyList(payload.items ?? []);
+  }, decodeOptions);
+  const offSync = client.onSyncPayload((payload) => {
+    applyList(payload.items ?? []);
+  }, decodeOptions);
+  const offCreated = client.onCreatedPayload((payload) => {
+    appendLog(`[created] ${payload.item?.name ?? ''}`);
+  }, decodeOptions);
+  const offUpdated = client.onUpdatedPayload((payload) => {
+    appendLog(`[updated] ${payload.item?.name ?? ''}`);
+  }, decodeOptions);
+  const offDeleted = client.onDeletedPayload((payload) => {
+    appendLog(`[deleted] ${payload.deletedId}`);
+  }, decodeOptions);
+  const offSystem = client.onSystemPayload((payload) => {
+    appendLog(`[system] ${payload.message ?? ''}`);
+  }, decodeOptions);
+  const offServerError = client.onErrorPayload((payload) => {
+    error.value = payload.message || 'server error';
+    appendLog(`[error] ${payload.message ?? ''}`);
+  }, decodeOptions);
 
   unbindEvents = () => {
     offOpen();
     offClose();
     offError();
-    offMessage();
+    offList();
+    offSync();
+    offCreated();
+    offUpdated();
+    offDeleted();
+    offSystem();
+    offServerError();
   };
 };
 

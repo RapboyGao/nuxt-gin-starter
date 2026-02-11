@@ -36,6 +36,8 @@ type wsProductDeletePayload struct {
 	ID uint `json:"id" tsdoc:"Product id"`
 }
 
+type wsNoPayload struct{}
+
 // wsProductOverview
 // Business payload wrapped into endpoint.WebSocketMessage.payload.
 // 业务负载体，最终会包装进 endpoint.WebSocketMessage.payload。
@@ -188,6 +190,18 @@ var ProductCRUDWebSocketEndpoint = func() *endpoint.WebSocketEndpoint {
 	ws.Description = "WebSocket Product CRUD demo"
 	ws.ClientMessageType = reflect.TypeOf(endpoint.WebSocketMessage{})
 	ws.ServerMessageType = reflect.TypeOf(endpoint.WebSocketMessage{})
+	ws.MessageTypes = []string{
+		"created",
+		"deleted",
+		"error",
+		"list",
+		"sync",
+		"system",
+		"updated",
+	}
+	for _, messageType := range ws.MessageTypes {
+		endpoint.RegisterWebSocketServerPayloadType[wsProductOverview](ws, messageType)
+	}
 
 	//
 	// 1) Ensure DB is ready on connect.
@@ -352,6 +366,26 @@ var ProductCRUDWebSocketEndpoint = func() *endpoint.WebSocketEndpoint {
 		publishProductCRUDSync(db)
 
 		return wrapProductWSMessage("deleted", resp), nil
+	})
+
+	// server-only message types to satisfy payload map checks in current generator/runtime
+	endpoint.RegisterWebSocketTypedHandler(ws, "created", func(_ wsNoPayload, _ *endpoint.WebSocketContext) (any, error) {
+		return wsErrorMessage("created is server-only"), nil
+	})
+	endpoint.RegisterWebSocketTypedHandler(ws, "deleted", func(_ wsNoPayload, _ *endpoint.WebSocketContext) (any, error) {
+		return wsErrorMessage("deleted is server-only"), nil
+	})
+	endpoint.RegisterWebSocketTypedHandler(ws, "error", func(_ wsNoPayload, _ *endpoint.WebSocketContext) (any, error) {
+		return wsErrorMessage("error is server-only"), nil
+	})
+	endpoint.RegisterWebSocketTypedHandler(ws, "sync", func(_ wsNoPayload, _ *endpoint.WebSocketContext) (any, error) {
+		return wsErrorMessage("sync is server-only"), nil
+	})
+	endpoint.RegisterWebSocketTypedHandler(ws, "system", func(_ wsNoPayload, _ *endpoint.WebSocketContext) (any, error) {
+		return wsErrorMessage("system is server-only"), nil
+	})
+	endpoint.RegisterWebSocketTypedHandler(ws, "updated", func(_ wsNoPayload, _ *endpoint.WebSocketContext) (any, error) {
+		return wsErrorMessage("updated is server-only"), nil
 	})
 
 	return ws

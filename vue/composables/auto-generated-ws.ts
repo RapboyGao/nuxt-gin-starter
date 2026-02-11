@@ -12,7 +12,8 @@
  * =====================================================
  */
 
-import type { ProductCreateRequest, ProductListQueryParams, WebSocketMessage, WsProductDeletePayload, WsProductUpdatePayload } from './auto-generated-types';
+import type { ProductCreateRequest, ProductListQueryParams, WebSocketMessage, WsNoPayload, WsProductDeletePayload, WsProductOverview, WsProductUpdatePayload } from './auto-generated-types';
+import { validateWebSocketMessage } from './auto-generated-types';
 
 
 // #region Runtime Helpers
@@ -372,17 +373,53 @@ export class TypedWebSocketClient<
  */
 // Literal union is emitted as type because interface cannot model union values.
 // 字面量联合类型使用 type，因为 interface 不能表达联合值。
-export type ProductCrudWsDemoMessageType = string;
+export type ProductCrudWsDemoMessageType =
+  | 'created'
+  | 'deleted'
+  | 'error'
+  | 'list'
+  | 'sync'
+  | 'system'
+  | 'updated';
+export interface ProductCrudWsDemoServerPayloadByType {
+  created: WsProductOverview;
+  deleted: WsProductOverview;
+  error: WsProductOverview;
+  list: WsProductOverview;
+  sync: WsProductOverview;
+  system: WsProductOverview;
+  updated: WsProductOverview;
+}
 export interface ProductCrudWsDemoClientPayloadByType {
+  created: WsNoPayload;
+  deleted: WsNoPayload;
+  error: WsNoPayload;
+  list: ProductListQueryParams;
+  sync: WsNoPayload;
+  system: WsNoPayload;
+  updated: WsNoPayload;
   create: ProductCreateRequest;
   delete: WsProductDeletePayload;
-  list: ProductListQueryParams;
   update: WsProductUpdatePayload;
 }
+export type ProductCrudWsDemoReceiveUnion =
+  | { type: 'created'; payload: WsProductOverview }
+  | { type: 'deleted'; payload: WsProductOverview }
+  | { type: 'error'; payload: WsProductOverview }
+  | { type: 'list'; payload: WsProductOverview }
+  | { type: 'sync'; payload: WsProductOverview }
+  | { type: 'system'; payload: WsProductOverview }
+  | { type: 'updated'; payload: WsProductOverview };
 export type ProductCrudWsDemoSendUnion =
+  | { type: 'created'; payload: WsNoPayload }
+  | { type: 'deleted'; payload: WsNoPayload }
+  | { type: 'error'; payload: WsNoPayload }
+  | { type: 'list'; payload: ProductListQueryParams }
+  | { type: 'sync'; payload: WsNoPayload }
+  | { type: 'system'; payload: WsNoPayload }
+  | { type: 'updated'; payload: WsNoPayload }
   | { type: 'create'; payload: ProductCreateRequest }
   | { type: 'delete'; payload: WsProductDeletePayload }
-  | { type: 'list'; payload: ProductListQueryParams }
   | { type: 'update'; payload: WsProductUpdatePayload };
 export class ProductCrudWsDemo<
   TSend = WebSocketMessage,
@@ -398,7 +435,15 @@ export class ProductCrudWsDemo<
     api: '/products-demo',
   } as const;
   static readonly FULL_PATH = '/ws-go/v1/products-demo' as const;
-  static readonly MESSAGE_TYPES = [] as const;
+  static readonly MESSAGE_TYPES = [
+    'created',
+    'deleted',
+    'error',
+    'list',
+    'sync',
+    'system',
+    'updated',
+  ] as const;
   public readonly endpointName = ProductCrudWsDemo.NAME;
   public readonly endpointPath = ProductCrudWsDemo.FULL_PATH;
 
@@ -407,8 +452,399 @@ export class ProductCrudWsDemo<
     super(url, options);
   }
 
+  onTypedMessage<TType extends ProductCrudWsDemoMessageType>(
+    type: TType,
+    handler: (
+      message: Extract<ProductCrudWsDemoReceiveUnion, { type: TType }>
+    ) => void,
+    options?: TypeHandlerOptions<WebSocketMessage>
+  ): () => void {
+    return this.onType(
+      type,
+      (message) =>
+        handler(
+          message as unknown as Extract<
+            ProductCrudWsDemoReceiveUnion,
+            { type: TType }
+          >
+        ),
+      options
+    );
+  }
+
   sendTypedMessage(message: ProductCrudWsDemoSendUnion): void {
     this.send(message as TSend);
+  }
+
+  /**
+   * Subscribe to messages with type "created" for ProductCrudWsDemo.
+   * 订阅 ProductCrudWsDemo 中 type="created" 的完整消息。
+   */
+  onCreatedType(
+    handler: (message: { type: 'created'; payload: WsProductOverview }) => void,
+    options?: TypeHandlerOptions<WebSocketMessage>
+  ): () => void {
+    if (options === undefined) {
+      options = { validate: validateWebSocketMessage };
+    }
+    return this.onType(
+      'created' as ProductCrudWsDemoMessageType,
+      (message) =>
+        handler(
+          message as unknown as { type: 'created'; payload: WsProductOverview }
+        ),
+      options
+    );
+  }
+
+  /**
+   * Subscribe to payload of messages with type "created" for ProductCrudWsDemo.
+   * 订阅 ProductCrudWsDemo 中 type="created" 的 payload，并可通过 options 做选择、校验与解码。
+   */
+  onCreatedPayload(
+    handler: (payload: WsProductOverview, message: WebSocketMessage) => void,
+    options?: TypedHandlerOptions<WebSocketMessage, WsProductOverview>
+  ): () => void {
+    if (options === undefined) {
+      function defaultValidatePayload(
+        _payload: unknown,
+        message: WebSocketMessage
+      ): boolean {
+        return validateWebSocketMessage(message);
+      }
+      options = { validate: defaultValidatePayload };
+    }
+    return this.onTyped<WsProductOverview>(
+      'created' as ProductCrudWsDemoMessageType,
+      handler,
+      options
+    );
+  }
+
+  /**
+   * Send payload with fixed message type "created".
+   * 发送固定 type="created" 的 payload。
+   */
+  sendCreatedPayload(payload: WsNoPayload): void {
+    this.send({ type: 'created', payload } as TSend);
+  }
+
+  /**
+   * Subscribe to messages with type "deleted" for ProductCrudWsDemo.
+   * 订阅 ProductCrudWsDemo 中 type="deleted" 的完整消息。
+   */
+  onDeletedType(
+    handler: (message: { type: 'deleted'; payload: WsProductOverview }) => void,
+    options?: TypeHandlerOptions<WebSocketMessage>
+  ): () => void {
+    if (options === undefined) {
+      options = { validate: validateWebSocketMessage };
+    }
+    return this.onType(
+      'deleted' as ProductCrudWsDemoMessageType,
+      (message) =>
+        handler(
+          message as unknown as { type: 'deleted'; payload: WsProductOverview }
+        ),
+      options
+    );
+  }
+
+  /**
+   * Subscribe to payload of messages with type "deleted" for ProductCrudWsDemo.
+   * 订阅 ProductCrudWsDemo 中 type="deleted" 的 payload，并可通过 options 做选择、校验与解码。
+   */
+  onDeletedPayload(
+    handler: (payload: WsProductOverview, message: WebSocketMessage) => void,
+    options?: TypedHandlerOptions<WebSocketMessage, WsProductOverview>
+  ): () => void {
+    if (options === undefined) {
+      function defaultValidatePayload(
+        _payload: unknown,
+        message: WebSocketMessage
+      ): boolean {
+        return validateWebSocketMessage(message);
+      }
+      options = { validate: defaultValidatePayload };
+    }
+    return this.onTyped<WsProductOverview>(
+      'deleted' as ProductCrudWsDemoMessageType,
+      handler,
+      options
+    );
+  }
+
+  /**
+   * Send payload with fixed message type "deleted".
+   * 发送固定 type="deleted" 的 payload。
+   */
+  sendDeletedPayload(payload: WsNoPayload): void {
+    this.send({ type: 'deleted', payload } as TSend);
+  }
+
+  /**
+   * Subscribe to messages with type "error" for ProductCrudWsDemo.
+   * 订阅 ProductCrudWsDemo 中 type="error" 的完整消息。
+   */
+  onErrorType(
+    handler: (message: { type: 'error'; payload: WsProductOverview }) => void,
+    options?: TypeHandlerOptions<WebSocketMessage>
+  ): () => void {
+    if (options === undefined) {
+      options = { validate: validateWebSocketMessage };
+    }
+    return this.onType(
+      'error' as ProductCrudWsDemoMessageType,
+      (message) =>
+        handler(
+          message as unknown as { type: 'error'; payload: WsProductOverview }
+        ),
+      options
+    );
+  }
+
+  /**
+   * Subscribe to payload of messages with type "error" for ProductCrudWsDemo.
+   * 订阅 ProductCrudWsDemo 中 type="error" 的 payload，并可通过 options 做选择、校验与解码。
+   */
+  onErrorPayload(
+    handler: (payload: WsProductOverview, message: WebSocketMessage) => void,
+    options?: TypedHandlerOptions<WebSocketMessage, WsProductOverview>
+  ): () => void {
+    if (options === undefined) {
+      function defaultValidatePayload(
+        _payload: unknown,
+        message: WebSocketMessage
+      ): boolean {
+        return validateWebSocketMessage(message);
+      }
+      options = { validate: defaultValidatePayload };
+    }
+    return this.onTyped<WsProductOverview>(
+      'error' as ProductCrudWsDemoMessageType,
+      handler,
+      options
+    );
+  }
+
+  /**
+   * Send payload with fixed message type "error".
+   * 发送固定 type="error" 的 payload。
+   */
+  sendErrorPayload(payload: WsNoPayload): void {
+    this.send({ type: 'error', payload } as TSend);
+  }
+
+  /**
+   * Subscribe to messages with type "list" for ProductCrudWsDemo.
+   * 订阅 ProductCrudWsDemo 中 type="list" 的完整消息。
+   */
+  onListType(
+    handler: (message: { type: 'list'; payload: WsProductOverview }) => void,
+    options?: TypeHandlerOptions<WebSocketMessage>
+  ): () => void {
+    if (options === undefined) {
+      options = { validate: validateWebSocketMessage };
+    }
+    return this.onType(
+      'list' as ProductCrudWsDemoMessageType,
+      (message) =>
+        handler(
+          message as unknown as { type: 'list'; payload: WsProductOverview }
+        ),
+      options
+    );
+  }
+
+  /**
+   * Subscribe to payload of messages with type "list" for ProductCrudWsDemo.
+   * 订阅 ProductCrudWsDemo 中 type="list" 的 payload，并可通过 options 做选择、校验与解码。
+   */
+  onListPayload(
+    handler: (payload: WsProductOverview, message: WebSocketMessage) => void,
+    options?: TypedHandlerOptions<WebSocketMessage, WsProductOverview>
+  ): () => void {
+    if (options === undefined) {
+      function defaultValidatePayload(
+        _payload: unknown,
+        message: WebSocketMessage
+      ): boolean {
+        return validateWebSocketMessage(message);
+      }
+      options = { validate: defaultValidatePayload };
+    }
+    return this.onTyped<WsProductOverview>(
+      'list' as ProductCrudWsDemoMessageType,
+      handler,
+      options
+    );
+  }
+
+  /**
+   * Send payload with fixed message type "list".
+   * 发送固定 type="list" 的 payload。
+   */
+  sendListPayload(payload: ProductListQueryParams): void {
+    this.send({ type: 'list', payload } as TSend);
+  }
+
+  /**
+   * Subscribe to messages with type "sync" for ProductCrudWsDemo.
+   * 订阅 ProductCrudWsDemo 中 type="sync" 的完整消息。
+   */
+  onSyncType(
+    handler: (message: { type: 'sync'; payload: WsProductOverview }) => void,
+    options?: TypeHandlerOptions<WebSocketMessage>
+  ): () => void {
+    if (options === undefined) {
+      options = { validate: validateWebSocketMessage };
+    }
+    return this.onType(
+      'sync' as ProductCrudWsDemoMessageType,
+      (message) =>
+        handler(
+          message as unknown as { type: 'sync'; payload: WsProductOverview }
+        ),
+      options
+    );
+  }
+
+  /**
+   * Subscribe to payload of messages with type "sync" for ProductCrudWsDemo.
+   * 订阅 ProductCrudWsDemo 中 type="sync" 的 payload，并可通过 options 做选择、校验与解码。
+   */
+  onSyncPayload(
+    handler: (payload: WsProductOverview, message: WebSocketMessage) => void,
+    options?: TypedHandlerOptions<WebSocketMessage, WsProductOverview>
+  ): () => void {
+    if (options === undefined) {
+      function defaultValidatePayload(
+        _payload: unknown,
+        message: WebSocketMessage
+      ): boolean {
+        return validateWebSocketMessage(message);
+      }
+      options = { validate: defaultValidatePayload };
+    }
+    return this.onTyped<WsProductOverview>(
+      'sync' as ProductCrudWsDemoMessageType,
+      handler,
+      options
+    );
+  }
+
+  /**
+   * Send payload with fixed message type "sync".
+   * 发送固定 type="sync" 的 payload。
+   */
+  sendSyncPayload(payload: WsNoPayload): void {
+    this.send({ type: 'sync', payload } as TSend);
+  }
+
+  /**
+   * Subscribe to messages with type "system" for ProductCrudWsDemo.
+   * 订阅 ProductCrudWsDemo 中 type="system" 的完整消息。
+   */
+  onSystemType(
+    handler: (message: { type: 'system'; payload: WsProductOverview }) => void,
+    options?: TypeHandlerOptions<WebSocketMessage>
+  ): () => void {
+    if (options === undefined) {
+      options = { validate: validateWebSocketMessage };
+    }
+    return this.onType(
+      'system' as ProductCrudWsDemoMessageType,
+      (message) =>
+        handler(
+          message as unknown as { type: 'system'; payload: WsProductOverview }
+        ),
+      options
+    );
+  }
+
+  /**
+   * Subscribe to payload of messages with type "system" for ProductCrudWsDemo.
+   * 订阅 ProductCrudWsDemo 中 type="system" 的 payload，并可通过 options 做选择、校验与解码。
+   */
+  onSystemPayload(
+    handler: (payload: WsProductOverview, message: WebSocketMessage) => void,
+    options?: TypedHandlerOptions<WebSocketMessage, WsProductOverview>
+  ): () => void {
+    if (options === undefined) {
+      function defaultValidatePayload(
+        _payload: unknown,
+        message: WebSocketMessage
+      ): boolean {
+        return validateWebSocketMessage(message);
+      }
+      options = { validate: defaultValidatePayload };
+    }
+    return this.onTyped<WsProductOverview>(
+      'system' as ProductCrudWsDemoMessageType,
+      handler,
+      options
+    );
+  }
+
+  /**
+   * Send payload with fixed message type "system".
+   * 发送固定 type="system" 的 payload。
+   */
+  sendSystemPayload(payload: WsNoPayload): void {
+    this.send({ type: 'system', payload } as TSend);
+  }
+
+  /**
+   * Subscribe to messages with type "updated" for ProductCrudWsDemo.
+   * 订阅 ProductCrudWsDemo 中 type="updated" 的完整消息。
+   */
+  onUpdatedType(
+    handler: (message: { type: 'updated'; payload: WsProductOverview }) => void,
+    options?: TypeHandlerOptions<WebSocketMessage>
+  ): () => void {
+    if (options === undefined) {
+      options = { validate: validateWebSocketMessage };
+    }
+    return this.onType(
+      'updated' as ProductCrudWsDemoMessageType,
+      (message) =>
+        handler(
+          message as unknown as { type: 'updated'; payload: WsProductOverview }
+        ),
+      options
+    );
+  }
+
+  /**
+   * Subscribe to payload of messages with type "updated" for ProductCrudWsDemo.
+   * 订阅 ProductCrudWsDemo 中 type="updated" 的 payload，并可通过 options 做选择、校验与解码。
+   */
+  onUpdatedPayload(
+    handler: (payload: WsProductOverview, message: WebSocketMessage) => void,
+    options?: TypedHandlerOptions<WebSocketMessage, WsProductOverview>
+  ): () => void {
+    if (options === undefined) {
+      function defaultValidatePayload(
+        _payload: unknown,
+        message: WebSocketMessage
+      ): boolean {
+        return validateWebSocketMessage(message);
+      }
+      options = { validate: defaultValidatePayload };
+    }
+    return this.onTyped<WsProductOverview>(
+      'updated' as ProductCrudWsDemoMessageType,
+      handler,
+      options
+    );
+  }
+
+  /**
+   * Send payload with fixed message type "updated".
+   * 发送固定 type="updated" 的 payload。
+   */
+  sendUpdatedPayload(payload: WsNoPayload): void {
+    this.send({ type: 'updated', payload } as TSend);
   }
 }
 export function createProductCrudWsDemo<TSend = WebSocketMessage>(

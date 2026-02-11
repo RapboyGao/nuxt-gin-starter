@@ -473,7 +473,47 @@ export function ensureWebSocketMessage(value: unknown): WebSocketMessage {
 }
 
 // -----------------------------------------------------
-// TYPE: ProductListQueryParams
+// TYPE: WsNoPayload
+// -----------------------------------------------------
+
+// -----------------------------------------------------
+// TYPE: WsNoPayload
+// -----------------------------------------------------
+export interface WsNoPayload {}
+
+/**
+ * Validate whether a value matches WsNoPayload.
+ * 校验一个值是否符合 WsNoPayload 结构。
+ */
+
+/**
+ * Validate whether a value matches WsNoPayload.
+ * 校验一个值是否符合 WsNoPayload 结构。
+ */
+export function validateWsNoPayload(value: unknown): value is WsNoPayload {
+  if (!isPlainObject(value)) return false;
+  const obj = value as Record<string, unknown>;
+  return true;
+}
+
+/**
+ * Ensure a typed WsNoPayload after validation.
+ * 先校验，再确保得到类型化的 WsNoPayload。
+ */
+
+/**
+ * Ensure a typed WsNoPayload after validation.
+ * 先校验，再确保得到类型化的 WsNoPayload。
+ */
+export function ensureWsNoPayload(value: unknown): WsNoPayload {
+  if (!validateWsNoPayload(value)) {
+    throw new Error('Invalid WsNoPayload');
+  }
+  return value;
+}
+
+// -----------------------------------------------------
+// TYPE: ProductCreateRequest
 // -----------------------------------------------------
 
 // -----------------------------------------------------
@@ -546,7 +586,7 @@ export function ensureWsProductUpdatePayload(
 }
 
 // -----------------------------------------------------
-// TYPE: WsProductDeletePayload
+// TYPE: ProductListQueryParams
 // -----------------------------------------------------
 
 // -----------------------------------------------------
@@ -590,6 +630,87 @@ export function ensureWsProductDeletePayload(
 ): WsProductDeletePayload {
   if (!validateWsProductDeletePayload(value)) {
     throw new Error('Invalid WsProductDeletePayload');
+  }
+  return value;
+}
+
+// -----------------------------------------------------
+// TYPE: ProductModelResponse
+// -----------------------------------------------------
+
+// -----------------------------------------------------
+// TYPE: WsProductOverview
+// -----------------------------------------------------
+export interface WsProductOverview {
+  /** Event message */
+  message: string;
+  /** Single product payload */
+  item: ProductModelResponse;
+  /** Product list payload */
+  items: ProductModelResponse[];
+  /** Total item count */
+  total: number;
+  /** Current page number */
+  page: number;
+  /** Current page size */
+  size: number;
+  /** Deleted product id */
+  deletedId: number;
+  /** Server timestamp in milliseconds */
+  at: number;
+}
+
+/**
+ * Validate whether a value matches WsProductOverview.
+ * 校验一个值是否符合 WsProductOverview 结构。
+ */
+
+/**
+ * Validate whether a value matches WsProductOverview.
+ * 校验一个值是否符合 WsProductOverview 结构。
+ */
+export function validateWsProductOverview(
+  value: unknown
+): value is WsProductOverview {
+  if (!isPlainObject(value)) return false;
+  const obj = value as Record<string, unknown>;
+  if (!('message' in obj)) return false;
+  if (!(typeof obj['message'] === 'string')) return false;
+  if (!('item' in obj)) return false;
+  if (!validateProductModelResponse(obj['item'])) return false;
+  if (!('items' in obj)) return false;
+  if (
+    !(
+      Array.isArray(obj['items']) &&
+      obj['items'].every((v1) => validateProductModelResponse(v1))
+    )
+  )
+    return false;
+  if (!('total' in obj)) return false;
+  if (!(typeof obj['total'] === 'number')) return false;
+  if (!('page' in obj)) return false;
+  if (!(typeof obj['page'] === 'number')) return false;
+  if (!('size' in obj)) return false;
+  if (!(typeof obj['size'] === 'number')) return false;
+  if (!('deletedId' in obj)) return false;
+  if (!(typeof obj['deletedId'] === 'number')) return false;
+  if (!('at' in obj)) return false;
+  if (!(typeof obj['at'] === 'number')) return false;
+  return true;
+}
+
+/**
+ * Ensure a typed WsProductOverview after validation.
+ * 先校验，再确保得到类型化的 WsProductOverview。
+ */
+
+/**
+ * Ensure a typed WsProductOverview after validation.
+ * 先校验，再确保得到类型化的 WsProductOverview。
+ */
+export function ensureWsProductOverview(value: unknown): WsProductOverview {
+  if (!validateWsProductOverview(value)) {
+    throw new Error('Invalid WsProductOverview');
   }
   return value;
 }
