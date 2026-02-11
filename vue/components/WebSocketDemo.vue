@@ -42,11 +42,6 @@
 </template>
 
 <script setup lang="ts">
-import {
-  ChatDemo,
-  ensureWsServerEnvelope,
-} from '@/composables/auto-generated-ws';
-
 type WsClientMessage = {
   type: string;
   payload: unknown;
@@ -63,7 +58,7 @@ const logs = ref<string[]>([]);
 let unbindEvents: (() => void) | null = null;
 
 const createClient = () =>
-  new ChatDemo<WsClientMessage>({
+  createChatDemo<WsClientMessage>({
     serialize: (value) => value,
     deserialize: (value) => ensureWsServerEnvelope(value),
   });

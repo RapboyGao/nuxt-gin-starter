@@ -78,13 +78,6 @@
 
 <script setup lang="ts">
 import axios from 'axios';
-import {
-  CreateProductPost,
-  DeleteProductDelete,
-  ListProductsGet,
-  UpdateProductPut,
-  type ProductModelResponse,
-} from '@/composables/auto-generated-api';
 
 type EditState = {
   name: string;
@@ -165,7 +158,7 @@ const getEdit = (id: number) => {
 const refresh = async () => {
   try {
     error.value = '';
-    const res = await ListProductsGet.request({
+    const res = await requestListProductsGet({
       query: { Page: 1, PageSize: 50 },
     });
     items.value = res.items;
@@ -183,7 +176,7 @@ const create = async () => {
       error.value = 'name and price are required';
       return;
     }
-    await CreateProductPost.request({
+    await requestCreateProductPost({
       name: createForm.name,
       price: createForm.price,
       code: createForm.code,
@@ -201,7 +194,7 @@ const update = async (id: number) => {
     error.value = '';
     const next = getEdit(id);
     const pathParams = { ID: String(id) };
-    await UpdateProductPut.request(
+    await requestUpdateProductPut(
       { path: pathParams },
       {
         name: next.name,
@@ -220,7 +213,7 @@ const remove = async (id: number) => {
   try {
     error.value = '';
     const pathParams = { ID: String(id) };
-    await DeleteProductDelete.request({ path: pathParams });
+    await requestDeleteProductDelete({ path: pathParams });
     await refresh();
   } catch (err) {
     console.error(err);
