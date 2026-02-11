@@ -15,6 +15,8 @@
 
 A production-oriented full-stack starter built on **Nuxt + Gin**, with typed **HTTP Endpoint** and typed **WebSocketEndpoint** workflow.
 
+➡️ [Jump to Chinese / 跳转到中文](#zh-cn)
+
 ---
 
 ## English 🇺🇸
@@ -237,6 +239,8 @@ func main() {
 ```
 
 ---
+
+<a id="zh-cn"></a>
 
 ## 中文 🇨🇳
 
@@ -462,6 +466,8 @@ func main() {
 ## 🌐 Ecosystem
 
 - nuxtGin docs: <https://pkg.go.dev/github.com/RapboyGao/nuxtGin>
+- nuxt-gin-tools (GitHub): <https://github.com/RapboyGao/nuxt-gin-tools.git>
+- nuxt-gin-tools (npm): <https://www.npmjs.com/package/nuxt-gin-tools>
 - Nuxt docs: <https://nuxt.com/docs>
 - Gin docs: <https://gin-gonic.com>
 - GORM docs: <https://gorm.io>
