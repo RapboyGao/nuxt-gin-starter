@@ -78,6 +78,13 @@
 
 <script setup lang="ts">
 import axios from 'axios';
+import {
+  CreateProductPost,
+  DeleteProductDelete,
+  ListProductsGet,
+  UpdateProductPut,
+  type ProductModelResponse,
+} from '@/composables/auto-generated-api';
 
 type EditState = {
   name: string;
