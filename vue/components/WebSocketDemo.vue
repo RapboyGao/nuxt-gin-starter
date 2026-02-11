@@ -142,6 +142,7 @@ import {
 } from '@/composables/auto-generated-ws';
 import {
   ensureWsProductOverview,
+  type WsProductOverview,
 } from '@/composables/auto-generated-types';
 
 type ProductWsClientMessage = {
@@ -158,17 +159,37 @@ type EditState = {
 
 type ProductCrudWsClient = ProductCrudWsDemo<ProductWsClientMessage>;
 
-const ws = shallowRef<ProductCrudWsClient | null>(null);
-const isOpen = ref(false);
-const error = ref('');
-const logs = ref<string[]>([]);
-const items = ref<ProductModelResponse[]>([]);
-const createForm = reactive<EditState>({
+const randomNames = [
+  'Nova Lamp',
+  'Echo Speaker',
+  'Atlas Backpack',
+  'Pixel Mug',
+  'Zen Chair',
+  'Orbit Watch',
+  'Drift Keyboard',
+  'Pulse Headphones',
+  'Summit Bottle',
+  'Glow Candle',
+] as const;
+const codePrefixes = ['NX', 'ZG', 'PK', 'AT', 'GL'] as const;
+const levels = ['basic', 'standard', 'premium'] as const;
+
+const pick = <T,>(list: readonly T[], fallback: T): T =>
+  list[Math.floor(Math.random() * list.length)] ?? fallback;
+
+const createEditState = (): EditState => ({
   name: '',
   price: 0,
   code: '',
   level: 'standard',
 });
+
+const ws = shallowRef<ProductCrudWsClient | null>(null);
+const isOpen = ref(false);
+const error = ref('');
+const logs = ref<string[]>([]);
+const items = ref<ProductModelResponse[]>([]);
+const createForm = reactive<EditState>(createEditState());
 const edits = reactive<Record<number, EditState>>({});
 let unbindEvents: (() => void) | null = null;
 
@@ -177,38 +198,11 @@ const appendLog = (line: string) => {
   if (logs.value.length > 40) logs.value = logs.value.slice(0, 40);
 };
 
-const pick = <T,>(list: readonly T[], fallback: T): T =>
-  list[Math.floor(Math.random() * list.length)] ?? fallback;
-
-const randomName = () =>
-  pick(
-    [
-      'Nova Lamp',
-      'Echo Speaker',
-      'Atlas Backpack',
-      'Pixel Mug',
-      'Zen Chair',
-      'Orbit Watch',
-      'Drift Keyboard',
-      'Pulse Headphones',
-      'Summit Bottle',
-      'Glow Candle',
-    ] as const,
-    'Product'
-  );
-
-const randomPrice = () => Number((50 + Math.random() * 250).toFixed(2));
-
-const randomCode = () => `${pick(['NX', 'ZG', 'PK', 'AT', 'GL'], 'NX')}-${Math.floor(1000 + Math.random() * 9000)}`;
-
-const randomLevel = (): 'basic' | 'standard' | 'premium' =>
-  pick(['basic', 'standard', 'premium'] as const, 'standard');
-
 const fillRandomCreateForm = () => {
-  createForm.name = randomName();
-  createForm.price = randomPrice();
-  createForm.code = randomCode();
-  createForm.level = randomLevel();
+  createForm.name = pick(randomNames, 'Product');
+  createForm.price = Number((50 + Math.random() * 250).toFixed(2));
+  createForm.code = `${pick(codePrefixes, 'NX')}-${Math.floor(1000 + Math.random() * 9000)}`;
+  createForm.level = pick(levels, 'standard');
 };
 
 const syncEdits = (list: ProductModelResponse[]) => {
@@ -223,14 +217,7 @@ const syncEdits = (list: ProductModelResponse[]) => {
 };
 
 const getEdit = (id: number) => {
-  if (!edits[id]) {
-    edits[id] = {
-      name: '',
-      price: 0,
-      code: '',
-      level: 'standard',
-    };
-  }
+  if (!edits[id]) edits[id] = createEditState();
   return edits[id];
 };
 
@@ -239,7 +226,7 @@ const applyList = (list: ProductModelResponse[]) => {
   syncEdits(list);
 };
 
-const parseOverviewPayload = (value: unknown) => {
+const parseOverviewPayload = (value: unknown): WsProductOverview => {
   if (typeof value === 'string') {
     try {
       return ensureWsProductOverview(JSON.parse(value));
@@ -250,22 +237,19 @@ const parseOverviewPayload = (value: unknown) => {
   return ensureWsProductOverview(value);
 };
 
-const sendTyped = (message: ProductCrudWsDemoSendUnion) => {
-  if (!ws.value || !isOpen.value) return;
-  ws.value.sendTypedMessage(message);
-};
-
 const createClient = () =>
   createProductCrudWsDemo<ProductWsClientMessage>({
     serialize: (value) => value,
     deserialize: (value) => value as any,
   });
 
+const sendTyped = (message: ProductCrudWsDemoSendUnion) => {
+  if (!ws.value || !isOpen.value) return;
+  ws.value.sendTypedMessage(message);
+};
+
 const requestList = () => {
-  sendTyped({
-    type: 'list',
-    payload: { Page: 1, PageSize: 0 },
-  });
+  sendTyped({ type: 'list', payload: { Page: 1, PageSize: 0 } });
 };
 
 const create = () => {
@@ -288,6 +272,7 @@ const create = () => {
 };
 
 const update = (id: number) => {
+  if (!isOpen.value) return;
   const next = getEdit(id);
   error.value = '';
   sendTyped({
@@ -303,15 +288,14 @@ const update = (id: number) => {
 };
 
 const remove = (id: number) => {
+  if (!isOpen.value) return;
   error.value = '';
-  sendTyped({
-    type: 'delete',
-    payload: { id },
-  });
+  sendTyped({ type: 'delete', payload: { id } });
 };
 
 const bindClientEvents = (client: ProductCrudWsClient) => {
   unbindEvents?.();
+  const decodeOptions = { decode: parseOverviewPayload };
 
   const handleConnected = () => {
     isOpen.value = true;
@@ -320,23 +304,17 @@ const bindClientEvents = (client: ProductCrudWsClient) => {
   };
 
   const offOpen = client.onOpen(handleConnected);
-
   const offClose = client.onClose(() => {
     isOpen.value = false;
     appendLog('disconnected');
   });
-
   const offError = client.onError(() => {
     error.value = 'websocket error';
   });
 
-  const decodeOptions = { decode: parseOverviewPayload };
-  const offList = client.onListPayload((payload) => {
-    applyList(payload.items ?? []);
-  }, decodeOptions);
-  const offSync = client.onSyncPayload((payload) => {
-    applyList(payload.items ?? []);
-  }, decodeOptions);
+  const applyItems = (payload: WsProductOverview) => applyList(payload.items ?? []);
+  const offList = client.onListPayload(applyItems, decodeOptions);
+  const offSync = client.onSyncPayload(applyItems, decodeOptions);
   const offCreated = client.onCreatedPayload((payload) => {
     appendLog(`[created] ${payload.item?.name ?? ''}`);
   }, decodeOptions);
@@ -348,9 +326,7 @@ const bindClientEvents = (client: ProductCrudWsClient) => {
   }, decodeOptions);
   const offSystem = client.onSystemPayload((payload) => {
     appendLog(`[system] ${payload.message ?? ''}`);
-    if ((payload.items?.length ?? 0) > 0) {
-      applyList(payload.items ?? []);
-    }
+    if ((payload.items?.length ?? 0) > 0) applyItems(payload);
   }, decodeOptions);
   const offServerError = client.onErrorPayload((payload) => {
     error.value = payload.message || 'server error';
@@ -370,17 +346,12 @@ const bindClientEvents = (client: ProductCrudWsClient) => {
     offServerError();
   };
 
-  // Avoid missing initial open event when socket opens before handlers are attached.
-  if (client.isOpen) {
-    handleConnected();
-  }
+  if (client.isOpen) handleConnected();
 };
 
 const connect = () => {
   error.value = '';
-  if (ws.value?.isOpen || ws.value?.readyState === WebSocket.CONNECTING) {
-    return;
-  }
+  if (ws.value?.isOpen || ws.value?.readyState === WebSocket.CONNECTING) return;
   ws.value = createClient();
   bindClientEvents(ws.value);
 };
