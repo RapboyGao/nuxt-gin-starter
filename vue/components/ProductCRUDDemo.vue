@@ -389,7 +389,8 @@ onMounted(() => {
   color: #6b7280;
 }
 
-.row input {
+.row input,
+.row select {
   width: 100%;
   background: #0f1113;
   border: 1px solid rgba(255, 255, 255, 0.08);
