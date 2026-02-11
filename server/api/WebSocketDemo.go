@@ -129,6 +129,14 @@ func validateProductInput(name string, price float64, levelRaw string) (string, 
 	return level, nil
 }
 
+func publishProductCRUDSync(db *gorm.DB) {
+	syncResp, err := buildProductListEnvelope(db, "sync", "products synced", 1, 0)
+	if err != nil {
+		return
+	}
+	_ = endpoint.BroadcastWebSocketJSON("/ws-go/v1/products-demo", syncResp)
+}
+
 // ProductCRUDWebSocketEndpoint provides CRUD actions over WebSocket.
 var ProductCRUDWebSocketEndpoint = func() *endpoint.WebSocketEndpoint {
 	ws := endpoint.NewWebSocketEndpoint()
@@ -174,7 +182,7 @@ var ProductCRUDWebSocketEndpoint = func() *endpoint.WebSocketEndpoint {
 		return resp, nil
 	})
 
-	endpoint.RegisterWebSocketTypedHandler(ws, "create", func(payload wsProductCreatePayload, ctx *endpoint.WebSocketContext) (any, error) {
+	endpoint.RegisterWebSocketTypedHandler(ws, "create", func(payload wsProductCreatePayload, _ *endpoint.WebSocketContext) (any, error) {
 		level, err := validateProductInput(payload.Name, payload.Price, payload.Level)
 		if err != nil {
 			return newProductWSEnvelope("error", err.Error()), nil
@@ -198,14 +206,12 @@ var ProductCRUDWebSocketEndpoint = func() *endpoint.WebSocketEndpoint {
 		resp := newProductWSEnvelope("created", "product created")
 		resp.Item = toProductResponse(product)
 
-		if syncResp, syncErr := buildProductListEnvelope(db, "sync", "products synced", 1, 0); syncErr == nil {
-			_ = ctx.Publish(syncResp)
-		}
+		publishProductCRUDSync(db)
 
 		return resp, nil
 	})
 
-	endpoint.RegisterWebSocketTypedHandler(ws, "update", func(payload wsProductUpdatePayload, ctx *endpoint.WebSocketContext) (any, error) {
+	endpoint.RegisterWebSocketTypedHandler(ws, "update", func(payload wsProductUpdatePayload, _ *endpoint.WebSocketContext) (any, error) {
 		if payload.ID == 0 {
 			return newProductWSEnvelope("error", "invalid product id"), nil
 		}
@@ -238,14 +244,12 @@ var ProductCRUDWebSocketEndpoint = func() *endpoint.WebSocketEndpoint {
 		resp := newProductWSEnvelope("updated", "product updated")
 		resp.Item = toProductResponse(product)
 
-		if syncResp, syncErr := buildProductListEnvelope(db, "sync", "products synced", 1, 0); syncErr == nil {
-			_ = ctx.Publish(syncResp)
-		}
+		publishProductCRUDSync(db)
 
 		return resp, nil
 	})
 
-	endpoint.RegisterWebSocketTypedHandler(ws, "delete", func(payload wsProductDeletePayload, ctx *endpoint.WebSocketContext) (any, error) {
+	endpoint.RegisterWebSocketTypedHandler(ws, "delete", func(payload wsProductDeletePayload, _ *endpoint.WebSocketContext) (any, error) {
 		if payload.ID == 0 {
 			return newProductWSEnvelope("error", "invalid product id"), nil
 		}
@@ -266,9 +270,7 @@ var ProductCRUDWebSocketEndpoint = func() *endpoint.WebSocketEndpoint {
 		resp := newProductWSEnvelope("deleted", "product deleted")
 		resp.DeletedID = payload.ID
 
-		if syncResp, syncErr := buildProductListEnvelope(db, "sync", "products synced", 1, 0); syncErr == nil {
-			_ = ctx.Publish(syncResp)
-		}
+		publishProductCRUDSync(db)
 
 		return resp, nil
 	})

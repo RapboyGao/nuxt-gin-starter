@@ -122,6 +122,7 @@ var ProductCreateEndpoint = endpoint.NewEndpointNoParams(
 		if err := db.Create(&product).Error; err != nil {
 			return ProductModelResponse{}, err
 		}
+		publishProductCRUDSync(db)
 
 		return toProductResponse(product), nil
 	},
@@ -205,6 +206,7 @@ var ProductUpdateEndpoint = endpoint.NewEndpoint(
 		if err := db.Save(&product).Error; err != nil {
 			return ProductModelResponse{}, err
 		}
+		publishProductCRUDSync(db)
 
 		return toProductResponse(product), nil
 	},
@@ -229,6 +231,7 @@ var ProductDeleteEndpoint = endpoint.NewEndpointNoBody(
 		if err := db.Delete(&model.Product{}, id).Error; err != nil {
 			return nil, err
 		}
+		publishProductCRUDSync(db)
 
 		return gin.H{"deleted": id}, nil
 	},
