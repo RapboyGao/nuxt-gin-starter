@@ -137,6 +137,7 @@
 <script setup lang="ts">
 import {
   ProductCrudWsDemo,
+  type ProductCrudWsDemoSendUnion,
   createProductCrudWsDemo,
 } from '@/composables/auto-generated-ws';
 import {
@@ -144,11 +145,6 @@ import {
 } from '@/composables/auto-generated-types';
 
 type ProductWsClientMessage = {
-  type: string;
-  payload: unknown;
-};
-
-type ProductWsIncomingMessage = {
   type: string;
   payload: unknown;
 };
@@ -178,43 +174,35 @@ let unbindEvents: (() => void) | null = null;
 
 const appendLog = (line: string) => {
   logs.value.unshift(line);
-  if (logs.value.length > 40) {
-    logs.value = logs.value.slice(0, 40);
-  }
+  if (logs.value.length > 40) logs.value = logs.value.slice(0, 40);
 };
 
-const randomName = () => {
-  const names = [
-    'Nova Lamp',
-    'Echo Speaker',
-    'Atlas Backpack',
-    'Pixel Mug',
-    'Zen Chair',
-    'Orbit Watch',
-    'Drift Keyboard',
-    'Pulse Headphones',
-    'Summit Bottle',
-    'Glow Candle',
-  ];
-  return names[Math.floor(Math.random() * names.length)] ?? 'Product';
-};
+const pick = <T,>(list: readonly T[], fallback: T): T =>
+  list[Math.floor(Math.random() * list.length)] ?? fallback;
+
+const randomName = () =>
+  pick(
+    [
+      'Nova Lamp',
+      'Echo Speaker',
+      'Atlas Backpack',
+      'Pixel Mug',
+      'Zen Chair',
+      'Orbit Watch',
+      'Drift Keyboard',
+      'Pulse Headphones',
+      'Summit Bottle',
+      'Glow Candle',
+    ] as const,
+    'Product'
+  );
 
 const randomPrice = () => Number((50 + Math.random() * 250).toFixed(2));
 
-const randomCode = () => {
-  const prefix = ['NX', 'ZG', 'PK', 'AT', 'GL'][Math.floor(Math.random() * 5)];
-  const suffix = Math.floor(1000 + Math.random() * 9000);
-  return `${prefix}-${suffix}`;
-};
+const randomCode = () => `${pick(['NX', 'ZG', 'PK', 'AT', 'GL'], 'NX')}-${Math.floor(1000 + Math.random() * 9000)}`;
 
-const randomLevel = (): 'basic' | 'standard' | 'premium' => {
-  const levels: Array<'basic' | 'standard' | 'premium'> = [
-    'basic',
-    'standard',
-    'premium',
-  ];
-  return levels[Math.floor(Math.random() * levels.length)] ?? 'standard';
-};
+const randomLevel = (): 'basic' | 'standard' | 'premium' =>
+  pick(['basic', 'standard', 'premium'] as const, 'standard');
 
 const fillRandomCreateForm = () => {
   createForm.name = randomName();
@@ -262,26 +250,19 @@ const parseOverviewPayload = (value: unknown) => {
   return ensureWsProductOverview(value);
 };
 
-const normalizeIncomingMessage = (value: unknown): ProductWsIncomingMessage => {
-  if (!value || typeof value !== 'object') {
-    return { type: 'unknown', payload: value };
-  }
-  const record = value as Record<string, unknown>;
-  return {
-    type: typeof record.type === 'string' ? record.type : 'unknown',
-    payload: record.payload,
-  };
+const sendTyped = (message: ProductCrudWsDemoSendUnion) => {
+  if (!ws.value || !isOpen.value) return;
+  ws.value.sendTypedMessage(message);
 };
 
 const createClient = () =>
   createProductCrudWsDemo<ProductWsClientMessage>({
     serialize: (value) => value,
-    deserialize: (value) => normalizeIncomingMessage(value) as any,
+    deserialize: (value) => value as any,
   });
 
 const requestList = () => {
-  if (!ws.value || !isOpen.value) return;
-  ws.value.sendTypedMessage({
+  sendTyped({
     type: 'list',
     payload: { Page: 1, PageSize: 0 },
   });
@@ -294,7 +275,7 @@ const create = () => {
     return;
   }
   error.value = '';
-  ws.value?.sendTypedMessage({
+  sendTyped({
     type: 'create',
     payload: {
       name: createForm.name,
@@ -307,10 +288,9 @@ const create = () => {
 };
 
 const update = (id: number) => {
-  if (!isOpen.value) return;
   const next = getEdit(id);
   error.value = '';
-  ws.value?.sendTypedMessage({
+  sendTyped({
     type: 'update',
     payload: {
       id,
@@ -323,9 +303,8 @@ const update = (id: number) => {
 };
 
 const remove = (id: number) => {
-  if (!isOpen.value) return;
   error.value = '';
-  ws.value?.sendTypedMessage({
+  sendTyped({
     type: 'delete',
     payload: { id },
   });
@@ -340,9 +319,7 @@ const bindClientEvents = (client: ProductCrudWsClient) => {
     requestList();
   };
 
-  const offOpen = client.onOpen(() => {
-    handleConnected();
-  });
+  const offOpen = client.onOpen(handleConnected);
 
   const offClose = client.onClose(() => {
     isOpen.value = false;
