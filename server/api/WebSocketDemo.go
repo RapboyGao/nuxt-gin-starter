@@ -1,6 +1,7 @@
 package api
 
 import (
+	"encoding/json"
 	"errors"
 	"reflect"
 	"strings"
@@ -11,23 +12,6 @@ import (
 	"github.com/RapboyGao/nuxtGin/endpoint"
 	"gorm.io/gorm"
 )
-
-type wsProductClientMessage struct {
-	Type    string         `json:"type" tsdoc:"WebSocket action type"`
-	Payload map[string]any `json:"payload" tsdoc:"WebSocket action payload"`
-}
-
-type wsProductListPayload struct {
-	Page     int `json:"page" tsdoc:"Page number, starting from 1"`
-	PageSize int `json:"pageSize" tsdoc:"Page size, max 100; set 0 to fetch all products"`
-}
-
-type wsProductCreatePayload struct {
-	Name  string  `json:"name" tsdoc:"Product name"`
-	Price float64 `json:"price" tsdoc:"Product unit price, must be greater than 0"`
-	Code  string  `json:"code" tsdoc:"Product code"`
-	Level string  `json:"level" tsunion:"basic,standard,premium" tsdoc:"Product level"`
-}
 
 type wsProductUpdatePayload struct {
 	ID    uint    `json:"id" tsdoc:"Product id"`
@@ -50,11 +34,6 @@ type wsProductServerEnvelope struct {
 	Size      int                    `json:"size" tsdoc:"Current page size"`
 	DeletedID uint                   `json:"deletedId" tsdoc:"Deleted product id"`
 	At        int64                  `json:"at" tsdoc:"Server timestamp in milliseconds"`
-}
-
-type wsProductServerMessage struct {
-	Type    string                  `json:"type" tsunion:"created,deleted,error,list,sync,system,updated" tsdoc:"Server event type"`
-	Payload wsProductServerEnvelope `json:"payload" tsdoc:"Server event payload"`
 }
 
 func newProductWSEnvelope(msg string) wsProductServerEnvelope {
@@ -118,10 +97,11 @@ func buildProductListEnvelope(db *gorm.DB, msg string, page int, size int) (wsPr
 	return resp, nil
 }
 
-func wrapProductWSMessage(eventType string, payload wsProductServerEnvelope) wsProductServerMessage {
-	return wsProductServerMessage{
+func wrapProductWSMessage(eventType string, payload wsProductServerEnvelope) endpoint.WebSocketMessage {
+	body, _ := json.Marshal(payload)
+	return endpoint.WebSocketMessage{
 		Type:    eventType,
-		Payload: payload,
+		Payload: body,
 	}
 }
 
@@ -153,25 +133,25 @@ var ProductCRUDWebSocketEndpoint = func() *endpoint.WebSocketEndpoint {
 	ws.Name = "ProductCrudWsDemo"
 	ws.Path = "/products-demo"
 	ws.Description = "WebSocket Product CRUD demo"
-	ws.ClientMessageType = reflect.TypeOf(wsProductClientMessage{})
-	ws.ServerMessageType = reflect.TypeOf(wsProductServerMessage{})
+	ws.ClientMessageType = reflect.TypeOf(endpoint.WebSocketMessage{})
+	ws.ServerMessageType = reflect.TypeOf(endpoint.WebSocketMessage{})
 
 	ws.OnConnect = func(ctx *endpoint.WebSocketContext) error {
 		db, err := ensureDB()
 		if err != nil {
 			return ctx.Send(wrapProductWSMessage("error", newProductWSEnvelope(err.Error())))
 		}
-		if err := ctx.Send(wrapProductWSMessage("system", newProductWSEnvelope("connected"))); err != nil {
-			return err
-		}
-		listResp, err := buildProductListEnvelope(db, "initial full list", 1, 0)
+		systemResp, err := buildProductListEnvelope(db, "connected", 1, 0)
 		if err != nil {
 			return ctx.Send(wrapProductWSMessage("error", newProductWSEnvelope(err.Error())))
 		}
-		return ctx.Send(wrapProductWSMessage("list", listResp))
+		if err := ctx.Send(wrapProductWSMessage("system", systemResp)); err != nil {
+			return err
+		}
+		return nil
 	}
 
-	endpoint.RegisterWebSocketTypedHandler(ws, "list", func(payload wsProductListPayload, _ *endpoint.WebSocketContext) (any, error) {
+	endpoint.RegisterWebSocketTypedHandler(ws, "list", func(payload ProductListQueryParams, _ *endpoint.WebSocketContext) (any, error) {
 		db, err := ensureDB()
 		if err != nil {
 			return wrapProductWSMessage("error", newProductWSEnvelope(err.Error())), nil
@@ -183,7 +163,7 @@ var ProductCRUDWebSocketEndpoint = func() *endpoint.WebSocketEndpoint {
 		return wrapProductWSMessage("list", resp), nil
 	})
 
-	endpoint.RegisterWebSocketTypedHandler(ws, "create", func(payload wsProductCreatePayload, _ *endpoint.WebSocketContext) (any, error) {
+	endpoint.RegisterWebSocketTypedHandler(ws, "create", func(payload ProductCreateRequest, _ *endpoint.WebSocketContext) (any, error) {
 		level, err := validateProductInput(payload.Name, payload.Price, payload.Level)
 		if err != nil {
 			return wrapProductWSMessage("error", newProductWSEnvelope(err.Error())), nil

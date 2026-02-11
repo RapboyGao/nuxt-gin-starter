@@ -139,11 +139,22 @@ import {
   ProductCrudWsDemo,
   createProductCrudWsDemo,
 } from '@/composables/auto-generated-ws';
-import { ensureWsProductServerMessage } from '@/composables/auto-generated-types';
 
 type ProductWsClientMessage = {
   type: string;
   payload: unknown;
+};
+
+type ProductWsServerMessage = {
+  type: string;
+  payload: unknown;
+};
+
+type ProductWsServerPayload = {
+  message?: string;
+  item?: ProductModelResponse;
+  items?: ProductModelResponse[];
+  deletedId?: number;
 };
 
 type EditState = {
@@ -244,15 +255,41 @@ const applyList = (list: ProductModelResponse[]) => {
   syncEdits(list);
 };
 
+const asProductWsPayload = (value: unknown): ProductWsServerPayload | null => {
+  if (typeof value === 'string') {
+    try {
+      const parsed = JSON.parse(value) as unknown;
+      if (!parsed || typeof parsed !== 'object') return null;
+      return parsed as ProductWsServerPayload;
+    } catch {
+      return null;
+    }
+  }
+  if (!value || typeof value !== 'object') return null;
+  return value as ProductWsServerPayload;
+};
+
+const normalizeWsMessage = (value: unknown): ProductWsServerMessage => {
+  if (!value || typeof value !== 'object') {
+    return { type: 'error', payload: { message: 'invalid websocket payload' } };
+  }
+  const record = value as Record<string, unknown>;
+  const type = typeof record.type === 'string' ? record.type : 'unknown';
+  return { type, payload: record.payload };
+};
+
 const createClient = () =>
   createProductCrudWsDemo<ProductWsClientMessage>({
     serialize: (value) => value,
-    deserialize: (value) => ensureWsProductServerMessage(value),
+    deserialize: (value) => normalizeWsMessage(value) as any,
   });
 
 const requestList = () => {
   if (!ws.value || !isOpen.value) return;
-  ws.value.sendTypedMessage({ type: 'list', payload: { page: 1, pageSize: 0 } });
+  ws.value.sendTypedMessage({
+    type: 'list',
+    payload: { Page: 1, PageSize: 0 },
+  });
 };
 
 const create = () => {
@@ -318,7 +355,8 @@ const bindClientEvents = (client: ProductCrudWsClient) => {
   });
 
   const offMessage = client.onMessage((message) => {
-    const payload = message.payload;
+    const payload = asProductWsPayload(message.payload);
+    if (!payload) return;
     if (message.type === 'list' || message.type === 'sync') {
       applyList(payload.items ?? []);
       return;

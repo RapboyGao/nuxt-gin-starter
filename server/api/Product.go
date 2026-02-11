@@ -10,9 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type ProductPathParams struct {
-	ID string `uri:"id" tsdoc:"Product identifier in route path"`
-}
+type ProductPathParams = ProductIDPathParams
 
 type ProductQueryParams struct {
 	WithStock bool `form:"withStock" tsdoc:"Whether to include stock information in response"`

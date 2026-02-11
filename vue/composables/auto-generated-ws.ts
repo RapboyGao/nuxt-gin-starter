@@ -12,7 +12,7 @@
  * =====================================================
  */
 
-import type { WsProductClientMessage, WsProductCreatePayload, WsProductDeletePayload, WsProductListPayload, WsProductServerMessage, WsProductUpdatePayload } from './auto-generated-types';
+import type { ProductCreateRequest, ProductListQueryParams, WebSocketMessage, WsProductDeletePayload, WsProductUpdatePayload } from './auto-generated-types';
 
 
 // #region Runtime Helpers
@@ -374,20 +374,20 @@ export class TypedWebSocketClient<
 // 字面量联合类型使用 type，因为 interface 不能表达联合值。
 export type ProductCrudWsDemoMessageType = string;
 export interface ProductCrudWsDemoClientPayloadByType {
-  create: WsProductCreatePayload;
+  create: ProductCreateRequest;
   delete: WsProductDeletePayload;
-  list: WsProductListPayload;
+  list: ProductListQueryParams;
   update: WsProductUpdatePayload;
 }
 export type ProductCrudWsDemoSendUnion =
-  | { type: 'create'; payload: WsProductCreatePayload }
+  | { type: 'create'; payload: ProductCreateRequest }
   | { type: 'delete'; payload: WsProductDeletePayload }
-  | { type: 'list'; payload: WsProductListPayload }
+  | { type: 'list'; payload: ProductListQueryParams }
   | { type: 'update'; payload: WsProductUpdatePayload };
 export class ProductCrudWsDemo<
-  TSend = WsProductClientMessage,
+  TSend = WebSocketMessage,
 > extends TypedWebSocketClient<
-  WsProductServerMessage,
+  WebSocketMessage,
   TSend,
   ProductCrudWsDemoMessageType
 > {
@@ -402,7 +402,7 @@ export class ProductCrudWsDemo<
   public readonly endpointName = ProductCrudWsDemo.NAME;
   public readonly endpointPath = ProductCrudWsDemo.FULL_PATH;
 
-  constructor(options: WebSocketConvertOptions<TSend, WsProductServerMessage>) {
+  constructor(options: WebSocketConvertOptions<TSend, WebSocketMessage>) {
     const url = ProductCrudWsDemo.FULL_PATH;
     super(url, options);
   }
@@ -411,8 +411,8 @@ export class ProductCrudWsDemo<
     this.send(message as TSend);
   }
 }
-export function createProductCrudWsDemo<TSend = WsProductClientMessage>(
-  options: WebSocketConvertOptions<TSend, WsProductServerMessage>
+export function createProductCrudWsDemo<TSend = WebSocketMessage>(
+  options: WebSocketConvertOptions<TSend, WebSocketMessage>
 ): ProductCrudWsDemo<TSend> {
   return new ProductCrudWsDemo<TSend>(options);
 }
