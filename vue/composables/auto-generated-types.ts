@@ -473,7 +473,7 @@ export function ensureWebSocketMessage(value: unknown): WebSocketMessage {
 }
 
 // -----------------------------------------------------
-// TYPE: ProductListQueryParams
+// TYPE: WsProductUpdatePayload
 // -----------------------------------------------------
 
 // -----------------------------------------------------
@@ -546,46 +546,6 @@ export function ensureWsProductUpdatePayload(
 }
 
 // -----------------------------------------------------
-// TYPE: WsNoPayload
-// -----------------------------------------------------
-
-// -----------------------------------------------------
-// TYPE: WsNoPayload
-// -----------------------------------------------------
-export interface WsNoPayload {}
-
-/**
- * Validate whether a value matches WsNoPayload.
- * 校验一个值是否符合 WsNoPayload 结构。
- */
-
-/**
- * Validate whether a value matches WsNoPayload.
- * 校验一个值是否符合 WsNoPayload 结构。
- */
-export function validateWsNoPayload(value: unknown): value is WsNoPayload {
-  if (!isPlainObject(value)) return false;
-  const obj = value as Record<string, unknown>;
-  return true;
-}
-
-/**
- * Ensure a typed WsNoPayload after validation.
- * 先校验，再确保得到类型化的 WsNoPayload。
- */
-
-/**
- * Ensure a typed WsNoPayload after validation.
- * 先校验，再确保得到类型化的 WsNoPayload。
- */
-export function ensureWsNoPayload(value: unknown): WsNoPayload {
-  if (!validateWsNoPayload(value)) {
-    throw new Error('Invalid WsNoPayload');
-  }
-  return value;
-}
-
-// -----------------------------------------------------
 // TYPE: ProductCreateRequest
 // -----------------------------------------------------
 
@@ -635,7 +595,47 @@ export function ensureWsProductDeletePayload(
 }
 
 // -----------------------------------------------------
-// TYPE: ProductModelResponse
+// TYPE: WsNoPayload
+// -----------------------------------------------------
+
+// -----------------------------------------------------
+// TYPE: WsNoPayload
+// -----------------------------------------------------
+export interface WsNoPayload {}
+
+/**
+ * Validate whether a value matches WsNoPayload.
+ * 校验一个值是否符合 WsNoPayload 结构。
+ */
+
+/**
+ * Validate whether a value matches WsNoPayload.
+ * 校验一个值是否符合 WsNoPayload 结构。
+ */
+export function validateWsNoPayload(value: unknown): value is WsNoPayload {
+  if (!isPlainObject(value)) return false;
+  const obj = value as Record<string, unknown>;
+  return true;
+}
+
+/**
+ * Ensure a typed WsNoPayload after validation.
+ * 先校验，再确保得到类型化的 WsNoPayload。
+ */
+
+/**
+ * Ensure a typed WsNoPayload after validation.
+ * 先校验，再确保得到类型化的 WsNoPayload。
+ */
+export function ensureWsNoPayload(value: unknown): WsNoPayload {
+  if (!validateWsNoPayload(value)) {
+    throw new Error('Invalid WsNoPayload');
+  }
+  return value;
+}
+
+// -----------------------------------------------------
+// TYPE: ProductListQueryParams
 // -----------------------------------------------------
 
 // -----------------------------------------------------
