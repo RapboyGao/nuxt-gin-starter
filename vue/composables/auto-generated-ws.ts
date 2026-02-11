@@ -373,81 +373,186 @@ export class TypedWebSocketClient<
 // =====================================================
 
 // -----------------------------------------------------
-// TYPE: WebSocketMessage
+// TYPE: WsProductClientMessage
 // -----------------------------------------------------
-export interface WebSocketMessage {
+export interface WsProductClientMessage {
+  /** WebSocket action type */
   type: string;
-  payload: string;
+  /** WebSocket action payload */
+  payload: Record<string, unknown>;
 }
 
 /**
- * Validate whether a value matches WebSocketMessage.
- * 校验一个值是否符合 WebSocketMessage 结构。
+ * Validate whether a value matches WsProductClientMessage.
+ * 校验一个值是否符合 WsProductClientMessage 结构。
  */
-export function validateWebSocketMessage(
+export function validateWsProductClientMessage(
   value: unknown
-): value is WebSocketMessage {
+): value is WsProductClientMessage {
   if (!isPlainObject(value)) return false;
   const obj = value as Record<string, unknown>;
   if (!('type' in obj)) return false;
   if (!(typeof obj['type'] === 'string')) return false;
   if (!('payload' in obj)) return false;
-  if (!(typeof obj['payload'] === 'string')) return false;
+  if (
+    !(
+      isPlainObject(obj['payload']) &&
+      Object.values(obj['payload']).every((v1) => true)
+    )
+  )
+    return false;
   return true;
 }
 
 /**
- * Ensure a typed WebSocketMessage after validation.
- * 先校验，再确保得到类型化的 WebSocketMessage。
+ * Ensure a typed WsProductClientMessage after validation.
+ * 先校验，再确保得到类型化的 WsProductClientMessage。
  */
-export function ensureWebSocketMessage(value: unknown): WebSocketMessage {
-  if (!validateWebSocketMessage(value)) {
-    throw new Error('Invalid WebSocketMessage');
+export function ensureWsProductClientMessage(
+  value: unknown
+): WsProductClientMessage {
+  if (!validateWsProductClientMessage(value)) {
+    throw new Error('Invalid WsProductClientMessage');
   }
   return value;
 }
 
 // -----------------------------------------------------
-// TYPE: WsServerEnvelope
+// TYPE: ProductModelResponse
 // -----------------------------------------------------
-export interface WsServerEnvelope {
+export interface ProductModelResponse {
+  /** Product primary key */
+  id: number;
+  /** Product name */
+  name: string;
+  /** Product unit price */
+  price: number;
+  /** Product unique code */
+  code: string;
+  /** Product level */
+  level: 'basic' | 'standard' | 'premium';
+  /** Creation timestamp in milliseconds */
+  createdAt: number;
+  /** Last update timestamp in milliseconds */
+  updatedAt: number;
+}
+
+/**
+ * Validate whether a value matches ProductModelResponse.
+ * 校验一个值是否符合 ProductModelResponse 结构。
+ */
+export function validateProductModelResponse(
+  value: unknown
+): value is ProductModelResponse {
+  if (!isPlainObject(value)) return false;
+  const obj = value as Record<string, unknown>;
+  if (!('id' in obj)) return false;
+  if (!(typeof obj['id'] === 'number')) return false;
+  if (!('name' in obj)) return false;
+  if (!(typeof obj['name'] === 'string')) return false;
+  if (!('price' in obj)) return false;
+  if (!(typeof obj['price'] === 'number')) return false;
+  if (!('code' in obj)) return false;
+  if (!(typeof obj['code'] === 'string')) return false;
+  if (!('level' in obj)) return false;
+  if (
+    !(
+      typeof obj['level'] === 'string' &&
+      (obj['level'] === 'basic' ||
+        obj['level'] === 'standard' ||
+        obj['level'] === 'premium')
+    )
+  )
+    return false;
+  if (!('createdAt' in obj)) return false;
+  if (!(typeof obj['createdAt'] === 'number')) return false;
+  if (!('updatedAt' in obj)) return false;
+  if (!(typeof obj['updatedAt'] === 'number')) return false;
+  return true;
+}
+
+/**
+ * Ensure a typed ProductModelResponse after validation.
+ * 先校验，再确保得到类型化的 ProductModelResponse。
+ */
+export function ensureProductModelResponse(
+  value: unknown
+): ProductModelResponse {
+  if (!validateProductModelResponse(value)) {
+    throw new Error('Invalid ProductModelResponse');
+  }
+  return value;
+}
+
+// -----------------------------------------------------
+// TYPE: WsProductServerEnvelope
+// -----------------------------------------------------
+export interface WsProductServerEnvelope {
   /** Server event type */
   type: string;
-  /** Current websocket client id */
-  client: string;
-  /** Event message body */
+  /** Event message */
   message: string;
+  /** Single product payload */
+  item: ProductModelResponse;
+  /** Product list payload */
+  items: ProductModelResponse[];
+  /** Total item count */
+  total: number;
+  /** Current page number */
+  page: number;
+  /** Current page size */
+  size: number;
+  /** Deleted product id */
+  deletedId: number;
   /** Server timestamp in milliseconds */
   at: number;
 }
 
 /**
- * Validate whether a value matches WsServerEnvelope.
- * 校验一个值是否符合 WsServerEnvelope 结构。
+ * Validate whether a value matches WsProductServerEnvelope.
+ * 校验一个值是否符合 WsProductServerEnvelope 结构。
  */
-export function validateWsServerEnvelope(
+export function validateWsProductServerEnvelope(
   value: unknown
-): value is WsServerEnvelope {
+): value is WsProductServerEnvelope {
   if (!isPlainObject(value)) return false;
   const obj = value as Record<string, unknown>;
   if (!('type' in obj)) return false;
   if (!(typeof obj['type'] === 'string')) return false;
-  if (!('client' in obj)) return false;
-  if (!(typeof obj['client'] === 'string')) return false;
   if (!('message' in obj)) return false;
   if (!(typeof obj['message'] === 'string')) return false;
+  if (!('item' in obj)) return false;
+  if (!validateProductModelResponse(obj['item'])) return false;
+  if (!('items' in obj)) return false;
+  if (
+    !(
+      Array.isArray(obj['items']) &&
+      obj['items'].every((v1) => validateProductModelResponse(v1))
+    )
+  )
+    return false;
+  if (!('total' in obj)) return false;
+  if (!(typeof obj['total'] === 'number')) return false;
+  if (!('page' in obj)) return false;
+  if (!(typeof obj['page'] === 'number')) return false;
+  if (!('size' in obj)) return false;
+  if (!(typeof obj['size'] === 'number')) return false;
+  if (!('deletedId' in obj)) return false;
+  if (!(typeof obj['deletedId'] === 'number')) return false;
   if (!('at' in obj)) return false;
   if (!(typeof obj['at'] === 'number')) return false;
   return true;
 }
 
 /**
- * Ensure a typed WsServerEnvelope after validation.
- * 先校验，再确保得到类型化的 WsServerEnvelope。
+ * Ensure a typed WsProductServerEnvelope after validation.
+ * 先校验，再确保得到类型化的 WsProductServerEnvelope。
  */
-export function ensureWsServerEnvelope(value: unknown): WsServerEnvelope {
-  if (!validateWsServerEnvelope(value)) {
-    throw new Error('Invalid WsServerEnvelope');
+export function ensureWsProductServerEnvelope(
+  value: unknown
+): WsProductServerEnvelope {
+  if (!validateWsProductServerEnvelope(value)) {
+    throw new Error('Invalid WsProductServerEnvelope');
   }
   return value;
 }
@@ -458,232 +563,344 @@ export function ensureWsServerEnvelope(value: unknown): WsServerEnvelope {
 // =====================================================
 
 /**
- * WebSocket demo with typed message handlers
+ * WebSocket Product CRUD demo
  */
 // Literal union is emitted as type because interface cannot model union values.
 // 字面量联合类型使用 type，因为 interface 不能表达联合值。
-export type ChatDemoMessageType =
-  | 'chat'
+export type ProductCrudWsDemoMessageType =
+  | 'created'
+  | 'deleted'
   | 'error'
-  | 'pong'
+  | 'list'
+  | 'sync'
   | 'system'
-  | 'whoami';
-export class ChatDemo<TSend = WebSocketMessage> extends TypedWebSocketClient<
-  WsServerEnvelope,
+  | 'updated';
+export class ProductCrudWsDemo<
+  TSend = WsProductClientMessage,
+> extends TypedWebSocketClient<
+  WsProductServerEnvelope,
   TSend,
-  ChatDemoMessageType
+  ProductCrudWsDemoMessageType
 > {
-  static readonly NAME = 'chatDemo' as const;
-  static readonly PATH = '/chat-demo' as const;
+  static readonly NAME = 'productCrudWsDemo' as const;
+  static readonly PATH = '/products-demo' as const;
   static readonly MESSAGE_TYPES = [
-    'chat',
+    'created',
+    'deleted',
     'error',
-    'pong',
+    'list',
+    'sync',
     'system',
-    'whoami',
+    'updated',
   ] as const;
-  public readonly endpointName = ChatDemo.NAME;
-  public readonly endpointPath = ChatDemo.PATH;
+  public readonly endpointName = ProductCrudWsDemo.NAME;
+  public readonly endpointPath = ProductCrudWsDemo.PATH;
 
-  constructor(options: WebSocketConvertOptions<TSend, WsServerEnvelope>) {
-    const url = joinURLPath('/ws-go/v1', '/chat-demo');
+  constructor(
+    options: WebSocketConvertOptions<TSend, WsProductServerEnvelope>
+  ) {
+    const url = joinURLPath('/ws-go/v1', '/products-demo');
     super(url, options);
   }
 
   /**
-   * Subscribe to messages with type "chat" for ChatDemo.
-   * 订阅 ChatDemo 中 type="chat" 的完整消息。
+   * Subscribe to messages with type "created" for ProductCrudWsDemo.
+   * 订阅 ProductCrudWsDemo 中 type="created" 的完整消息。
    */
-  onChatType(
-    handler: (message: WsServerEnvelope) => void,
-    options?: TypeHandlerOptions<WsServerEnvelope>
+  onCreatedType(
+    handler: (message: WsProductServerEnvelope) => void,
+    options?: TypeHandlerOptions<WsProductServerEnvelope>
   ): () => void {
     if (options === undefined) {
-      options = { validate: validateWsServerEnvelope };
+      options = { validate: validateWsProductServerEnvelope };
     }
-    return this.onType('chat' as ChatDemoMessageType, handler, options);
-  }
-
-  /**
-   * Subscribe to payload of messages with type "chat" for ChatDemo.
-   * 订阅 ChatDemo 中 type="chat" 的 payload，并可通过 options 做选择、校验与解码。
-   */
-  onChatPayload<TPayload>(
-    handler: (payload: TPayload, message: WsServerEnvelope) => void,
-    options?: TypedHandlerOptions<WsServerEnvelope, TPayload>
-  ): () => void {
-    if (options === undefined) {
-      function defaultValidatePayload(
-        _payload: unknown,
-        message: WsServerEnvelope
-      ): boolean {
-        return validateWsServerEnvelope(message);
-      }
-      options = { validate: defaultValidatePayload };
-    }
-    return this.onTyped<TPayload>(
-      'chat' as ChatDemoMessageType,
+    return this.onType(
+      'created' as ProductCrudWsDemoMessageType,
       handler,
       options
     );
   }
 
   /**
-   * Subscribe to messages with type "error" for ChatDemo.
-   * 订阅 ChatDemo 中 type="error" 的完整消息。
+   * Subscribe to payload of messages with type "created" for ProductCrudWsDemo.
+   * 订阅 ProductCrudWsDemo 中 type="created" 的 payload，并可通过 options 做选择、校验与解码。
+   */
+  onCreatedPayload<TPayload>(
+    handler: (payload: TPayload, message: WsProductServerEnvelope) => void,
+    options?: TypedHandlerOptions<WsProductServerEnvelope, TPayload>
+  ): () => void {
+    if (options === undefined) {
+      function defaultValidatePayload(
+        _payload: unknown,
+        message: WsProductServerEnvelope
+      ): boolean {
+        return validateWsProductServerEnvelope(message);
+      }
+      options = { validate: defaultValidatePayload };
+    }
+    return this.onTyped<TPayload>(
+      'created' as ProductCrudWsDemoMessageType,
+      handler,
+      options
+    );
+  }
+
+  /**
+   * Subscribe to messages with type "deleted" for ProductCrudWsDemo.
+   * 订阅 ProductCrudWsDemo 中 type="deleted" 的完整消息。
+   */
+  onDeletedType(
+    handler: (message: WsProductServerEnvelope) => void,
+    options?: TypeHandlerOptions<WsProductServerEnvelope>
+  ): () => void {
+    if (options === undefined) {
+      options = { validate: validateWsProductServerEnvelope };
+    }
+    return this.onType(
+      'deleted' as ProductCrudWsDemoMessageType,
+      handler,
+      options
+    );
+  }
+
+  /**
+   * Subscribe to payload of messages with type "deleted" for ProductCrudWsDemo.
+   * 订阅 ProductCrudWsDemo 中 type="deleted" 的 payload，并可通过 options 做选择、校验与解码。
+   */
+  onDeletedPayload<TPayload>(
+    handler: (payload: TPayload, message: WsProductServerEnvelope) => void,
+    options?: TypedHandlerOptions<WsProductServerEnvelope, TPayload>
+  ): () => void {
+    if (options === undefined) {
+      function defaultValidatePayload(
+        _payload: unknown,
+        message: WsProductServerEnvelope
+      ): boolean {
+        return validateWsProductServerEnvelope(message);
+      }
+      options = { validate: defaultValidatePayload };
+    }
+    return this.onTyped<TPayload>(
+      'deleted' as ProductCrudWsDemoMessageType,
+      handler,
+      options
+    );
+  }
+
+  /**
+   * Subscribe to messages with type "error" for ProductCrudWsDemo.
+   * 订阅 ProductCrudWsDemo 中 type="error" 的完整消息。
    */
   onErrorType(
-    handler: (message: WsServerEnvelope) => void,
-    options?: TypeHandlerOptions<WsServerEnvelope>
+    handler: (message: WsProductServerEnvelope) => void,
+    options?: TypeHandlerOptions<WsProductServerEnvelope>
   ): () => void {
     if (options === undefined) {
-      options = { validate: validateWsServerEnvelope };
+      options = { validate: validateWsProductServerEnvelope };
     }
-    return this.onType('error' as ChatDemoMessageType, handler, options);
+    return this.onType(
+      'error' as ProductCrudWsDemoMessageType,
+      handler,
+      options
+    );
   }
 
   /**
-   * Subscribe to payload of messages with type "error" for ChatDemo.
-   * 订阅 ChatDemo 中 type="error" 的 payload，并可通过 options 做选择、校验与解码。
+   * Subscribe to payload of messages with type "error" for ProductCrudWsDemo.
+   * 订阅 ProductCrudWsDemo 中 type="error" 的 payload，并可通过 options 做选择、校验与解码。
    */
   onErrorPayload<TPayload>(
-    handler: (payload: TPayload, message: WsServerEnvelope) => void,
-    options?: TypedHandlerOptions<WsServerEnvelope, TPayload>
+    handler: (payload: TPayload, message: WsProductServerEnvelope) => void,
+    options?: TypedHandlerOptions<WsProductServerEnvelope, TPayload>
   ): () => void {
     if (options === undefined) {
       function defaultValidatePayload(
         _payload: unknown,
-        message: WsServerEnvelope
+        message: WsProductServerEnvelope
       ): boolean {
-        return validateWsServerEnvelope(message);
+        return validateWsProductServerEnvelope(message);
       }
       options = { validate: defaultValidatePayload };
     }
     return this.onTyped<TPayload>(
-      'error' as ChatDemoMessageType,
+      'error' as ProductCrudWsDemoMessageType,
       handler,
       options
     );
   }
 
   /**
-   * Subscribe to messages with type "pong" for ChatDemo.
-   * 订阅 ChatDemo 中 type="pong" 的完整消息。
+   * Subscribe to messages with type "list" for ProductCrudWsDemo.
+   * 订阅 ProductCrudWsDemo 中 type="list" 的完整消息。
    */
-  onPongType(
-    handler: (message: WsServerEnvelope) => void,
-    options?: TypeHandlerOptions<WsServerEnvelope>
+  onListType(
+    handler: (message: WsProductServerEnvelope) => void,
+    options?: TypeHandlerOptions<WsProductServerEnvelope>
   ): () => void {
     if (options === undefined) {
-      options = { validate: validateWsServerEnvelope };
+      options = { validate: validateWsProductServerEnvelope };
     }
-    return this.onType('pong' as ChatDemoMessageType, handler, options);
-  }
-
-  /**
-   * Subscribe to payload of messages with type "pong" for ChatDemo.
-   * 订阅 ChatDemo 中 type="pong" 的 payload，并可通过 options 做选择、校验与解码。
-   */
-  onPongPayload<TPayload>(
-    handler: (payload: TPayload, message: WsServerEnvelope) => void,
-    options?: TypedHandlerOptions<WsServerEnvelope, TPayload>
-  ): () => void {
-    if (options === undefined) {
-      function defaultValidatePayload(
-        _payload: unknown,
-        message: WsServerEnvelope
-      ): boolean {
-        return validateWsServerEnvelope(message);
-      }
-      options = { validate: defaultValidatePayload };
-    }
-    return this.onTyped<TPayload>(
-      'pong' as ChatDemoMessageType,
+    return this.onType(
+      'list' as ProductCrudWsDemoMessageType,
       handler,
       options
     );
   }
 
   /**
-   * Subscribe to messages with type "system" for ChatDemo.
-   * 订阅 ChatDemo 中 type="system" 的完整消息。
+   * Subscribe to payload of messages with type "list" for ProductCrudWsDemo.
+   * 订阅 ProductCrudWsDemo 中 type="list" 的 payload，并可通过 options 做选择、校验与解码。
+   */
+  onListPayload<TPayload>(
+    handler: (payload: TPayload, message: WsProductServerEnvelope) => void,
+    options?: TypedHandlerOptions<WsProductServerEnvelope, TPayload>
+  ): () => void {
+    if (options === undefined) {
+      function defaultValidatePayload(
+        _payload: unknown,
+        message: WsProductServerEnvelope
+      ): boolean {
+        return validateWsProductServerEnvelope(message);
+      }
+      options = { validate: defaultValidatePayload };
+    }
+    return this.onTyped<TPayload>(
+      'list' as ProductCrudWsDemoMessageType,
+      handler,
+      options
+    );
+  }
+
+  /**
+   * Subscribe to messages with type "sync" for ProductCrudWsDemo.
+   * 订阅 ProductCrudWsDemo 中 type="sync" 的完整消息。
+   */
+  onSyncType(
+    handler: (message: WsProductServerEnvelope) => void,
+    options?: TypeHandlerOptions<WsProductServerEnvelope>
+  ): () => void {
+    if (options === undefined) {
+      options = { validate: validateWsProductServerEnvelope };
+    }
+    return this.onType(
+      'sync' as ProductCrudWsDemoMessageType,
+      handler,
+      options
+    );
+  }
+
+  /**
+   * Subscribe to payload of messages with type "sync" for ProductCrudWsDemo.
+   * 订阅 ProductCrudWsDemo 中 type="sync" 的 payload，并可通过 options 做选择、校验与解码。
+   */
+  onSyncPayload<TPayload>(
+    handler: (payload: TPayload, message: WsProductServerEnvelope) => void,
+    options?: TypedHandlerOptions<WsProductServerEnvelope, TPayload>
+  ): () => void {
+    if (options === undefined) {
+      function defaultValidatePayload(
+        _payload: unknown,
+        message: WsProductServerEnvelope
+      ): boolean {
+        return validateWsProductServerEnvelope(message);
+      }
+      options = { validate: defaultValidatePayload };
+    }
+    return this.onTyped<TPayload>(
+      'sync' as ProductCrudWsDemoMessageType,
+      handler,
+      options
+    );
+  }
+
+  /**
+   * Subscribe to messages with type "system" for ProductCrudWsDemo.
+   * 订阅 ProductCrudWsDemo 中 type="system" 的完整消息。
    */
   onSystemType(
-    handler: (message: WsServerEnvelope) => void,
-    options?: TypeHandlerOptions<WsServerEnvelope>
+    handler: (message: WsProductServerEnvelope) => void,
+    options?: TypeHandlerOptions<WsProductServerEnvelope>
   ): () => void {
     if (options === undefined) {
-      options = { validate: validateWsServerEnvelope };
+      options = { validate: validateWsProductServerEnvelope };
     }
-    return this.onType('system' as ChatDemoMessageType, handler, options);
-  }
-
-  /**
-   * Subscribe to payload of messages with type "system" for ChatDemo.
-   * 订阅 ChatDemo 中 type="system" 的 payload，并可通过 options 做选择、校验与解码。
-   */
-  onSystemPayload<TPayload>(
-    handler: (payload: TPayload, message: WsServerEnvelope) => void,
-    options?: TypedHandlerOptions<WsServerEnvelope, TPayload>
-  ): () => void {
-    if (options === undefined) {
-      function defaultValidatePayload(
-        _payload: unknown,
-        message: WsServerEnvelope
-      ): boolean {
-        return validateWsServerEnvelope(message);
-      }
-      options = { validate: defaultValidatePayload };
-    }
-    return this.onTyped<TPayload>(
-      'system' as ChatDemoMessageType,
+    return this.onType(
+      'system' as ProductCrudWsDemoMessageType,
       handler,
       options
     );
   }
 
   /**
-   * Subscribe to messages with type "whoami" for ChatDemo.
-   * 订阅 ChatDemo 中 type="whoami" 的完整消息。
+   * Subscribe to payload of messages with type "system" for ProductCrudWsDemo.
+   * 订阅 ProductCrudWsDemo 中 type="system" 的 payload，并可通过 options 做选择、校验与解码。
    */
-  onWhoamiType(
-    handler: (message: WsServerEnvelope) => void,
-    options?: TypeHandlerOptions<WsServerEnvelope>
-  ): () => void {
-    if (options === undefined) {
-      options = { validate: validateWsServerEnvelope };
-    }
-    return this.onType('whoami' as ChatDemoMessageType, handler, options);
-  }
-
-  /**
-   * Subscribe to payload of messages with type "whoami" for ChatDemo.
-   * 订阅 ChatDemo 中 type="whoami" 的 payload，并可通过 options 做选择、校验与解码。
-   */
-  onWhoamiPayload<TPayload>(
-    handler: (payload: TPayload, message: WsServerEnvelope) => void,
-    options?: TypedHandlerOptions<WsServerEnvelope, TPayload>
+  onSystemPayload<TPayload>(
+    handler: (payload: TPayload, message: WsProductServerEnvelope) => void,
+    options?: TypedHandlerOptions<WsProductServerEnvelope, TPayload>
   ): () => void {
     if (options === undefined) {
       function defaultValidatePayload(
         _payload: unknown,
-        message: WsServerEnvelope
+        message: WsProductServerEnvelope
       ): boolean {
-        return validateWsServerEnvelope(message);
+        return validateWsProductServerEnvelope(message);
       }
       options = { validate: defaultValidatePayload };
     }
     return this.onTyped<TPayload>(
-      'whoami' as ChatDemoMessageType,
+      'system' as ProductCrudWsDemoMessageType,
+      handler,
+      options
+    );
+  }
+
+  /**
+   * Subscribe to messages with type "updated" for ProductCrudWsDemo.
+   * 订阅 ProductCrudWsDemo 中 type="updated" 的完整消息。
+   */
+  onUpdatedType(
+    handler: (message: WsProductServerEnvelope) => void,
+    options?: TypeHandlerOptions<WsProductServerEnvelope>
+  ): () => void {
+    if (options === undefined) {
+      options = { validate: validateWsProductServerEnvelope };
+    }
+    return this.onType(
+      'updated' as ProductCrudWsDemoMessageType,
+      handler,
+      options
+    );
+  }
+
+  /**
+   * Subscribe to payload of messages with type "updated" for ProductCrudWsDemo.
+   * 订阅 ProductCrudWsDemo 中 type="updated" 的 payload，并可通过 options 做选择、校验与解码。
+   */
+  onUpdatedPayload<TPayload>(
+    handler: (payload: TPayload, message: WsProductServerEnvelope) => void,
+    options?: TypedHandlerOptions<WsProductServerEnvelope, TPayload>
+  ): () => void {
+    if (options === undefined) {
+      function defaultValidatePayload(
+        _payload: unknown,
+        message: WsProductServerEnvelope
+      ): boolean {
+        return validateWsProductServerEnvelope(message);
+      }
+      options = { validate: defaultValidatePayload };
+    }
+    return this.onTyped<TPayload>(
+      'updated' as ProductCrudWsDemoMessageType,
       handler,
       options
     );
   }
 }
-export function createChatDemo<TSend = WebSocketMessage>(
-  options: WebSocketConvertOptions<TSend, WsServerEnvelope>
-): ChatDemo<TSend> {
-  return new ChatDemo<TSend>(options);
+export function createProductCrudWsDemo<TSend = WsProductClientMessage>(
+  options: WebSocketConvertOptions<TSend, WsProductServerEnvelope>
+): ProductCrudWsDemo<TSend> {
+  return new ProductCrudWsDemo<TSend>(options);
 }
 
 // #endregion Endpoint Classes

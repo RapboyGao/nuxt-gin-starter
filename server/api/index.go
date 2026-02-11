@@ -13,5 +13,5 @@ var AllEndpoints = []endpoint.EndpointLike{
 	ProductListEndpoint,
 }
 var AllWebSocketEndpoints = []endpoint.WebSocketEndpointLike{
-	ChatWebSocketEndpoint,
+	ProductCRUDWebSocketEndpoint,
 }

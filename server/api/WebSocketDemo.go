@@ -1,117 +1,267 @@
 package api
 
 import (
-	"fmt"
+	"errors"
 	"reflect"
 	"strings"
 	"time"
 
+	"GinServer/server/model"
+
 	"github.com/RapboyGao/nuxtGin/endpoint"
+	"gorm.io/gorm"
 )
 
-type wsPingPayload struct {
-	At int64 `json:"at" tsdoc:"Client local timestamp in milliseconds when sending ping"`
+type wsProductClientMessage struct {
+	Type    string         `json:"type" tsdoc:"WebSocket action type"`
+	Payload map[string]any `json:"payload" tsdoc:"WebSocket action payload"`
 }
 
-type wsChatPayload struct {
-	User    string `json:"user" tsdoc:"Sender display name"`
-	Content string `json:"content" tsdoc:"Chat content text"`
+type wsProductListPayload struct {
+	Page     int `json:"page" tsdoc:"Page number, starting from 1"`
+	PageSize int `json:"pageSize" tsdoc:"Page size, max 100; set 0 to fetch all products"`
 }
 
-type wsWhoAmIPayload struct{}
-
-type wsServerEnvelope struct {
-	Type    string `json:"type" tsdoc:"Server event type"`
-	Client  string `json:"client" tsdoc:"Current websocket client id"`
-	Message string `json:"message" tsdoc:"Event message body"`
-	At      int64  `json:"at" tsdoc:"Server timestamp in milliseconds"`
+type wsProductCreatePayload struct {
+	Name  string  `json:"name" tsdoc:"Product name"`
+	Price float64 `json:"price" tsdoc:"Product unit price, must be greater than 0"`
+	Code  string  `json:"code" tsdoc:"Product code"`
+	Level string  `json:"level" tsunion:"basic,standard,premium" tsdoc:"Product level"`
 }
 
-// ChatWebSocketEndpoint handles a small event protocol:
-// - ping   -> server replies pong to current client
-// - whoami -> server replies with current client id
-// - chat   -> server broadcasts chat message to all clients
-var ChatWebSocketEndpoint = func() *endpoint.WebSocketEndpoint {
+type wsProductUpdatePayload struct {
+	ID    uint    `json:"id" tsdoc:"Product id"`
+	Name  string  `json:"name" tsdoc:"Product name"`
+	Price float64 `json:"price" tsdoc:"Product unit price, must be greater than 0"`
+	Code  string  `json:"code" tsdoc:"Product code"`
+	Level string  `json:"level" tsunion:"basic,standard,premium" tsdoc:"Product level"`
+}
+
+type wsProductDeletePayload struct {
+	ID uint `json:"id" tsdoc:"Product id"`
+}
+
+type wsProductServerEnvelope struct {
+	Type      string                 `json:"type" tsdoc:"Server event type"`
+	Message   string                 `json:"message" tsdoc:"Event message"`
+	Item      ProductModelResponse   `json:"item" tsdoc:"Single product payload"`
+	Items     []ProductModelResponse `json:"items" tsdoc:"Product list payload"`
+	Total     int64                  `json:"total" tsdoc:"Total item count"`
+	Page      int                    `json:"page" tsdoc:"Current page number"`
+	Size      int                    `json:"size" tsdoc:"Current page size"`
+	DeletedID uint                   `json:"deletedId" tsdoc:"Deleted product id"`
+	At        int64                  `json:"at" tsdoc:"Server timestamp in milliseconds"`
+}
+
+func newProductWSEnvelope(t string, msg string) wsProductServerEnvelope {
+	return wsProductServerEnvelope{
+		Type:    t,
+		Message: msg,
+		Items:   []ProductModelResponse{},
+		At:      time.Now().UnixMilli(),
+	}
+}
+
+func buildProductListEnvelope(db *gorm.DB, eventType string, msg string, page int, size int) (wsProductServerEnvelope, error) {
+	if page <= 0 {
+		page = 1
+	}
+	fetchAll := size == 0
+	if !fetchAll && (size < 0 || size > 100) {
+		size = 10
+	}
+
+	var total int64
+	if err := db.Model(&model.Product{}).Count(&total).Error; err != nil {
+		return wsProductServerEnvelope{}, err
+	}
+
+	var products []model.Product
+	if fetchAll {
+		if err := db.Order("id desc").Find(&products).Error; err != nil {
+			return wsProductServerEnvelope{}, err
+		}
+	} else {
+		offset := (page - 1) * size
+		if err := db.Order("id desc").Limit(size).Offset(offset).Find(&products).Error; err != nil {
+			return wsProductServerEnvelope{}, err
+		}
+	}
+
+	items := make([]ProductModelResponse, 0, len(products))
+	for _, p := range products {
+		items = append(items, toProductResponse(p))
+	}
+
+	resp := newProductWSEnvelope(eventType, msg)
+	resp.Items = items
+	resp.Total = total
+	if fetchAll {
+		resp.Page = 1
+		resp.Size = len(items)
+	} else {
+		resp.Page = page
+		resp.Size = size
+	}
+	return resp, nil
+}
+
+func validateProductInput(name string, price float64, levelRaw string) (string, error) {
+	if strings.TrimSpace(name) == "" {
+		return "", errors.New("name is required")
+	}
+	if price <= 0 {
+		return "", errors.New("price must be greater than 0")
+	}
+	level, ok := normalizeProductLevel(levelRaw)
+	if !ok {
+		return "", errors.New("level must be one of: basic, standard, premium")
+	}
+	return level, nil
+}
+
+// ProductCRUDWebSocketEndpoint provides CRUD actions over WebSocket.
+var ProductCRUDWebSocketEndpoint = func() *endpoint.WebSocketEndpoint {
 	ws := endpoint.NewWebSocketEndpoint()
-	ws.Name = "ChatDemo"
-	ws.Path = "/chat-demo"
-	ws.Description = "WebSocket demo with typed message handlers"
-	ws.ServerMessageType = reflect.TypeOf(wsServerEnvelope{})
+	ws.Name = "ProductCrudWsDemo"
+	ws.Path = "/products-demo"
+	ws.Description = "WebSocket Product CRUD demo"
+	ws.ClientMessageType = reflect.TypeOf(wsProductClientMessage{})
+	ws.ServerMessageType = reflect.TypeOf(wsProductServerEnvelope{})
 	ws.MessageTypes = []string{
-		"chat",
+		"created",
+		"deleted",
 		"error",
-		"pong",
+		"list",
+		"sync",
 		"system",
-		"whoami",
+		"updated",
 	}
 
 	ws.OnConnect = func(ctx *endpoint.WebSocketContext) error {
-		return ctx.Publish(wsServerEnvelope{
-			Type:    "system",
-			Client:  ctx.ID,
-			Message: "client connected",
-			At:      time.Now().UnixMilli(),
-		})
-	}
-
-	ws.OnDisconnect = func(ctx *endpoint.WebSocketContext, err error) {
-		msg := "client disconnected"
+		db, err := ensureDB()
 		if err != nil {
-			msg = fmt.Sprintf("client disconnected: %v", err)
+			return ctx.Send(newProductWSEnvelope("error", err.Error()))
 		}
-		_ = ctx.Publish(wsServerEnvelope{
-			Type:    "system",
-			Client:  ctx.ID,
-			Message: msg,
-			At:      time.Now().UnixMilli(),
-		})
+		if err := ctx.Send(newProductWSEnvelope("system", "connected")); err != nil {
+			return err
+		}
+		listResp, err := buildProductListEnvelope(db, "list", "initial full list", 1, 0)
+		if err != nil {
+			return ctx.Send(newProductWSEnvelope("error", err.Error()))
+		}
+		return ctx.Send(listResp)
 	}
 
-	// "ping" handler: responds to current client with a pong event.
-	endpoint.RegisterWebSocketTypedHandler(ws, "ping", func(payload wsPingPayload, ctx *endpoint.WebSocketContext) (any, error) {
-		return wsServerEnvelope{
-			Type:    "pong",
-			Client:  ctx.ID,
-			Message: fmt.Sprintf("pong (client at=%d)", payload.At),
-			At:      time.Now().UnixMilli(),
-		}, nil
+	endpoint.RegisterWebSocketTypedHandler(ws, "list", func(payload wsProductListPayload, _ *endpoint.WebSocketContext) (any, error) {
+		db, err := ensureDB()
+		if err != nil {
+			return newProductWSEnvelope("error", err.Error()), nil
+		}
+		resp, err := buildProductListEnvelope(db, "list", "ok", payload.Page, payload.PageSize)
+		if err != nil {
+			return newProductWSEnvelope("error", err.Error()), nil
+		}
+		return resp, nil
 	})
 
-	// "whoami" handler: returns current websocket client ID to caller.
-	endpoint.RegisterWebSocketTypedHandler(ws, "whoami", func(_ wsWhoAmIPayload, ctx *endpoint.WebSocketContext) (any, error) {
-		return wsServerEnvelope{
-			Type:    "whoami",
-			Client:  ctx.ID,
-			Message: "you are connected",
-			At:      time.Now().UnixMilli(),
-		}, nil
+	endpoint.RegisterWebSocketTypedHandler(ws, "create", func(payload wsProductCreatePayload, ctx *endpoint.WebSocketContext) (any, error) {
+		level, err := validateProductInput(payload.Name, payload.Price, payload.Level)
+		if err != nil {
+			return newProductWSEnvelope("error", err.Error()), nil
+		}
+
+		db, err := ensureDB()
+		if err != nil {
+			return newProductWSEnvelope("error", err.Error()), nil
+		}
+
+		product := model.Product{
+			Name:  strings.TrimSpace(payload.Name),
+			Price: payload.Price,
+			Code:  strings.TrimSpace(payload.Code),
+			Level: level,
+		}
+		if err := db.Create(&product).Error; err != nil {
+			return newProductWSEnvelope("error", err.Error()), nil
+		}
+
+		resp := newProductWSEnvelope("created", "product created")
+		resp.Item = toProductResponse(product)
+
+		if syncResp, syncErr := buildProductListEnvelope(db, "sync", "products synced", 1, 0); syncErr == nil {
+			_ = ctx.Publish(syncResp)
+		}
+
+		return resp, nil
 	})
 
-	// "chat" handler: validates text and broadcasts formatted chat message.
-	endpoint.RegisterWebSocketTypedHandler(ws, "chat", func(payload wsChatPayload, ctx *endpoint.WebSocketContext) (any, error) {
-		user := strings.TrimSpace(payload.User)
-		if user == "" {
-			user = "anonymous"
+	endpoint.RegisterWebSocketTypedHandler(ws, "update", func(payload wsProductUpdatePayload, ctx *endpoint.WebSocketContext) (any, error) {
+		if payload.ID == 0 {
+			return newProductWSEnvelope("error", "invalid product id"), nil
 		}
-		text := strings.TrimSpace(payload.Content)
-		if text == "" {
-			return wsServerEnvelope{
-				Type:    "error",
-				Client:  ctx.ID,
-				Message: "content is required",
-				At:      time.Now().UnixMilli(),
-			}, nil
+		level, err := validateProductInput(payload.Name, payload.Price, payload.Level)
+		if err != nil {
+			return newProductWSEnvelope("error", err.Error()), nil
 		}
 
-		event := wsServerEnvelope{
-			Type:    "chat",
-			Client:  ctx.ID,
-			Message: fmt.Sprintf("%s: %s", user, text),
-			At:      time.Now().UnixMilli(),
+		db, err := ensureDB()
+		if err != nil {
+			return newProductWSEnvelope("error", err.Error()), nil
 		}
 
-		// Broadcast chat messages to all connected clients.
-		return event, ctx.Publish(event)
+		var product model.Product
+		if err := db.First(&product, payload.ID).Error; err != nil {
+			if errors.Is(err, gorm.ErrRecordNotFound) {
+				return newProductWSEnvelope("error", "product not found"), nil
+			}
+			return newProductWSEnvelope("error", err.Error()), nil
+		}
+
+		product.Name = strings.TrimSpace(payload.Name)
+		product.Price = payload.Price
+		product.Code = strings.TrimSpace(payload.Code)
+		product.Level = level
+		if err := db.Save(&product).Error; err != nil {
+			return newProductWSEnvelope("error", err.Error()), nil
+		}
+
+		resp := newProductWSEnvelope("updated", "product updated")
+		resp.Item = toProductResponse(product)
+
+		if syncResp, syncErr := buildProductListEnvelope(db, "sync", "products synced", 1, 0); syncErr == nil {
+			_ = ctx.Publish(syncResp)
+		}
+
+		return resp, nil
+	})
+
+	endpoint.RegisterWebSocketTypedHandler(ws, "delete", func(payload wsProductDeletePayload, ctx *endpoint.WebSocketContext) (any, error) {
+		if payload.ID == 0 {
+			return newProductWSEnvelope("error", "invalid product id"), nil
+		}
+
+		db, err := ensureDB()
+		if err != nil {
+			return newProductWSEnvelope("error", err.Error()), nil
+		}
+
+		result := db.Delete(&model.Product{}, payload.ID)
+		if result.Error != nil {
+			return newProductWSEnvelope("error", result.Error.Error()), nil
+		}
+		if result.RowsAffected == 0 {
+			return newProductWSEnvelope("error", "product not found"), nil
+		}
+
+		resp := newProductWSEnvelope("deleted", "product deleted")
+		resp.DeletedID = payload.ID
+
+		if syncResp, syncErr := buildProductListEnvelope(db, "sync", "products synced", 1, 0); syncErr == nil {
+			_ = ctx.Publish(syncResp)
+		}
+
+		return resp, nil
 	})
 
 	return ws
