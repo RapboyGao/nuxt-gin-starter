@@ -12,16 +12,9 @@
  * =====================================================
  */
 
-import type {
-  ProductCreateRequest,
-  ProductListQueryParams,
-  WebSocketMessage,
-  WsNoPayload,
-  WsProductDeletePayload,
-  WsProductOverview,
-  WsProductUpdatePayload,
-} from './auto-generated-types';
+import type { ProductCreateRequest, ProductListQueryParams, WebSocketMessage, WsNoPayload, WsProductDeletePayload, WsProductOverview, WsProductUpdatePayload } from './auto-generated-types';
 import { validateWebSocketMessage } from './auto-generated-types';
+
 
 // #region Runtime Helpers
 // =====================================================
