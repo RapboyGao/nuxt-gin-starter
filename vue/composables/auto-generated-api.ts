@@ -178,6 +178,61 @@ export async function requestCreateProductPost(
   return CreateProductPost.request(requestBody, options);
 }
 
+export class DeleteProductDelete {
+  static readonly NAME = 'deleteProduct' as const;
+  static readonly SUMMARY = '' as const;
+  static readonly METHOD = 'DELETE' as const;
+  static readonly PATHS = {
+    base: '/api-go',
+    group: '/v1',
+    api: '/products/:id',
+  } as const;
+  static readonly FULL_PATH = '/api-go/v1/products/:id' as const;
+
+  static pathParamsShape(): readonly string[] {
+    return ['ID'] as const;
+  }
+
+  static buildURL(params: { path: ProductIDPathParams }): string {
+    return `/api-go/v1/products/${encodeURIComponent(String(params.path?.ID ?? ''))}`;
+  }
+
+  static requestConfig(params: {
+    path: ProductIDPathParams;
+  }): AxiosRequestConfig {
+    const url = DeleteProductDelete.buildURL(params);
+    return {
+      method: DeleteProductDelete.METHOD,
+      url,
+    };
+  }
+
+  static async request(
+    params: {
+      path: ProductIDPathParams;
+    },
+    options?: AxiosConvertOptions<never, Record<string, unknown>>
+  ): Promise<Record<string, unknown>> {
+    const response = await axiosClient.request<Record<string, unknown>>(
+      DeleteProductDelete.requestConfig(params)
+    );
+    const responseData = response.data as unknown;
+    if (options?.deserializeResponse) {
+      return options.deserializeResponse(responseData);
+    }
+    return responseData as Record<string, unknown>;
+  }
+}
+
+export async function requestDeleteProductDelete(
+  params: {
+    path: ProductIDPathParams;
+  },
+  options?: AxiosConvertOptions<never, Record<string, unknown>>
+): Promise<Record<string, unknown>> {
+  return DeleteProductDelete.request(params, options);
+}
+
 export class GetProductByIDGet {
   static readonly NAME = 'getProductByID' as const;
   static readonly SUMMARY = '' as const;
@@ -231,6 +286,65 @@ export async function requestGetProductByIDGet(
   options?: AxiosConvertOptions<never, ProductModelResponse>
 ): Promise<ProductModelResponse> {
   return GetProductByIDGet.request(params, options);
+}
+
+export class ListProductsGet {
+  static readonly NAME = 'listProducts' as const;
+  static readonly SUMMARY = '' as const;
+  static readonly METHOD = 'GET' as const;
+  static readonly PATHS = {
+    base: '/api-go',
+    group: '/v1',
+    api: '/products',
+  } as const;
+  static readonly FULL_PATH = '/api-go/v1/products' as const;
+
+  static pathParamsShape(): readonly string[] {
+    return [] as const;
+  }
+
+  static buildURL(): string {
+    return ListProductsGet.FULL_PATH;
+  }
+
+  static requestConfig(params: {
+    query: ProductListQueryParams;
+  }): AxiosRequestConfig {
+    const url = ListProductsGet.buildURL();
+    const normalizedParams = normalizeParamKeys(params, {
+      query: { page: 'page', pagesize: 'pageSize' },
+    });
+    return {
+      method: ListProductsGet.METHOD,
+      url,
+      params: normalizedParams.query,
+    };
+  }
+
+  static async request(
+    params: {
+      query: ProductListQueryParams;
+    },
+    options?: AxiosConvertOptions<never, ProductListResponse>
+  ): Promise<ProductListResponse> {
+    const response = await axiosClient.request<ProductListResponse>(
+      ListProductsGet.requestConfig(params)
+    );
+    const responseData = response.data as unknown;
+    if (options?.deserializeResponse) {
+      return options.deserializeResponse(responseData);
+    }
+    return responseData as ProductListResponse;
+  }
+}
+
+export async function requestListProductsGet(
+  params: {
+    query: ProductListQueryParams;
+  },
+  options?: AxiosConvertOptions<never, ProductListResponse>
+): Promise<ProductListResponse> {
+  return ListProductsGet.request(params, options);
 }
 
 export class UpdateProductPut {
@@ -296,120 +410,6 @@ export async function requestUpdateProductPut(
   options?: AxiosConvertOptions<ProductUpdateRequest, ProductModelResponse>
 ): Promise<ProductModelResponse> {
   return UpdateProductPut.request(params, requestBody, options);
-}
-
-export class DeleteProductDelete {
-  static readonly NAME = 'deleteProduct' as const;
-  static readonly SUMMARY = '' as const;
-  static readonly METHOD = 'DELETE' as const;
-  static readonly PATHS = {
-    base: '/api-go',
-    group: '/v1',
-    api: '/products/:id',
-  } as const;
-  static readonly FULL_PATH = '/api-go/v1/products/:id' as const;
-
-  static pathParamsShape(): readonly string[] {
-    return ['ID'] as const;
-  }
-
-  static buildURL(params: { path: ProductIDPathParams }): string {
-    return `/api-go/v1/products/${encodeURIComponent(String(params.path?.ID ?? ''))}`;
-  }
-
-  static requestConfig(params: {
-    path: ProductIDPathParams;
-  }): AxiosRequestConfig {
-    const url = DeleteProductDelete.buildURL(params);
-    return {
-      method: DeleteProductDelete.METHOD,
-      url,
-    };
-  }
-
-  static async request(
-    params: {
-      path: ProductIDPathParams;
-    },
-    options?: AxiosConvertOptions<never, Record<string, unknown>>
-  ): Promise<Record<string, unknown>> {
-    const response = await axiosClient.request<Record<string, unknown>>(
-      DeleteProductDelete.requestConfig(params)
-    );
-    const responseData = response.data as unknown;
-    if (options?.deserializeResponse) {
-      return options.deserializeResponse(responseData);
-    }
-    return responseData as Record<string, unknown>;
-  }
-}
-
-export async function requestDeleteProductDelete(
-  params: {
-    path: ProductIDPathParams;
-  },
-  options?: AxiosConvertOptions<never, Record<string, unknown>>
-): Promise<Record<string, unknown>> {
-  return DeleteProductDelete.request(params, options);
-}
-
-export class ListProductsGet {
-  static readonly NAME = 'listProducts' as const;
-  static readonly SUMMARY = '' as const;
-  static readonly METHOD = 'GET' as const;
-  static readonly PATHS = {
-    base: '/api-go',
-    group: '/v1',
-    api: '/products',
-  } as const;
-  static readonly FULL_PATH = '/api-go/v1/products' as const;
-
-  static pathParamsShape(): readonly string[] {
-    return [] as const;
-  }
-
-  static buildURL(): string {
-    return ListProductsGet.FULL_PATH;
-  }
-
-  static requestConfig(params: {
-    query: ProductListQueryParams;
-  }): AxiosRequestConfig {
-    const url = ListProductsGet.buildURL();
-    const normalizedParams = normalizeParamKeys(params, {
-      query: { page: 'page', pagesize: 'pageSize' },
-    });
-    return {
-      method: ListProductsGet.METHOD,
-      url,
-      params: normalizedParams.query,
-    };
-  }
-
-  static async request(
-    params: {
-      query: ProductListQueryParams;
-    },
-    options?: AxiosConvertOptions<never, ProductListResponse>
-  ): Promise<ProductListResponse> {
-    const response = await axiosClient.request<ProductListResponse>(
-      ListProductsGet.requestConfig(params)
-    );
-    const responseData = response.data as unknown;
-    if (options?.deserializeResponse) {
-      return options.deserializeResponse(responseData);
-    }
-    return responseData as ProductListResponse;
-  }
-}
-
-export async function requestListProductsGet(
-  params: {
-    query: ProductListQueryParams;
-  },
-  options?: AxiosConvertOptions<never, ProductListResponse>
-): Promise<ProductListResponse> {
-  return ListProductsGet.request(params, options);
 }
 
 // #endregion Endpoint Classes
