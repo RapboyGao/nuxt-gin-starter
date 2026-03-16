@@ -12,10 +12,10 @@
     "nuxt:dev": "nuxt dev"
   },
   "devDependencies": {
-    "axios": "^1.13.5",
-    "nuxt": "^4.3.1",
-    "nuxt-gin-tools": "0.2.16",
+    "axios": "^1.13.6",
+    "nuxt": "^4.4.2",
+    "nuxt-gin-tools": "0.2.17",
     "prettier": "^3.8.1",
-    "sass": "^1.97.3"
+    "sass": "^1.98.0"
   }
 }
