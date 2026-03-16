@@ -16,6 +16,6 @@ dist
 DS_Store
 tmp
 __debug_bin**
-vue\composables\auto-generated-api.ts
-vue\composables\auto-generated-types.ts
-vue\composables\auto-generated-ws.ts
+vue/composables/auto-generated-api.ts
+vue/composables/auto-generated-types.ts
+vue/composables/auto-generated-ws.ts
