@@ -3,7 +3,7 @@ module GinServer
 go 1.25.0
 
 require (
-	github.com/RapboyGao/nuxtGin v0.2.20
+	github.com/RapboyGao/nuxtGin v0.2.21
 	github.com/arduino/go-paths-helper v1.14.0 // indirect; direct
 	github.com/dlclark/regexp2 v1.11.5 // indirect; direct
 	github.com/fatih/color v1.18.0 // indirect; direct
@@ -20,7 +20,7 @@ require (
 
 require (
 	github.com/araddon/dateparse v0.0.0-20210429162001-6b43995a97de // indirect
-	github.com/bytedance/gopkg v0.1.3 // indirect
+	github.com/bytedance/gopkg v0.1.4 // indirect
 	github.com/bytedance/sonic v1.15.0 // indirect
 	github.com/bytedance/sonic/loader v0.5.0 // indirect
 	github.com/cloudwego/base64x v0.1.6 // indirect
@@ -75,6 +75,6 @@ require (
 	modernc.org/libc v1.70.0 // indirect
 	modernc.org/mathutil v1.7.1 // indirect
 	modernc.org/memory v1.11.0 // indirect
-	modernc.org/sqlite v1.46.1 // indirect
+	modernc.org/sqlite v1.47.0 // indirect
 	rsc.io/qr v0.2.0 // indirect
 )
