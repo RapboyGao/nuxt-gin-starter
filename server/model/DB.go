@@ -12,7 +12,12 @@ func Initialize() (*gorm.DB, error) {
 		return nil, err
 	}
 	db, err := gorm.Open(sqlite.Open(".build/temp/gorm.db"), &gorm.Config{})
+	if err != nil {
+		return nil, err
+	}
 	// 迁移 schema
-	db.AutoMigrate(&Product{})
-	return db, err
+	if err := db.AutoMigrate(&Product{}); err != nil {
+		return nil, err
+	}
+	return db, nil
 }

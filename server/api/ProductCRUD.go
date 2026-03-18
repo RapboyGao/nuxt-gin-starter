@@ -1,42 +1,16 @@
 package api
 
 import (
-	"errors"
 	"strconv"
 	"strings"
 
 	"GinServer/server/model"
+	"GinServer/server/service"
 
 	"github.com/RapboyGao/nuxtGin/endpoint"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
-
-// Product level constants
-// Centralize allowed enum values for consistent validation and writes.
-// 集中定义可用等级枚举，保证校验与写入一致。
-const (
-	productLevelBasic    = "basic"
-	productLevelStandard = "standard"
-	productLevelPremium  = "premium"
-)
-
-// normalizeProductLevel
-//
-// 1) Trim spaces and lowercase incoming value.
-// 2) Validate value belongs to allowed enum.
-//
-// 1）对输入做 trim + 小写标准化。
-// 2）校验是否属于允许的等级集合。
-func normalizeProductLevel(raw string) (string, bool) {
-	level := strings.ToLower(strings.TrimSpace(raw))
-	switch level {
-	case productLevelBasic, productLevelStandard, productLevelPremium:
-		return level, true
-	default:
-		return "", false
-	}
-}
 
 // ProductIDPathParams
 // Shared path schema for `/products/:id` endpoints.
@@ -125,33 +99,18 @@ var ProductCreateEndpoint = endpoint.NewEndpointNoParams(
 	// 3）广播 WebSocket 同步消息，保证实时页面一致。
 	// 4）返回规范化后的新记录。
 	func(req ProductCreateRequest, _ *gin.Context) (ProductModelResponse, error) {
-		if strings.TrimSpace(req.Name) == "" {
-			return ProductModelResponse{}, errors.New("name is required")
-		}
-		if req.Price <= 0 {
-			return ProductModelResponse{}, errors.New("price must be greater than 0")
-		}
-		level, ok := normalizeProductLevel(req.Level)
-		if !ok {
-			return ProductModelResponse{}, errors.New("level must be one of: basic, standard, premium")
-		}
-
-		// Acquire DB connection.
-		// 获取数据库连接。
 		db, err := ensureDB()
 		if err != nil {
 			return ProductModelResponse{}, err
 		}
 
-		// Build persistent entity from validated request.
-		// 根据校验后的请求构建待持久化实体。
-		product := model.Product{
-			Name:  strings.TrimSpace(req.Name),
+		product, err := service.CreateProduct(db, service.ProductCreateInput{
+			Name:  req.Name,
 			Price: req.Price,
-			Code:  strings.TrimSpace(req.Code),
-			Level: level,
-		}
-		if err := db.Create(&product).Error; err != nil {
+			Code:  req.Code,
+			Level: req.Level,
+		})
+		if err != nil {
 			return ProductModelResponse{}, err
 		}
 
@@ -178,24 +137,18 @@ var ProductGetEndpoint = endpoint.NewEndpointNoBody(
 	func(pathParams ProductIDPathParams, _ endpoint.NoParams, _ endpoint.NoParams, _ endpoint.NoParams, _ *gin.Context) (ProductModelResponse, error) {
 		id, err := strconv.ParseUint(strings.TrimSpace(pathParams.ID), 10, 64)
 		if err != nil || id == 0 {
-			return ProductModelResponse{}, errors.New("invalid product id")
+			return ProductModelResponse{}, service.ErrInvalidProductID
 		}
 
-		// Open DB and fetch one row.
-		// 打开数据库并查询单条记录。
 		db, err := ensureDB()
 		if err != nil {
 			return ProductModelResponse{}, err
 		}
 
-		var product model.Product
-		if err := db.First(&product, id).Error; err != nil {
-			if errors.Is(err, gorm.ErrRecordNotFound) {
-				return ProductModelResponse{}, errors.New("product not found")
-			}
+		product, err := service.GetProductByID(db, uint(id))
+		if err != nil {
 			return ProductModelResponse{}, err
 		}
-
 		return toProductResponse(product), nil
 	},
 )
@@ -217,7 +170,7 @@ var ProductUpdateEndpoint = endpoint.NewEndpoint(
 	func(pathParams ProductIDPathParams, _ endpoint.NoParams, _ endpoint.NoParams, _ endpoint.NoParams, req ProductUpdateRequest, _ *gin.Context) (ProductModelResponse, error) {
 		id, err := strconv.ParseUint(strings.TrimSpace(pathParams.ID), 10, 64)
 		if err != nil || id == 0 {
-			return ProductModelResponse{}, errors.New("invalid product id")
+			return ProductModelResponse{}, service.ErrInvalidProductID
 		}
 
 		db, err := ensureDB()
@@ -225,38 +178,13 @@ var ProductUpdateEndpoint = endpoint.NewEndpoint(
 			return ProductModelResponse{}, err
 		}
 
-		var product model.Product
-		if err := db.First(&product, id).Error; err != nil {
-			if errors.Is(err, gorm.ErrRecordNotFound) {
-				return ProductModelResponse{}, errors.New("product not found")
-			}
-			return ProductModelResponse{}, err
-		}
-
-		if req.Name != nil {
-			if strings.TrimSpace(*req.Name) == "" {
-				return ProductModelResponse{}, errors.New("name cannot be empty")
-			}
-			product.Name = strings.TrimSpace(*req.Name)
-		}
-		if req.Price != nil {
-			if *req.Price <= 0 {
-				return ProductModelResponse{}, errors.New("price must be greater than 0")
-			}
-			product.Price = *req.Price
-		}
-		if req.Code != nil {
-			product.Code = strings.TrimSpace(*req.Code)
-		}
-		if req.Level != nil {
-			level, ok := normalizeProductLevel(*req.Level)
-			if !ok {
-				return ProductModelResponse{}, errors.New("level must be one of: basic, standard, premium")
-			}
-			product.Level = level
-		}
-
-		if err := db.Save(&product).Error; err != nil {
+		product, err := service.UpdateProduct(db, uint(id), service.ProductUpdateInput{
+			Name:  req.Name,
+			Price: req.Price,
+			Code:  req.Code,
+			Level: req.Level,
+		})
+		if err != nil {
 			return ProductModelResponse{}, err
 		}
 
@@ -285,7 +213,7 @@ var ProductDeleteEndpoint = endpoint.NewEndpointNoBody(
 	func(pathParams ProductIDPathParams, _ endpoint.NoParams, _ endpoint.NoParams, _ endpoint.NoParams, _ *gin.Context) (gin.H, error) {
 		id, err := strconv.ParseUint(strings.TrimSpace(pathParams.ID), 10, 64)
 		if err != nil || id == 0 {
-			return nil, errors.New("invalid product id")
+			return nil, service.ErrInvalidProductID
 		}
 
 		db, err := ensureDB()
@@ -293,7 +221,7 @@ var ProductDeleteEndpoint = endpoint.NewEndpointNoBody(
 			return nil, err
 		}
 
-		if err := db.Delete(&model.Product{}, id).Error; err != nil {
+		if err := service.DeleteProduct(db, uint(id)); err != nil {
 			return nil, err
 		}
 
@@ -320,41 +248,26 @@ var ProductListEndpoint = endpoint.NewEndpointNoBody(
 	// 3）按 id 倒序查询当前页。
 	// 4）将数据库行转换为 API 返回结构。
 	func(_ endpoint.NoParams, queryParams ProductListQueryParams, _ endpoint.NoParams, _ endpoint.NoParams, _ *gin.Context) (ProductListResponse, error) {
-		page := queryParams.Page
-		size := queryParams.PageSize
-		if page <= 0 {
-			page = 1
-		}
-		if size <= 0 || size > 100 {
-			size = 10
-		}
-		offset := (page - 1) * size
-
 		db, err := ensureDB()
 		if err != nil {
 			return ProductListResponse{}, err
 		}
 
-		var total int64
-		if err := db.Model(&model.Product{}).Count(&total).Error; err != nil {
+		result, err := service.ListProducts(db, queryParams.Page, queryParams.PageSize)
+		if err != nil {
 			return ProductListResponse{}, err
 		}
 
-		var products []model.Product
-		if err := db.Order("id desc").Limit(size).Offset(offset).Find(&products).Error; err != nil {
-			return ProductListResponse{}, err
-		}
-
-		items := make([]ProductModelResponse, 0, len(products))
-		for _, p := range products {
+		items := make([]ProductModelResponse, 0, len(result.Items))
+		for _, p := range result.Items {
 			items = append(items, toProductResponse(p))
 		}
 
 		return ProductListResponse{
 			Items: items,
-			Total: total,
-			Page:  page,
-			Size:  size,
+			Total: result.Total,
+			Page:  result.Page,
+			Size:  result.Size,
 		}, nil
 	},
 )

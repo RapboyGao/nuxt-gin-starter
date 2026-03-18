@@ -2,12 +2,11 @@ package api
 
 import (
 	"encoding/json"
-	"errors"
 	"reflect"
-	"strings"
 	"time"
 
 	"GinServer/server/model"
+	"GinServer/server/service"
 
 	"github.com/RapboyGao/nuxtGin/endpoint"
 	"gorm.io/gorm"
@@ -35,8 +34,6 @@ type wsProductUpdatePayload struct {
 type wsProductDeletePayload struct {
 	ID uint `json:"id" tsdoc:"Product id"`
 }
-
-type wsNoPayload struct{}
 
 // wsProductOverview
 // Business payload wrapped into endpoint.WebSocketMessage.payload.
@@ -84,29 +81,25 @@ func newProductWSEnvelope(msg string) wsProductOverview {
 // 3）映射为 ProductModelResponse。
 // 4）补齐分页元信息返回。
 func buildProductListEnvelope(db *gorm.DB, msg string, page int, size int) (wsProductOverview, error) {
-	if page <= 0 {
-		page = 1
-	}
 	fetchAll := size == 0
-	if !fetchAll && (size < 0 || size > 100) {
-		size = 10
-	}
-
-	var total int64
-	if err := db.Model(&model.Product{}).Count(&total).Error; err != nil {
-		return wsProductOverview{}, err
-	}
-
-	var products []model.Product
+	var (
+		products []model.Product
+		total    int64
+	)
 	if fetchAll {
 		if err := db.Order("id desc").Find(&products).Error; err != nil {
 			return wsProductOverview{}, err
 		}
+		total = int64(len(products))
 	} else {
-		offset := (page - 1) * size
-		if err := db.Order("id desc").Limit(size).Offset(offset).Find(&products).Error; err != nil {
+		result, err := service.ListProducts(db, page, size)
+		if err != nil {
 			return wsProductOverview{}, err
 		}
+		products = result.Items
+		total = result.Total
+		page = result.Page
+		size = result.Size
 	}
 
 	items := make([]ProductModelResponse, 0, len(products))
@@ -155,20 +148,6 @@ func wsErrorFromErr(err error) endpoint.WebSocketMessage {
 // validateProductInput
 // Shared validation for create/update payload fields.
 // create/update 共享字段校验逻辑。
-func validateProductInput(name string, price float64, levelRaw string) (string, error) {
-	if strings.TrimSpace(name) == "" {
-		return "", errors.New("name is required")
-	}
-	if price <= 0 {
-		return "", errors.New("price must be greater than 0")
-	}
-	level, ok := normalizeProductLevel(levelRaw)
-	if !ok {
-		return "", errors.New("level must be one of: basic, standard, premium")
-	}
-	return level, nil
-}
-
 // publishProductCRUDSync
 // Broadcast latest full product snapshot to all WS subscribers.
 // 将最新全量商品快照广播给所有 WS 订阅者。
@@ -191,15 +170,18 @@ var ProductCRUDWebSocketEndpoint = func() *endpoint.WebSocketEndpoint {
 	ws.ClientMessageType = reflect.TypeOf(endpoint.WebSocketMessage{})
 	ws.ServerMessageType = reflect.TypeOf(endpoint.WebSocketMessage{})
 	ws.MessageTypes = []string{
+		"create",
+		"delete",
 		"created",
 		"deleted",
 		"error",
 		"list",
 		"sync",
 		"system",
+		"update",
 		"updated",
 	}
-	for _, messageType := range ws.MessageTypes {
+	for _, messageType := range []string{"created", "deleted", "error", "list", "sync", "system", "updated"} {
 		endpoint.RegisterWebSocketServerPayloadType[wsProductOverview](ws, messageType)
 	}
 
@@ -254,23 +236,18 @@ var ProductCRUDWebSocketEndpoint = func() *endpoint.WebSocketEndpoint {
 	// 3）返回 created 单条记录。
 	// 4）广播 sync 快照。
 	endpoint.RegisterWebSocketTypedHandler(ws, "create", func(payload ProductCreateRequest, _ *endpoint.WebSocketContext) (any, error) {
-		level, err := validateProductInput(payload.Name, payload.Price, payload.Level)
-		if err != nil {
-			return wsErrorFromErr(err), nil
-		}
-
 		db, err := ensureDB()
 		if err != nil {
 			return wsErrorFromErr(err), nil
 		}
 
-		product := model.Product{
-			Name:  strings.TrimSpace(payload.Name),
+		product, err := service.CreateProduct(db, service.ProductCreateInput{
+			Name:  payload.Name,
 			Price: payload.Price,
-			Code:  strings.TrimSpace(payload.Code),
-			Level: level,
-		}
-		if err := db.Create(&product).Error; err != nil {
+			Code:  payload.Code,
+			Level: payload.Level,
+		})
+		if err != nil {
 			return wsErrorFromErr(err), nil
 		}
 
@@ -295,32 +272,18 @@ var ProductCRUDWebSocketEndpoint = func() *endpoint.WebSocketEndpoint {
 	// 3）应用更新并保存。
 	// 4）返回 updated 单条记录并广播 sync。
 	endpoint.RegisterWebSocketTypedHandler(ws, "update", func(payload wsProductUpdatePayload, _ *endpoint.WebSocketContext) (any, error) {
-		if payload.ID == 0 {
-			return wsErrorMessage("invalid product id"), nil
-		}
-		level, err := validateProductInput(payload.Name, payload.Price, payload.Level)
-		if err != nil {
-			return wsErrorFromErr(err), nil
-		}
-
 		db, err := ensureDB()
 		if err != nil {
 			return wsErrorFromErr(err), nil
 		}
 
-		var product model.Product
-		if err := db.First(&product, payload.ID).Error; err != nil {
-			if errors.Is(err, gorm.ErrRecordNotFound) {
-				return wsErrorMessage("product not found"), nil
-			}
-			return wsErrorFromErr(err), nil
-		}
-
-		product.Name = strings.TrimSpace(payload.Name)
-		product.Price = payload.Price
-		product.Code = strings.TrimSpace(payload.Code)
-		product.Level = level
-		if err := db.Save(&product).Error; err != nil {
+		product, err := service.UpdateProduct(db, payload.ID, service.ProductUpdateInput{
+			Name:  &payload.Name,
+			Price: &payload.Price,
+			Code:  &payload.Code,
+			Level: &payload.Level,
+		})
+		if err != nil {
 			return wsErrorFromErr(err), nil
 		}
 
@@ -343,21 +306,13 @@ var ProductCRUDWebSocketEndpoint = func() *endpoint.WebSocketEndpoint {
 	// 2）按 id 删除记录。
 	// 3）返回 deleted 摘要并广播 sync。
 	endpoint.RegisterWebSocketTypedHandler(ws, "delete", func(payload wsProductDeletePayload, _ *endpoint.WebSocketContext) (any, error) {
-		if payload.ID == 0 {
-			return wsErrorMessage("invalid product id"), nil
-		}
-
 		db, err := ensureDB()
 		if err != nil {
 			return wsErrorFromErr(err), nil
 		}
 
-		result := db.Delete(&model.Product{}, payload.ID)
-		if result.Error != nil {
-			return wsErrorFromErr(result.Error), nil
-		}
-		if result.RowsAffected == 0 {
-			return wsErrorMessage("product not found"), nil
+		if err := service.DeleteProduct(db, payload.ID); err != nil {
+			return wsErrorFromErr(err), nil
 		}
 
 		resp := newProductWSEnvelope("product deleted")
@@ -367,26 +322,5 @@ var ProductCRUDWebSocketEndpoint = func() *endpoint.WebSocketEndpoint {
 
 		return wrapProductWSMessage("deleted", resp), nil
 	})
-
-	// server-only message types to satisfy payload map checks in current generator/runtime
-	endpoint.RegisterWebSocketTypedHandler(ws, "created", func(_ wsNoPayload, _ *endpoint.WebSocketContext) (any, error) {
-		return wsErrorMessage("created is server-only"), nil
-	})
-	endpoint.RegisterWebSocketTypedHandler(ws, "deleted", func(_ wsNoPayload, _ *endpoint.WebSocketContext) (any, error) {
-		return wsErrorMessage("deleted is server-only"), nil
-	})
-	endpoint.RegisterWebSocketTypedHandler(ws, "error", func(_ wsNoPayload, _ *endpoint.WebSocketContext) (any, error) {
-		return wsErrorMessage("error is server-only"), nil
-	})
-	endpoint.RegisterWebSocketTypedHandler(ws, "sync", func(_ wsNoPayload, _ *endpoint.WebSocketContext) (any, error) {
-		return wsErrorMessage("sync is server-only"), nil
-	})
-	endpoint.RegisterWebSocketTypedHandler(ws, "system", func(_ wsNoPayload, _ *endpoint.WebSocketContext) (any, error) {
-		return wsErrorMessage("system is server-only"), nil
-	})
-	endpoint.RegisterWebSocketTypedHandler(ws, "updated", func(_ wsNoPayload, _ *endpoint.WebSocketContext) (any, error) {
-		return wsErrorMessage("updated is server-only"), nil
-	})
-
 	return ws
 }()
