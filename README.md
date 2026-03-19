@@ -3,8 +3,8 @@
 [![Go](https://img.shields.io/badge/Go-1.24+-00ADD8?logo=go&logoColor=white&style=flat-square)](https://go.dev)
 [![Nuxt](https://img.shields.io/badge/Nuxt-4.x-00DC82?logo=nuxt&logoColor=white&style=flat-square)](https://nuxt.com)
 [![Vue](https://img.shields.io/badge/Vue-3.x-42b883?logo=vuedotjs&logoColor=white&style=flat-square)](https://vuejs.org)
-[![nuxtGin](https://img.shields.io/badge/nuxtGin-v0.2.16-111827?style=flat-square)](https://pkg.go.dev/github.com/RapboyGao/nuxtGin)
-[![nuxt-gin-tools](https://img.shields.io/badge/nuxt--gin--tools-v0.2.16-0b5fff?style=flat-square)](https://www.npmjs.com/package/nuxt-gin-tools)
+[![nuxtGin](https://img.shields.io/badge/nuxtGin-v0.2.20-111827?style=flat-square)](https://pkg.go.dev/github.com/RapboyGao/nuxtGin)
+[![nuxt-gin-tools](https://img.shields.io/badge/nuxt--gin--tools-v0.2.17-0b5fff?style=flat-square)](https://www.npmjs.com/package/nuxt-gin-tools)
 [![License](https://img.shields.io/badge/license-MIT-0b5fff?style=flat-square)](./LICENSE)
 
 Typed full-stack starter with Nuxt + Gin + GORM, using endpoint-first API design.
@@ -23,9 +23,9 @@ Typed full-stack starter with Nuxt + Gin + GORM, using endpoint-first API design
 
 ### Versions (Current)
 
-- `github.com/RapboyGao/nuxtGin`: `v0.2.16`
-- `nuxt-gin-tools`: `0.2.16`
-- Nuxt: `4.3.x`
+- `github.com/RapboyGao/nuxtGin`: `v0.2.20`
+- `nuxt-gin-tools`: `0.2.17`
+- Nuxt: `4.4.2`
 
 ### Quick Start
 
@@ -52,7 +52,8 @@ pnpm build
 │   │   ├── Product.go
 │   │   ├── ProductCRUD.go
 │   │   └── WebSocketDemo.go
-│   └── model/
+│   ├── model/
+│   └── service/
 └── vue/
     ├── components/
     └── composables/
@@ -61,7 +62,7 @@ pnpm build
         └── auto-generated-types.ts
 ```
 
-### Server Bootstrap (v0.2.16)
+### Server Bootstrap
 
 `main.go` now uses `RunServerFromConfig`:
 
@@ -111,14 +112,14 @@ To generate `onXXXPayload(...)` in TS client, endpoint needs:
 
 - `MessageTypes`
 - `ServerMessageType` as `endpoint.WebSocketMessage`
-- `RegisterWebSocketServerPayloadType[...]` for each message type
-- `RegisterWebSocketTypedHandler(...)` mapping for each message type
+- `RegisterWebSocketServerPayloadType[...]` for each server-side message type
+- `RegisterWebSocketTypedHandler(...)` for each client-side message type you want to handle
 
 Backend setup (simplified):
 
 ```go
-ws.MessageTypes = []string{"created", "deleted", "error", "list", "sync", "system", "updated"}
-for _, t := range ws.MessageTypes {
+ws.MessageTypes = []string{"create", "delete", "created", "deleted", "error", "list", "sync", "system", "update", "updated"}
+for _, t := range []string{"created", "deleted", "error", "list", "sync", "system", "updated"} {
   endpoint.RegisterWebSocketServerPayloadType[wsProductOverview](ws, t)
 }
 
@@ -153,9 +154,10 @@ ws.onSyncPayload((payload) => {
 ### Notes
 
 - This project does not use Air.
+- Product CRUD business logic is extracted to `server/service/product_service.go`, so HTTP and WS now share the same validation and persistence flow.
 - `ProductCRUD.go` HTTP mutations also trigger WebSocket `sync`.
 - On first connect, frontend requests list via payload (`type: "list"`), and also handles `system` payload as fallback.
-- Current generated `auto-generated-ws.ts` may need local TS cast patching in this repo to satisfy strict `nuxi typecheck`.
+- `server.config.json` is validated on startup; invalid ports or an invalid `baseUrl` will fail fast.
 
 ### Ecosystem
 
@@ -177,9 +179,9 @@ ws.onSyncPayload((payload) => {
 
 ### 当前版本
 
-- `github.com/RapboyGao/nuxtGin`: `v0.2.16`
-- `nuxt-gin-tools`: `0.2.16`
-- Nuxt: `4.3.x`
+- `github.com/RapboyGao/nuxtGin`: `v0.2.20`
+- `nuxt-gin-tools`: `0.2.17`
+- Nuxt: `4.4.2`
 
 ### 快速开始
 
@@ -206,7 +208,8 @@ pnpm build
 │   │   ├── Product.go
 │   │   ├── ProductCRUD.go
 │   │   └── WebSocketDemo.go
-│   └── model/
+│   ├── model/
+│   └── service/
 └── vue/
     ├── components/
     └── composables/
@@ -215,7 +218,7 @@ pnpm build
         └── auto-generated-types.ts
 ```
 
-### 服务启动（v0.2.16）
+### 服务启动
 
 `main.go` 采用 `RunServerFromConfig`：
 
@@ -261,18 +264,18 @@ ws.ClientMessageType = reflect.TypeOf(endpoint.WebSocketMessage{})
 ws.ServerMessageType = reflect.TypeOf(endpoint.WebSocketMessage{})
 ```
 
-想让 TS 客户端出现 `onXXXPayload(...)`，后端需要同时满足：
+想让 TS 客户端出现 `onXXXPayload(...)`，后端需要满足：
 
 - 设置 `MessageTypes`
 - `ServerMessageType` 使用 `endpoint.WebSocketMessage`
-- 每个 message type 调用 `RegisterWebSocketServerPayloadType[...]`
-- 每个 message type 有 `RegisterWebSocketTypedHandler(...)` 映射
+- 每个服务端会发出的 message type 调用 `RegisterWebSocketServerPayloadType[...]`
+- 每个需要接收的客户端 message type 调用 `RegisterWebSocketTypedHandler(...)`
 
 后端示例（简化）：
 
 ```go
-ws.MessageTypes = []string{"created", "deleted", "error", "list", "sync", "system", "updated"}
-for _, t := range ws.MessageTypes {
+ws.MessageTypes = []string{"create", "delete", "created", "deleted", "error", "list", "sync", "system", "update", "updated"}
+for _, t := range []string{"created", "deleted", "error", "list", "sync", "system", "updated"} {
   endpoint.RegisterWebSocketServerPayloadType[wsProductOverview](ws, t)
 }
 
@@ -307,9 +310,10 @@ ws.onSyncPayload((payload) => {
 ### 说明
 
 - 本项目不再使用 Air。
+- Product CRUD 业务逻辑已下沉到 `server/service/product_service.go`，HTTP 与 WebSocket 复用同一套校验和持久化流程。
 - `ProductCRUD.go` 的 HTTP 写操作会联动触发 WebSocket `sync`。
 - 首次连接后，前端通过 `type: "list"` + payload 主动拉取全量列表，并用 `system` 消息兜底更新。
-- 当前仓库里生成的 `auto-generated-ws.ts` 在严格类型检查下可能需要本地 cast 补丁。
+- `server.config.json` 会在启动时校验；端口或 `baseUrl` 不合法会直接报错。
 
 ### 生态
 
