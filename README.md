@@ -7,7 +7,7 @@
 [![Gin](https://img.shields.io/badge/Gin-powered-008ECF?style=flat-square)](https://gin-gonic.com)
 [![GORM](https://img.shields.io/badge/GORM-ready-5D6D7E?style=flat-square)](https://gorm.io)
 [![nuxtGin](https://img.shields.io/badge/nuxtGin-v0.2.20-111827?style=flat-square)](https://pkg.go.dev/github.com/RapboyGao/nuxtGin)
-[![nuxt-gin-tools](https://img.shields.io/badge/nuxt--gin--tools-v0.2.18-0B5FFF?style=flat-square)](https://www.npmjs.com/package/nuxt-gin-tools)
+[![nuxt-gin-tools](https://img.shields.io/badge/nuxt--gin--tools-v0.2.22-0B5FFF?style=flat-square)](https://www.npmjs.com/package/nuxt-gin-tools)
 [![License](https://img.shields.io/badge/license-MIT-0B5FFF?style=flat-square)](./LICENSE)
 
 Typed full-stack starter for building **Nuxt + Gin** applications with an **endpoint-first API workflow**, **generated TypeScript clients**, and a practical development setup that keeps frontend and backend moving together.
