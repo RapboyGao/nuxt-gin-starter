@@ -58,7 +58,7 @@
     "server/v2": "server"
   },
   "material-icon-theme.files.associations": {
-    "nuxt-gin.config.ts": "settings",
+    "nuxt-gin.config.ts": "nuxt",
     "server.config.json": "settings"
   },
   "json.schemas": [
