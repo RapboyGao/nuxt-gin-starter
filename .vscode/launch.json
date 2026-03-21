@@ -19,7 +19,7 @@
       "request": "launch",
       "cwd": "${workspaceFolder}",
       "runtimeExecutable": "pnpm",
-      "runtimeArgs": ["nuxt:dev"],
+      "runtimeArgs": ["run", "nuxt:dev"],
       "console": "integratedTerminal",
       "skipFiles": ["<node_internals>/**"],
       "serverReadyAction": {
@@ -34,7 +34,7 @@
       "name": "Nuxt Client",
       "type": "chrome",
       "request": "launch",
-      "url": "http://localhost:3000",
+      "url": "http://localhost:3000/web",
       "webRoot": "${workspaceFolder}",
       "sourceMaps": true,
       "pathMapping": {

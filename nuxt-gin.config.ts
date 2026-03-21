@@ -5,5 +5,10 @@ export default createNuxtGinConfig({
     killPortBeforeDevelop: true,
     cleanupBeforeDevelop: false,
   },
+  goWatch: {
+    include: {
+      ext: ['go', 'tpl', 'html'],
+    },
+  },
   pack: {},
 });

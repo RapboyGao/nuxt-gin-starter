@@ -7,7 +7,7 @@
 [![Gin](https://img.shields.io/badge/Gin-powered-008ECF?style=flat-square)](https://gin-gonic.com)
 [![GORM](https://img.shields.io/badge/GORM-ready-5D6D7E?style=flat-square)](https://gorm.io)
 [![nuxtGin](https://img.shields.io/badge/nuxtGin-v0.2.20-111827?style=flat-square)](https://pkg.go.dev/github.com/RapboyGao/nuxtGin)
-[![nuxt-gin-tools](https://img.shields.io/badge/nuxt--gin--tools-v0.2.22-0B5FFF?style=flat-square)](https://www.npmjs.com/package/nuxt-gin-tools)
+[![nuxt-gin-tools](https://img.shields.io/badge/nuxt--gin--tools-v0.3.0-0B5FFF?style=flat-square)](https://www.npmjs.com/package/nuxt-gin-tools)
 [![License](https://img.shields.io/badge/license-MIT-0B5FFF?style=flat-square)](./LICENSE)
 
 Typed full-stack starter for building **Nuxt + Gin** applications with an **endpoint-first API workflow**, **generated TypeScript clients**, and a practical development setup that keeps frontend and backend moving together.
@@ -48,7 +48,7 @@ Instead of treating frontend and backend as two disconnected projects, this star
 ### 📌 Current Stack
 
 - `github.com/RapboyGao/nuxtGin`: `v0.2.20`
-- `nuxt-gin-tools`: `0.2.23`
+- `nuxt-gin-tools`: `0.3.0`
 - Nuxt: `4.4.2`
 - Vue: `3.x`
 - Go: `1.24+`
@@ -175,6 +175,11 @@ export default createNuxtGinConfig({
     killPortBeforeDevelop: true,
     cleanupBeforeDevelop: false,
   },
+  goWatch: {
+    include: {
+      ext: ['go', 'tpl', 'html'],
+    },
+  },
   pack: {},
 });
 ```
@@ -196,6 +201,7 @@ Fields:
 - `baseUrl`: frontend base path
 - `killPortBeforeDevelop`: put this in `nuxt-gin.config.ts`
 - `cleanupBeforeDevelop`: put this in `nuxt-gin.config.ts`
+- `goWatch`: optional watcher defaults also live in `nuxt-gin.config.ts`
 
 Runtime note:
 
@@ -340,7 +346,7 @@ Scripts from `package.json`:
   "dev": "nuxt-gin dev",
   "build": "nuxt-gin build",
   "postinstall": "nuxt-gin install",
-  "update:dep": "nuxt-gin update",
+  "update:dep": "nuxt-gin update --latest true",
   "cleanup": "nuxt-gin cleanup",
   "nuxt:dev": "nuxt dev"
 }
@@ -386,6 +392,11 @@ import createNuxtGinConfig from 'nuxt-gin-tools/src/nuxt-gin';
 export default createNuxtGinConfig({
   dev: {
     killPortBeforeDevelop: true,
+  },
+  goWatch: {
+    include: {
+      ext: ['go', 'tpl', 'html'],
+    },
   },
   pack: {},
 });
@@ -452,7 +463,7 @@ When packing:
 ### 📌 当前技术栈
 
 - `github.com/RapboyGao/nuxtGin`: `v0.2.20`
-- `nuxt-gin-tools`: `0.2.23`
+- `nuxt-gin-tools`: `0.3.0`
 - Nuxt: `4.4.2`
 - Vue: `3.x`
 - Go: `1.24+`
@@ -579,6 +590,11 @@ export default createNuxtGinConfig({
     killPortBeforeDevelop: true,
     cleanupBeforeDevelop: false,
   },
+  goWatch: {
+    include: {
+      ext: ['go', 'tpl', 'html'],
+    },
+  },
   pack: {},
 });
 ```
@@ -600,6 +616,7 @@ export default createNuxtGinConfig({
 - `baseUrl`：前端基础路径
 - `killPortBeforeDevelop`：放到 `nuxt-gin.config.ts`
 - `cleanupBeforeDevelop`：放到 `nuxt-gin.config.ts`
+- `goWatch`：可选的 watcher 默认规则也放到 `nuxt-gin.config.ts`
 
 运行时说明：
 
@@ -744,7 +761,7 @@ ws.onSyncPayload((payload) => {
   "dev": "nuxt-gin dev",
   "build": "nuxt-gin build",
   "postinstall": "nuxt-gin install",
-  "update:dep": "nuxt-gin update",
+  "update:dep": "nuxt-gin update --latest true",
   "cleanup": "nuxt-gin cleanup",
   "nuxt:dev": "nuxt dev"
 }
@@ -790,6 +807,11 @@ import createNuxtGinConfig from 'nuxt-gin-tools/src/nuxt-gin';
 export default createNuxtGinConfig({
   dev: {
     killPortBeforeDevelop: true,
+  },
+  goWatch: {
+    include: {
+      ext: ['go', 'tpl', 'html'],
+    },
   },
   pack: {},
 });

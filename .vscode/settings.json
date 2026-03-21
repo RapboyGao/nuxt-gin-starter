@@ -58,17 +58,13 @@
     "server/v2": "server"
   },
   "material-icon-theme.files.associations": {
-    "pack.config.json": "zip",
+    "nuxt-gin.config.ts": "settings",
     "server.config.json": "settings"
   },
   "json.schemas": [
     {
       "fileMatch": ["/server.config.json"],
-      "url": "/node_modules/nuxt-gin-tools/src/server-config.json"
-    },
-    {
-      "fileMatch": ["/pack.config.json"],
-      "url": "/node_modules/nuxt-gin-tools/src/pack-config.schema.json"
+      "url": "/node_modules/nuxt-gin-tools/src/assets/server-config.schema.json"
     }
   ],
   "python.analysis.typeCheckingMode": "basic",

@@ -6,7 +6,7 @@ require (
 	github.com/RapboyGao/nuxtGin v0.2.21
 	github.com/arduino/go-paths-helper v1.14.0 // indirect; direct
 	github.com/dlclark/regexp2 v1.11.5 // indirect; direct
-	github.com/fatih/color v1.18.0 // indirect; direct
+	github.com/fatih/color v1.19.0 // indirect; direct
 	github.com/gin-contrib/cors v1.7.6 // indirect; direct
 	github.com/gin-gonic/gin v1.12.0 // direct
 	github.com/glebarez/sqlite v1.11.0 // direct
