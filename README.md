@@ -48,7 +48,7 @@ Instead of treating frontend and backend as two disconnected projects, this star
 ### 📌 Current Stack
 
 - `github.com/RapboyGao/nuxtGin`: `v0.2.20`
-- `nuxt-gin-tools`: `0.2.18`
+- `nuxt-gin-tools`: `0.2.23`
 - Nuxt: `4.4.2`
 - Vue: `3.x`
 - Go: `1.24+`
@@ -60,8 +60,8 @@ Instead of treating frontend and backend as two disconnected projects, this star
 ├── main.go
 ├── package.json
 ├── go.mod
+├── nuxt-gin.config.ts
 ├── server.config.json
-├── pack.config.ts
 ├── server/
 │   ├── api/
 │   │   ├── index.go
@@ -109,6 +109,13 @@ pnpm install
 pnpm dev
 ```
 
+or
+
+```bash
+bun install
+bun run dev
+```
+
 That gives you:
 
 - Nuxt dev server
@@ -121,10 +128,22 @@ Build:
 pnpm build
 ```
 
+or
+
+```bash
+bun run build
+```
+
 Cleanup:
 
 ```bash
 pnpm cleanup
+```
+
+or
+
+```bash
+bun run cleanup
 ```
 
 Update dependencies:
@@ -133,17 +152,40 @@ Update dependencies:
 pnpm update:dep
 ```
 
+or
+
+```bash
+bun run update:dep
+```
+
 ### ⚙️ Runtime Config
 
-Create or edit `server.config.json`:
+Primary config entry:
+
+- `nuxt-gin.config.ts`: used by `nuxt-gin` commands and `nuxt.config.ts`
+- `server.config.json`: still kept for Go runtime and packaged output
+
+Create or edit `nuxt-gin.config.ts`:
+
+```ts
+import createNuxtGinConfig from 'nuxt-gin-tools/src/nuxt-gin';
+
+export default createNuxtGinConfig({
+  dev: {
+    killPortBeforeDevelop: true,
+    cleanupBeforeDevelop: false,
+  },
+  pack: {},
+});
+```
+
+Keep `server.config.json` for runtime compatibility:
 
 ```json
 {
   "ginPort": 8099,
   "nuxtPort": 3000,
-  "baseUrl": "/",
-  "killPortBeforeDevelop": true,
-  "cleanupBeforeDevelop": false
+  "baseUrl": "/"
 }
 ```
 
@@ -152,8 +194,8 @@ Fields:
 - `ginPort`: port used by Gin
 - `nuxtPort`: port used by Nuxt dev server
 - `baseUrl`: frontend base path
-- `killPortBeforeDevelop`: free occupied ports before dev starts
-- `cleanupBeforeDevelop`: force cleanup/bootstrap before dev
+- `killPortBeforeDevelop`: put this in `nuxt-gin.config.ts`
+- `cleanupBeforeDevelop`: put this in `nuxt-gin.config.ts`
 
 Runtime note:
 
@@ -317,18 +359,36 @@ pnpm exec nuxt-gin dev --skip-nuxt
 pnpm exec nuxt-gin dev --no-cleanup
 ```
 
+or
+
+```bash
+# frontend only
+bun x nuxt-gin dev --skip-go
+
+# go only
+bun x nuxt-gin dev --skip-nuxt
+
+# skip bootstrap checks
+bun x nuxt-gin dev --no-cleanup
+```
+
 ### 📦 Packaging
 
 The starter now uses:
 
-- `pack.config.ts`
+- `nuxt-gin.config.ts`
 
 Default config:
 
 ```ts
-import createPackConfig from 'nuxt-gin-tools/src/pack';
+import createNuxtGinConfig from 'nuxt-gin-tools/src/nuxt-gin';
 
-export default createPackConfig({});
+export default createNuxtGinConfig({
+  dev: {
+    killPortBeforeDevelop: true,
+  },
+  pack: {},
+});
 ```
 
 You can expand it with custom zip name, output path, extra files, or package metadata.
@@ -353,6 +413,7 @@ When packing:
 - 🔒 WebSocket broadcast now uses a serialized write path
 - 🗃️ SQLite storage is initialized under `.build/temp/gorm.db`
 - ✅ `go test ./...` for the starter is expected to work after dependency bootstrap
+- 📦 Both `pnpm` and `bun` can be used, but one working tree should prefer one package manager at a time
 
 ### 🌐 Ecosystem
 
@@ -391,7 +452,7 @@ When packing:
 ### 📌 当前技术栈
 
 - `github.com/RapboyGao/nuxtGin`: `v0.2.20`
-- `nuxt-gin-tools`: `0.2.18`
+- `nuxt-gin-tools`: `0.2.23`
 - Nuxt: `4.4.2`
 - Vue: `3.x`
 - Go: `1.24+`
@@ -403,8 +464,8 @@ When packing:
 ├── main.go
 ├── package.json
 ├── go.mod
+├── nuxt-gin.config.ts
 ├── server.config.json
-├── pack.config.ts
 ├── server/
 │   ├── api/
 │   │   ├── index.go
@@ -452,6 +513,13 @@ pnpm install
 pnpm dev
 ```
 
+或
+
+```bash
+bun install
+bun run dev
+```
+
 这会启动：
 
 - Nuxt 开发服务
@@ -464,10 +532,22 @@ pnpm dev
 pnpm build
 ```
 
+或
+
+```bash
+bun run build
+```
+
 清理：
 
 ```bash
 pnpm cleanup
+```
+
+或
+
+```bash
+bun run cleanup
 ```
 
 更新依赖：
@@ -476,17 +556,40 @@ pnpm cleanup
 pnpm update:dep
 ```
 
+或
+
+```bash
+bun run update:dep
+```
+
 ### ⚙️ 运行时配置
 
-编辑 `server.config.json`：
+主配置入口：
+
+- `nuxt-gin.config.ts`：`nuxt-gin` 命令和 `nuxt.config.ts` 都会读取它
+- `server.config.json`：继续保留，用于 Go 运行时和打包产物
+
+编辑 `nuxt-gin.config.ts`：
+
+```ts
+import createNuxtGinConfig from 'nuxt-gin-tools/src/nuxt-gin';
+
+export default createNuxtGinConfig({
+  dev: {
+    killPortBeforeDevelop: true,
+    cleanupBeforeDevelop: false,
+  },
+  pack: {},
+});
+```
+
+同时保留 `server.config.json`：
 
 ```json
 {
   "ginPort": 8099,
   "nuxtPort": 3000,
-  "baseUrl": "/",
-  "killPortBeforeDevelop": true,
-  "cleanupBeforeDevelop": false
+  "baseUrl": "/"
 }
 ```
 
@@ -495,8 +598,8 @@ pnpm update:dep
 - `ginPort`：Gin 服务端口
 - `nuxtPort`：Nuxt 开发端口
 - `baseUrl`：前端基础路径
-- `killPortBeforeDevelop`：开发前是否释放占用端口
-- `cleanupBeforeDevelop`：开发前是否强制 cleanup / bootstrap
+- `killPortBeforeDevelop`：放到 `nuxt-gin.config.ts`
+- `cleanupBeforeDevelop`：放到 `nuxt-gin.config.ts`
 
 运行时说明：
 
@@ -660,18 +763,36 @@ pnpm exec nuxt-gin dev --skip-nuxt
 pnpm exec nuxt-gin dev --no-cleanup
 ```
 
+或
+
+```bash
+# 仅前端
+bun x nuxt-gin dev --skip-go
+
+# 仅 Go
+bun x nuxt-gin dev --skip-nuxt
+
+# 跳过预检查
+bun x nuxt-gin dev --no-cleanup
+```
+
 ### 📦 打包
 
 当前使用：
 
-- `pack.config.ts`
+- `nuxt-gin.config.ts`
 
 默认配置：
 
 ```ts
-import createPackConfig from 'nuxt-gin-tools/src/pack';
+import createNuxtGinConfig from 'nuxt-gin-tools/src/nuxt-gin';
 
-export default createPackConfig({});
+export default createNuxtGinConfig({
+  dev: {
+    killPortBeforeDevelop: true,
+  },
+  pack: {},
+});
 ```
 
 后续可以在这里扩展：
@@ -701,6 +822,7 @@ export default createPackConfig({});
 - 🔒 WebSocket 广播已使用串行化写入路径
 - 🗃️ SQLite 默认存储在 `.build/temp/gorm.db`
 - ✅ 完成依赖初始化后，`go test ./...` 应可直接运行
+- 📦 支持 `pnpm` 与 `bun`，但同一个工作副本建议固定使用其中一种
 
 ### 🌐 生态
 
