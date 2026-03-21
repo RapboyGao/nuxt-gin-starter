@@ -13,7 +13,7 @@
   "devDependencies": {
     "axios": "^1.13.6",
     "nuxt": "^4.4.2",
-    "nuxt-gin-tools": "0.3.1",
+    "nuxt-gin-tools": "0.3.2",
     "prettier": "^3.8.1",
     "sass": "^1.98.0"
   }
