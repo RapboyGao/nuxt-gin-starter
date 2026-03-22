@@ -237,6 +237,61 @@ Advanced note:
 - `ExportTypesFromConfig(...)` is available when you want TS generation separated from server startup
 - this starter keeps the simpler `RunServerFromConfig(...)` flow
 
+### 🧠 Advanced Usage
+
+Use the default starter flow when:
+
+- you want one command path for local dev and packaged runtime
+- TS export should happen automatically during server startup
+- `server.config.json` remains your shared runtime fallback source
+
+Switch to manual orchestration when:
+
+- you want to export TS in a separate CI or codegen step
+- server construction must happen without export side effects
+- you need to inject `cfg.Server` programmatically instead of relying on `server.config.json`
+
+Example:
+
+```go
+package main
+
+import (
+	"GinServer/server/api"
+
+	"github.com/RapboyGao/nuxtGin/runtime"
+)
+
+func main() {
+	cfg := runtime.DefaultAPIServerConfig(api.AllEndpoints, api.AllWebSocketEndpoints)
+	cfg.ExportTSOnRun = false
+	cfg.Server = runtime.ServerRuntimeConfig{
+		GinPort:  8099,
+		NuxtPort: 3000,
+		BaseUrl:  "/web",
+	}
+
+	if err := runtime.ExportTypesFromConfig(cfg); err != nil {
+		panic(err)
+	}
+
+	engine, err := runtime.BuildServerFromConfig(cfg)
+	if err != nil {
+		panic(err)
+	}
+
+	if err := engine.Run(":8099"); err != nil {
+		panic(err)
+	}
+}
+```
+
+Notes:
+
+- `ExportTypesFromConfig(...)` is optional if your build pipeline already committed generated files
+- `BuildServerFromConfig(...)` validates runtime config before route registration
+- once `cfg.Server` is complete, `server.config.json` is no longer required
+
 ### 🧱 HTTP API Pattern
 
 Define request/response structs in Go, then expose endpoints with `endpoint.NewEndpoint...`.
@@ -658,6 +713,61 @@ func main() {
 - `BuildServerFromConfig(...)` 现在只负责构建服务和注册路由
 - `ExportTypesFromConfig(...)` 可用于把 TS 导出从服务启动中拆开
 - 本 starter 继续使用更简洁的 `RunServerFromConfig(...)` 启动方式
+
+### 🧠 高级用法
+
+以下情况建议继续使用 starter 默认方式：
+
+- 本地开发和打包运行共用一套启动路径
+- 希望服务启动时自动导出 TS
+- 继续把 `server.config.json` 当作共享运行时回退配置
+
+以下情况更适合手动拆分流程：
+
+- 你想把 TS 导出独立到 CI 或代码生成步骤
+- 你希望构建服务时完全没有导出副作用
+- 你要在代码里动态注入 `cfg.Server`，而不是依赖 `server.config.json`
+
+示例：
+
+```go
+package main
+
+import (
+	"GinServer/server/api"
+
+	"github.com/RapboyGao/nuxtGin/runtime"
+)
+
+func main() {
+	cfg := runtime.DefaultAPIServerConfig(api.AllEndpoints, api.AllWebSocketEndpoints)
+	cfg.ExportTSOnRun = false
+	cfg.Server = runtime.ServerRuntimeConfig{
+		GinPort:  8099,
+		NuxtPort: 3000,
+		BaseUrl:  "/web",
+	}
+
+	if err := runtime.ExportTypesFromConfig(cfg); err != nil {
+		panic(err)
+	}
+
+	engine, err := runtime.BuildServerFromConfig(cfg)
+	if err != nil {
+		panic(err)
+	}
+
+	if err := engine.Run(":8099"); err != nil {
+		panic(err)
+	}
+}
+```
+
+说明：
+
+- 如果你的构建流程已经提交了生成文件，`ExportTypesFromConfig(...)` 可以省略
+- `BuildServerFromConfig(...)` 会在注册路由前先校验运行时配置
+- 当 `cfg.Server` 已完整时，就不再强依赖 `server.config.json`
 
 ### 🧱 HTTP API 模式
 
