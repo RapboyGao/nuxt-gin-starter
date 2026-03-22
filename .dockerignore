@@ -1,0 +1,11 @@
+.git
+.gitignore
+.vscode
+node_modules
+logs
+.build
+dist
+docs/wiki
+vue/.nuxt
+vue/.output
+*.log
