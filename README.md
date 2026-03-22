@@ -6,8 +6,8 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-enabled-3178C6?logo=typescript&logoColor=white&style=flat-square)](https://www.typescriptlang.org)
 [![Gin](https://img.shields.io/badge/Gin-powered-008ECF?style=flat-square)](https://gin-gonic.com)
 [![GORM](https://img.shields.io/badge/GORM-ready-5D6D7E?style=flat-square)](https://gorm.io)
-[![nuxtGin](https://img.shields.io/badge/nuxtGin-v0.2.20-111827?style=flat-square)](https://pkg.go.dev/github.com/RapboyGao/nuxtGin)
-[![nuxt-gin-tools](https://img.shields.io/badge/nuxt--gin--tools-v0.3.0-0B5FFF?style=flat-square)](https://www.npmjs.com/package/nuxt-gin-tools)
+[![nuxtGin](https://img.shields.io/badge/nuxtGin-v0.3.3-111827?style=flat-square)](https://pkg.go.dev/github.com/RapboyGao/nuxtGin)
+[![nuxt-gin-tools](https://img.shields.io/badge/nuxt--gin--tools-v0.3.3-0B5FFF?style=flat-square)](https://www.npmjs.com/package/nuxt-gin-tools)
 [![License](https://img.shields.io/badge/license-MIT-0B5FFF?style=flat-square)](./LICENSE)
 
 Typed full-stack starter for building **Nuxt + Gin** applications with an **endpoint-first API workflow**, **generated TypeScript clients**, and a practical development setup that keeps frontend and backend moving together.
@@ -42,13 +42,13 @@ Instead of treating frontend and backend as two disconnected projects, this star
 - 🗃️ GORM + SQLite demo ready out of the box
 - 🔄 HTTP mutations broadcast WebSocket `sync` updates
 - 🧩 Product CRUD demo for both HTTP and WebSocket flows
-- ✅ startup validation for `server.config.json`
+- ✅ explicit runtime validation with `server.config.json` fallback support
 - 🧱 service-layer extraction for reusable product business logic
 
 ### 📌 Current Stack
 
-- `github.com/RapboyGao/nuxtGin`: `v0.2.20`
-- `nuxt-gin-tools`: `0.3.0`
+- `github.com/RapboyGao/nuxtGin`: `v0.3.3`
+- `nuxt-gin-tools`: `0.3.3`
 - Nuxt: `4.4.2`
 - Vue: `3.x`
 - Go: `1.24+`
@@ -84,7 +84,7 @@ Instead of treating frontend and backend as two disconnected projects, this star
 
 #### Backend
 
-- `main.go` boots the app through `runtime.DefaultAPIServerConfig(...)`
+- `main.go` boots the app through `runtime.DefaultAPIServerConfig(...)` and `nuxtGin.RunServerFromConfig(...)`
 - `server/api` contains endpoint definitions and WebSocket route wiring
 - `server/service` contains shared business logic for product CRUD
 - `server/model` contains database initialization and GORM models
@@ -99,7 +99,7 @@ Instead of treating frontend and backend as two disconnected projects, this star
 
 - Nuxt serves the UI
 - Gin serves APIs and WebSocket endpoints
-- `nuxtGin` exports typed TS client files during development/runtime setup
+- `nuxtGin` exports typed TS client files during runtime startup through `RunServerFromConfig(...)`
 - `nuxt-gin-tools` coordinates local dev, build, and packing
 
 ### ⚡ Quick Start
@@ -163,7 +163,7 @@ bun run update:dep
 Primary config entry:
 
 - `nuxt-gin.config.ts`: used by `nuxt-gin` commands and `nuxt.config.ts`
-- `server.config.json`: still kept for Go runtime and packaged output
+- `server.config.json`: kept as the Go runtime fallback source and packaged output config
 
 Create or edit `nuxt-gin.config.ts`:
 
@@ -184,7 +184,7 @@ export default createNuxtGinConfig({
 });
 ```
 
-Keep `server.config.json` for runtime compatibility:
+Keep `server.config.json` as the shared runtime fallback config:
 
 ```json
 {
@@ -206,6 +206,7 @@ Fields:
 Runtime note:
 
 - ✅ invalid ports or an invalid `baseUrl` fail fast during startup
+- ✅ `server.config.json` is optional if `cfg.Server` is filled programmatically, but this starter intentionally keeps it as the shared source for dev and packaged runtime
 
 ### 🏁 Server Bootstrap
 
@@ -223,11 +224,18 @@ import (
 
 func main() {
 	cfg := runtime.DefaultAPIServerConfig(api.AllEndpoints, api.AllWebSocketEndpoints)
+	cfg.ExportTSOnRun = true
 	if err := nuxtGin.RunServerFromConfig(cfg); err != nil {
 		panic(err)
 	}
 }
 ```
+
+Advanced note:
+
+- `BuildServerFromConfig(...)` now only builds and registers routes
+- `ExportTypesFromConfig(...)` is available when you want TS generation separated from server startup
+- this starter keeps the simpler `RunServerFromConfig(...)` flow
 
 ### 🧱 HTTP API Pattern
 
@@ -346,9 +354,8 @@ Scripts from `package.json`:
   "dev": "nuxt-gin dev",
   "build": "nuxt-gin build",
   "postinstall": "nuxt-gin install",
-  "update:dep": "nuxt-gin update --latest true",
-  "cleanup": "nuxt-gin cleanup",
-  "nuxt:dev": "nuxt dev"
+  "update:dep": "nuxt-gin update",
+  "cleanup": "nuxt-gin cleanup"
 }
 ```
 
@@ -420,7 +427,7 @@ When packing:
 ### 📝 Notes
 
 - 💨 Air is not used
-- 🧩 `nuxtGin` handles typed endpoint + TS export concerns
+- 🧩 `nuxtGin` handles Go runtime bootstrapping, endpoint definitions, and TS export concerns
 - 🔒 WebSocket broadcast now uses a serialized write path
 - 🗃️ SQLite storage is initialized under `.build/temp/gorm.db`
 - ✅ `go test ./...` for the starter is expected to work after dependency bootstrap
@@ -457,13 +464,13 @@ When packing:
 - 🗃️ 内置 GORM + SQLite 示例
 - 🔄 HTTP 写操作会触发 WebSocket `sync`
 - 🧩 同时包含 HTTP 与 WebSocket 两套 Product CRUD Demo
-- ✅ 启动时校验 `server.config.json`
+- ✅ 显式运行时校验，并支持 `server.config.json` 作为回退配置
 - 🧱 Product 业务逻辑抽离到 service 层
 
 ### 📌 当前技术栈
 
-- `github.com/RapboyGao/nuxtGin`: `v0.2.20`
-- `nuxt-gin-tools`: `0.3.0`
+- `github.com/RapboyGao/nuxtGin`: `v0.3.3`
+- `nuxt-gin-tools`: `0.3.3`
 - Nuxt: `4.4.2`
 - Vue: `3.x`
 - Go: `1.24+`
@@ -499,7 +506,7 @@ When packing:
 
 #### 后端
 
-- `main.go` 通过 `runtime.DefaultAPIServerConfig(...)` 启动
+- `main.go` 通过 `runtime.DefaultAPIServerConfig(...)` 和 `nuxtGin.RunServerFromConfig(...)` 启动
 - `server/api` 负责 endpoint 与 WebSocket 路由定义
 - `server/service` 负责 Product CRUD 共享业务逻辑
 - `server/model` 负责数据库初始化与 GORM 模型
@@ -514,7 +521,7 @@ When packing:
 
 - Nuxt 负责前端 UI
 - Gin 负责 API 与 WebSocket 服务
-- `nuxtGin` 负责导出强类型 TS 客户端
+- `nuxtGin` 通过 `RunServerFromConfig(...)` 在启动时导出强类型 TS 客户端
 - `nuxt-gin-tools` 负责本地开发、构建与打包协同
 
 ### ⚡ 快速开始
@@ -578,7 +585,7 @@ bun run update:dep
 主配置入口：
 
 - `nuxt-gin.config.ts`：`nuxt-gin` 命令和 `nuxt.config.ts` 都会读取它
-- `server.config.json`：继续保留，用于 Go 运行时和打包产物
+- `server.config.json`：继续保留，作为 Go 运行时回退配置以及打包产物配置
 
 编辑 `nuxt-gin.config.ts`：
 
@@ -599,7 +606,7 @@ export default createNuxtGinConfig({
 });
 ```
 
-同时保留 `server.config.json`：
+同时保留 `server.config.json` 作为共享运行时回退配置：
 
 ```json
 {
@@ -621,6 +628,7 @@ export default createNuxtGinConfig({
 运行时说明：
 
 - ✅ 非法端口或非法 `baseUrl` 会在启动时直接报错
+- ✅ 如果代码里显式填充了 `cfg.Server`，`server.config.json` 可以省略；但本 starter 仍保留它，确保开发和打包运行使用同一份配置
 
 ### 🏁 服务启动方式
 
@@ -638,11 +646,18 @@ import (
 
 func main() {
 	cfg := runtime.DefaultAPIServerConfig(api.AllEndpoints, api.AllWebSocketEndpoints)
+	cfg.ExportTSOnRun = true
 	if err := nuxtGin.RunServerFromConfig(cfg); err != nil {
 		panic(err)
 	}
 }
 ```
+
+进阶说明：
+
+- `BuildServerFromConfig(...)` 现在只负责构建服务和注册路由
+- `ExportTypesFromConfig(...)` 可用于把 TS 导出从服务启动中拆开
+- 本 starter 继续使用更简洁的 `RunServerFromConfig(...)` 启动方式
 
 ### 🧱 HTTP API 模式
 
@@ -761,9 +776,8 @@ ws.onSyncPayload((payload) => {
   "dev": "nuxt-gin dev",
   "build": "nuxt-gin build",
   "postinstall": "nuxt-gin install",
-  "update:dep": "nuxt-gin update --latest true",
-  "cleanup": "nuxt-gin cleanup",
-  "nuxt:dev": "nuxt dev"
+  "update:dep": "nuxt-gin update",
+  "cleanup": "nuxt-gin cleanup"
 }
 ```
 
@@ -840,7 +854,7 @@ export default createNuxtGinConfig({
 ### 📝 备注
 
 - 💨 不使用 Air
-- 🧩 `nuxtGin` 负责 endpoint 与 TS 导出
+- 🧩 `nuxtGin` 负责 Go 运行时启动、endpoint 定义与 TS 导出
 - 🔒 WebSocket 广播已使用串行化写入路径
 - 🗃️ SQLite 默认存储在 `.build/temp/gorm.db`
 - ✅ 完成依赖初始化后，`go test ./...` 应可直接运行
